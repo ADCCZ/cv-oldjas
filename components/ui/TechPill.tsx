@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Level } from "@/content/stack.config";
 
 type Props = {
+  /** Stable id from stack.config.ts – used for aria-controls. */
+  id: string;
   name: string;
   level?: Level;
   planned?: boolean;
@@ -31,10 +33,10 @@ const SIZE: Record<Level, string> = {
  * Hover shows the panel on desktop; click / tap / Enter toggles it, Esc or a click outside closes it.
  * Physics in the interactions phase moves these same elements around.
  */
-export function TechPill({ name, level, planned = false, iconPath, levelText, usedInLabel, usedIn }: Props) {
+export function TechPill({ id, name, level, planned = false, iconPath, levelText, usedInLabel, usedIn }: Props) {
   const [open, setOpen] = useState(false);
   const [alignRight, setAlignRight] = useState(false);
-  const panelId = useId();
+  const panelId = `tech-${id}-panel`;
   const rootRef = useRef<HTMLLIElement>(null);
 
   // The panel opens to the right of the tile; tiles near the right edge open it to the left instead.

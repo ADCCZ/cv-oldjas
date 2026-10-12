@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useState } from "react";
 
 type Props = {
   number: string;
@@ -16,7 +16,7 @@ type Props = {
  */
 export function SkillCard({ number, title, items, showDetailsLabel }: Props) {
   const [open, setOpen] = useState(false);
-  const listId = useId();
+  const listId = `skill-${number}-list`;
 
   const revealed =
     "group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100";

@@ -50,6 +50,7 @@ export function Stack({ t, locale }: { t: Dictionary; locale: Locale }) {
               {category.items.map((tech) => (
                 <TechPill
                   key={tech.id}
+                  id={tech.id}
                   name={tx(tech.name, locale)}
                   level={tech.level}
                   planned={category.planned}
