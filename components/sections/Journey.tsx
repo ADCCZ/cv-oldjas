@@ -1,3 +1,5 @@
+import { JourneyMotion } from "@/components/motion/JourneyMotion";
+import { ScrambleText } from "@/components/ui/ScrambleText";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import type { Dictionary } from "@/lib/dictionary";
 import { pad } from "@/lib/i18n";
@@ -22,8 +24,10 @@ type FolderProps = {
  *
  * md and up: every row is sticky, offset by one bar height per index, so the next row slides over
  * the previous one and leaves only its ~64 px bar (number, title, period) visible – a card index
- * (juncastudio.com style) in pure CSS. All rows share one minimum height, so no row is pushed out
- * of the stack early when the list ends. Tablets get a taller bar (two title lines, see --bar-h).
+ * (juncastudio.com style) in pure CSS. Each row is one bar shorter than the previous one (so it ends at
+ * the bottom of the viewport), capped at 34rem because our rows hold text, not big images. Either way
+ * no row is pushed out of the stack early. Tablets get a taller bar (two title lines, see --bar-h).
+ * JourneyMotion fades the rows that are being covered.
  *
  * Phones: a plain vertical list; the number sticks below the header while its row scrolls by.
  * Colours go from --red-950 to --red-500.
@@ -31,12 +35,13 @@ type FolderProps = {
 function Folder({ index, total, title, aside, rows, children }: FolderProps) {
   return (
     <li
-      className="border-t border-cream/15 text-cream md:sticky md:flex md:min-h-[min(60svh,34rem)] md:flex-col"
+      className="border-t border-cream/15 text-cream md:sticky md:flex md:min-h-[min(calc(100svh-var(--header-h)-var(--i)*var(--bar-h)),34rem)] md:flex-col"
       style={{
+        "--i": index,
         background: shadeFor(index, total),
         top: `calc(var(--header-h) + ${index} * var(--bar-h))`,
         zIndex: index + 1,
-      }}
+      } as React.CSSProperties}
     >
       <div className="site-grid flex-1 content-start gap-y-2 py-6 md:gap-y-0 md:py-0 md:pb-14">
         <div className={`col-span-2 md:col-span-1 md:row-span-1 md:flex md:h-(--bar-h) md:items-center ${NUMBER_ROWS[rows]}`}>
@@ -46,7 +51,7 @@ function Folder({ index, total, title, aside, rows, children }: FolderProps) {
         </div>
         {/* Sized so the longest title fits the bar: two lines on tablets, one line from lg up. */}
         <h4 className="col-span-10 text-xl leading-tight font-bold tracking-tight md:col-span-8 md:flex md:h-(--bar-h) md:items-center md:text-[1.375rem] lg:text-[clamp(1.375rem,2.15vw,1.875rem)]">
-          <span className="md:line-clamp-2 lg:line-clamp-1">{title}</span>
+          <ScrambleText text={title} className="md:line-clamp-2 lg:line-clamp-1" />
         </h4>
         <div className="col-span-10 font-mono text-sm md:col-span-3 md:flex md:h-(--bar-h) md:items-center md:justify-end">
           {aside}
@@ -60,9 +65,11 @@ function Folder({ index, total, title, aside, rows, children }: FolderProps) {
 function FolderBody({ row }: { row: Row }) {
   return (
     <>
-      <p className="col-span-10 mt-3 font-serif text-xl italic md:col-span-4 md:col-start-2 md:mt-4 md:text-2xl">{row.place}</p>
+      <p data-folder-body className="col-span-10 mt-3 font-serif text-xl italic md:col-span-4 md:col-start-2 md:mt-4 md:text-2xl">
+        {row.place}
+      </p>
       {row.text.length > 0 ? (
-        <ul className="col-span-10 mt-2 space-y-3 md:col-span-6 md:col-start-7 md:mt-5">
+        <ul data-folder-body className="col-span-10 mt-2 space-y-3 md:col-span-6 md:col-start-7 md:mt-5">
           {row.text.map((line) => (
             <li key={line.slice(0, 32)} className="flex gap-3">
               <span className="mt-[0.75em] h-px w-4 shrink-0 bg-gold-soft" aria-hidden="true" />
@@ -130,6 +137,7 @@ export function Journey({ t }: { t: Dictionary }) {
           />
         </ol>
       </div>
+      <JourneyMotion />
     </section>
   );
 }
