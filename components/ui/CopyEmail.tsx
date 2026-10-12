@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { track } from "@/lib/analytics";
+import { ScrambleText } from "./ScrambleText";
 
 type Props = {
   email: string;
@@ -34,7 +35,7 @@ export function CopyEmail({ email, copyLabel, copiedLabel, writeLabel }: Props) 
   return (
     <span className="relative inline-flex items-center gap-3">
       <button type="button" onClick={copy} title={copyLabel} className="link-draw text-left">
-        {email}
+        <ScrambleText text={email} />
         <span className="sr-only"> – {copyLabel}</span>
       </button>
       <a

@@ -1,5 +1,7 @@
 import { Clock } from "@/components/layout/Clock";
+import { FooterMotion } from "@/components/motion/FooterMotion";
 import { CopyEmail } from "@/components/ui/CopyEmail";
+import { ScrambleText } from "@/components/ui/ScrambleText";
 import { TrackedLink } from "@/components/ui/TrackedLink";
 import { links } from "@/content/links.config";
 import type { Locale } from "@/content/types";
@@ -27,7 +29,9 @@ export function Footer({ t, locale, projectCount }: Props) {
           <dl className="space-y-5">
             <div>
               <dt className="eyebrow mb-1 text-gold-text">{t.contact.location}</dt>
-              <dd>{links.location[locale]}</dd>
+              <dd>
+                <ScrambleText text={links.location[locale]} />
+              </dd>
             </div>
             <div>
               <dt className="eyebrow mb-1 text-gold-text">{t.contact.email}</dt>
@@ -46,7 +50,7 @@ export function Footer({ t, locale, projectCount }: Props) {
                   data={{ place: "footer-details" }}
                   className="link-draw"
                 >
-                  {links.githubLabel}
+                  <ScrambleText text={links.githubLabel} />
                   {newTab}
                 </TrackedLink>
               </dd>
@@ -110,11 +114,12 @@ export function Footer({ t, locale, projectCount }: Props) {
 
       {/* Font size = available width / text width in em (≈ 5.3 em for ŠVEHLA at wdth 125, wght 900). */}
       <p
+        data-giant
         aria-hidden="true"
         className="overflow-x-clip px-gutter pt-[0.08em] text-center font-wide text-[calc((100vw-2*var(--gutter))/5.3)] leading-[0.82] font-black tracking-[-0.03em] whitespace-nowrap select-none"
       >
         {[...GIANT].map((letter, i) => (
-          <span key={i} className="inline-block">
+          <span key={i} data-giant-letter className="inline-block">
             {letter}
           </span>
         ))}
@@ -139,6 +144,7 @@ export function Footer({ t, locale, projectCount }: Props) {
           {t.footer.top}
         </a>
       </div>
+      <FooterMotion />
     </footer>
   );
 }
