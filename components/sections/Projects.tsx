@@ -54,7 +54,7 @@ function ProjectCard({ project, index, total, t, locale, meta }: CardProps) {
       aria-labelledby={titleId}
       className="w-[85vw] shrink-0 snap-start md:w-[min(52vw,calc((100svh-22rem)*1.6))] lg:w-[min(36vw,calc((100svh-20rem)*1.6))]"
     >
-      <div className="relative" data-surface="red">
+      <div className="relative" data-surface="red" data-cover>
         {primaryUrl ? (
           // Mouse shortcut only – the same links follow as text, so keyboard users skip this one.
           <TrackedLink
@@ -74,7 +74,7 @@ function ProjectCard({ project, index, total, t, locale, meta }: CardProps) {
           cover
         )}
         {project.tags?.length ? (
-          <ul className="pointer-events-none absolute bottom-4 left-4 flex flex-wrap gap-1.5">
+          <ul data-cover-tags className="pointer-events-none absolute bottom-4 left-4 flex flex-wrap gap-1.5">
             {project.tags.map((tag) => (
               <li key={tx(tag, "en")} className="tag border-transparent bg-ink text-cream">
                 {tx(tag, locale)}
@@ -170,7 +170,7 @@ export function Projects({ t, locale, github }: Props) {
           {github.offline ? <p className="eyebrow mt-6 text-fg-muted">{t.projects.githubOffline}</p> : null}
         </div>
 
-        <div className="col-span-12 -mx-(--gutter) md:col-span-7 md:mx-0 md:overflow-x-clip lg:col-span-8">
+        <div data-projects-clip className="col-span-12 -mx-(--gutter) md:col-span-7 md:mx-0 md:overflow-x-clip lg:col-span-8">
           <div
             data-projects-track
             tabIndex={0}

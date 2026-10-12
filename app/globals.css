@@ -942,3 +942,17 @@ html[data-hero-gl] [data-hero-name] {
     container-type: size;
   }
 }
+
+/* Covers without the WebGL ripples (no WebGL2): a plain zoom with an RGB split on the type. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html[data-webgl="off"] [data-cover] [data-parallax] {
+    transition:
+      scale 0.6s var(--ease-inout),
+      filter 0.6s var(--ease-inout);
+  }
+
+  html[data-webgl="off"] [data-cover]:hover [data-parallax] {
+    scale: 1.2;
+    filter: drop-shadow(3px 0 0 rgb(255 40 60 / 0.45)) drop-shadow(-3px 0 0 rgb(40 220 255 / 0.35));
+  }
+}

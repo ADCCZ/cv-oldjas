@@ -27,6 +27,7 @@ export function ProjectCover({ project, index, total, locale }: Props) {
 
   return (
     <div
+      data-cover-frame
       className="relative aspect-[16/10] overflow-hidden text-cream [container-type:inline-size]"
       style={{ background: shadeFor(index, total) }}
     >
