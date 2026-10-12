@@ -441,3 +441,66 @@
       visibility 0s !important;
   }
 }
+
+/* ==========================================================================
+   Phase 3 – scroll & intro animation support
+   ========================================================================== */
+
+/* Intro loader: only rendered when the inline script in the layout set data-intro="play". */
+.intro {
+  display: none;
+  clip-path: inset(0 0 0 0);
+}
+
+html[data-intro="play"] .intro {
+  display: flex;
+}
+
+/* Loader already seen in this session: hide the hero name until its letters are set below the
+   mask, with a CSS fallback so the name can never stay hidden if JavaScript fails. */
+html[data-intro="replay"] [data-hero-name] {
+  visibility: hidden;
+  animation: reveal-fallback 0s linear 2.5s forwards;
+}
+
+@keyframes reveal-fallback {
+  to {
+    visibility: visible;
+  }
+}
+
+/* The JS marquee drives the track itself – switch the CSS fallback loop off. */
+.marquee-track.is-driven {
+  animation: none;
+}
+
+/* Masks for the letter rise; removed again so exploding letters may leave the line. */
+[data-hero-name].is-masked {
+  overflow: clip;
+}
+
+/* SplitText line masks: room for descenders and diacritics, no layout shift. */
+.split-line-mask {
+  padding-block: 0.08em 0.14em;
+  margin-block: -0.08em -0.14em;
+}
+
+/* About: words change from muted to full colour as you read (--reveal 0 → 1, driven by GSAP). */
+.about-word {
+  color: color-mix(in srgb, var(--fg) calc(var(--reveal, 1) * 100%), var(--fg-muted));
+}
+
+/* Scramble: random glyphs are red, characters that have not started yet are invisible. */
+.scr-char.is-band {
+  color: var(--red-text);
+}
+
+.scr-char.is-noise {
+  opacity: 0;
+}
+
+/* Projects: the strip is moved by the pinned scroll timeline instead of native scrolling. */
+[data-projects-track].is-pinned {
+  overflow: visible;
+  scroll-snap-type: none;
+}
