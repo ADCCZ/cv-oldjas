@@ -1,3 +1,4 @@
+import { ProjectsMotion } from "@/components/motion/ProjectsMotion";
 import { ProjectCover } from "@/components/ui/ProjectCover";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { TrackedLink } from "@/components/ui/TrackedLink";
@@ -48,7 +49,11 @@ function ProjectCard({ project, index, total, t, locale, meta }: CardProps) {
   const cover = <ProjectCover project={project} index={index} total={total} locale={locale} />;
 
   return (
-    <article id={`project-${project.id}`} aria-labelledby={titleId} className="w-[85vw] shrink-0 snap-start sm:w-[62vw] lg:w-[44vw]">
+    <article
+      id={`project-${project.id}`}
+      aria-labelledby={titleId}
+      className="w-[85vw] shrink-0 snap-start md:w-[min(52vw,calc((100svh-22rem)*1.6))] lg:w-[min(36vw,calc((100svh-20rem)*1.6))]"
+    >
       <div className="relative">
         {primaryUrl ? (
           // Mouse shortcut only – the same links follow as text, so keyboard users skip this one.
@@ -135,61 +140,73 @@ type Props = {
   github: GithubData;
 };
 
-/** Projects – a horizontal row of cards (the pinned horizontal scroll arrives with the scroll animations). */
+/**
+ * Projects (juncastudio.com style). From md up the heading stays on the left and vertical
+ * scrolling moves the strip of cards to the left (pinned, ProjectsMotion). Phones get a native
+ * swipe carousel, reduced motion a plain vertical list (CSS in globals.css).
+ */
 export function Projects({ t, locale, github }: Props) {
   const total = featuredProjects.length;
 
   return (
-    <section id="projects" aria-labelledby="projects-title" className="py-28 md:py-40">
-      <div className="site-grid items-end gap-y-6">
-        <SectionHeading
-          id="projects-title"
-          number="02"
-          className="col-span-12"
-          aside={
-            <span aria-hidden="true">
-              <span className="text-fg">01</span> / {pad(total)}
-            </span>
-          }
-        >
-          {t.projects.title}
-        </SectionHeading>
-        {github.offline ? <p className="eyebrow col-span-12 text-fg-muted">{t.projects.githubOffline}</p> : null}
-      </div>
-
-      <div
-        tabIndex={0}
-        aria-label={t.projects.title}
-        className="relative mt-12 flex snap-x snap-mandatory scroll-pl-(--gutter) gap-6 overflow-x-auto overscroll-x-contain px-gutter pb-6 md:gap-10"
-      >
-        {featuredProjects.map((project, index) => (
-          <ProjectCard
-            key={project.id}
-            project={project}
-            index={index}
-            total={total}
-            t={t}
-            locale={locale}
-            meta={project.repo ? github.repos[project.repo] : undefined}
-          />
-        ))}
-
-        <div className="w-[85vw] shrink-0 snap-start sm:w-[62vw] lg:w-[30vw]">
-          <TrackedLink
-            href={links.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            event="github_click"
-            data={{ place: "projects" }}
-            className="flex aspect-[16/10] flex-col justify-between border border-line-strong p-6 transition-colors duration-500 hover:border-red-500 hover:bg-red-500 hover:text-cream md:p-8"
+    <section id="projects" aria-labelledby="projects-title" className="py-28 md:py-0">
+      <div data-projects-pin className="site-grid gap-y-10 md:min-h-svh md:content-center md:pt-(--header-h) md:pb-10">
+        <div className="col-span-12 md:col-span-5 lg:col-span-4">
+          <SectionHeading
+            id="projects-title"
+            number="02"
+            aside={
+              <span aria-hidden="true">
+                <span data-projects-counter className="text-fg">
+                  01
+                </span>{" "}
+                / {pad(total)}
+              </span>
+            }
           >
-            <span className="eyebrow">{links.githubLabel}</span>
-            <span className="text-3xl leading-none font-bold tracking-tight md:text-5xl">
-              {t.projects.allOnGithub}
-              <NewTab label={t.a11y.openInNewTab} />
-            </span>
-          </TrackedLink>
+            {t.projects.title}
+          </SectionHeading>
+          {github.offline ? <p className="eyebrow mt-6 text-fg-muted">{t.projects.githubOffline}</p> : null}
         </div>
+
+        <div className="col-span-12 -mx-(--gutter) md:col-span-7 md:mx-0 md:overflow-x-clip lg:col-span-8">
+          <div
+            data-projects-track
+            tabIndex={0}
+            aria-label={t.projects.title}
+            className="relative flex snap-x snap-mandatory scroll-pl-(--gutter) gap-6 overflow-x-auto overscroll-x-contain px-gutter pb-6 md:gap-8 md:px-0 md:pb-2"
+          >
+            {featuredProjects.map((project, index) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                index={index}
+                total={total}
+                t={t}
+                locale={locale}
+                meta={project.repo ? github.repos[project.repo] : undefined}
+              />
+            ))}
+
+            <div className="w-[85vw] shrink-0 snap-start md:w-[min(40vw,calc((100svh-22rem)*1.6))] lg:w-[min(22vw,calc((100svh-20rem)*1.6))]">
+              <TrackedLink
+                href={links.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                event="github_click"
+                data={{ place: "projects" }}
+                className="flex aspect-[16/10] flex-col justify-between border border-line-strong p-6 transition-colors duration-500 hover:border-red-500 hover:bg-red-500 hover:text-cream md:p-8"
+              >
+                <span className="eyebrow">{links.githubLabel}</span>
+                <span className="text-3xl leading-none font-bold tracking-tight md:text-4xl">
+                  {t.projects.allOnGithub}
+                  <NewTab label={t.a11y.openInNewTab} />
+                </span>
+              </TrackedLink>
+            </div>
+          </div>
+        </div>
+        <ProjectsMotion />
       </div>
 
       <ProjectArchive t={t} locale={locale} />

@@ -31,9 +31,12 @@ export function ProjectCover({ project, index, total, locale }: Props) {
       style={{ background: shadeFor(index, total) }}
     >
       {image ? (
-        <Image src={image} alt="" fill sizes="(min-width: 1024px) 44vw, (min-width: 640px) 62vw, 85vw" className="object-cover" />
+        // Oversized wrapper: ProjectsMotion slides it sideways for a slower-than-the-card parallax.
+        <div data-parallax className="absolute inset-0 scale-[1.14]">
+          <Image src={image} alt="" fill sizes="(min-width: 1024px) 36vw, (min-width: 768px) 52vw, 85vw" className="object-cover" />
+        </div>
       ) : (
-        <div className="absolute inset-0 flex flex-col p-[5cqw]" aria-hidden="true">
+        <div data-parallax className="absolute inset-0 flex scale-[1.14] flex-col p-[9cqw]" aria-hidden="true">
           <div className="flex items-start justify-between gap-[4cqw] font-mono text-[2.4cqw] leading-tight">
             <span className="text-[3.4cqw] text-gold-soft">{pad(index + 1)}</span>
             <span className="max-w-[60%] text-right opacity-80">{project.stack.map((s) => tx(s, locale)).join(" · ")}</span>
