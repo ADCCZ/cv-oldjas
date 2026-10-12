@@ -1,5 +1,5 @@
 /** Trailing symbols that move into their own square next to the label. */
-const ICONS = ["→", "↓", "↗", "@", "::", "✕"] as const;
+const ICONS = ["→", "↓", "↑", "↗", "↔", "@", "::", "✕"] as const;
 
 /** "See my work →" → { text: "See my work", icon: "→" } */
 export function splitIcon(label: string): { text: string; icon: string | null } {

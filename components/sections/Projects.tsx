@@ -54,7 +54,7 @@ function ProjectCard({ project, index, total, t, locale, meta }: CardProps) {
       aria-labelledby={titleId}
       className="w-[85vw] shrink-0 snap-start md:w-[min(52vw,calc((100svh-22rem)*1.6))] lg:w-[min(36vw,calc((100svh-20rem)*1.6))]"
     >
-      <div className="relative">
+      <div className="relative" data-surface="red">
         {primaryUrl ? (
           // Mouse shortcut only – the same links follow as text, so keyboard users skip this one.
           <TrackedLink
@@ -65,6 +65,7 @@ function ProjectCard({ project, index, total, t, locale, meta }: CardProps) {
             aria-hidden="true"
             event="project_open"
             data={{ id: project.id, target: project.demo ? "demo" : "repo" }}
+            data-cursor="view"
             className="block"
           >
             {cover}
@@ -195,6 +196,7 @@ export function Projects({ t, locale, github }: Props) {
                 rel="noopener noreferrer"
                 event="github_click"
                 data={{ place: "projects" }}
+                data-surface="red"
                 className="flex aspect-[16/10] flex-col justify-between border border-line-strong p-6 transition-colors duration-500 hover:border-red-500 hover:bg-red-500 hover:text-cream md:p-8"
               >
                 <span className="eyebrow">{links.githubLabel}</span>

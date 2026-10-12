@@ -8,6 +8,8 @@
 export const MOTION_OK = "(prefers-reduced-motion: no-preference)";
 /** Desktop and tablet layouts (pinned horizontal projects, sticky folders). */
 export const MD_UP = "(min-width: 768px)";
+/** A mouse or trackpad – hover effects, the custom cursor and magnetic buttons need one. */
+export const FINE_POINTER = "(hover: hover) and (pointer: fine)";
 
 /**
  * Runs `callback` once web fonts are ready (SplitText must measure final glyphs).

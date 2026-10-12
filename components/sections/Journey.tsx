@@ -36,6 +36,7 @@ type FolderProps = {
 function Folder({ index, total, title, aside, rows, children }: FolderProps) {
   return (
     <li
+      data-surface="red"
       className="border-t border-cream/15 text-cream md:sticky md:flex md:min-h-[min(calc(100svh-var(--header-h)-var(--i)*var(--bar-h)),34rem)] md:flex-col"
       style={{
         "--i": index,

@@ -21,6 +21,11 @@ export const cs: Dictionary = {
     siteMenu: "Menu webu",
   },
 
+  cursor: {
+    view: "Zobrazit projekt ↗",
+    drag: "Táhni ↔",
+  },
+
   nav: {
     about: "O mně",
     projects: "Projekty",
@@ -89,7 +94,6 @@ export const cs: Dictionary = {
     title: "Projekty",
     repo: "Repozitář ↗",
     live: "Živá ukázka ↗",
-    viewProject: "Zobrazit projekt ↗",
     allOnGithub: "Všechno na GitHubu ↗",
     privateOwn: "soukromé repo, přístup na vyžádání",
     githubOffline: "GitHub teď neodpovídá, data jsou z poslední zálohy.",

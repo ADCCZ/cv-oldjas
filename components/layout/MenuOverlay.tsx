@@ -71,6 +71,7 @@ export function MenuOverlay({ open, onClose, locale, activeItem, activeSection, 
       aria-modal="true"
       aria-label={labels.siteMenu}
       data-open={open}
+      data-surface="red"
       onKeyDown={onKeyDown}
       className="menu-overlay pointer-events-auto fixed inset-0 z-[60] flex flex-col bg-red-950 text-cream"
     >

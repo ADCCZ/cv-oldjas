@@ -23,7 +23,7 @@ export function SkillCard({ number, title, items, showDetailsLabel }: Props) {
   const onFill = "group-data-[open=true]:text-cream group-focus-within:text-cream group-hover:text-cream";
 
   return (
-    <li className="reveal-card group relative aspect-square overflow-hidden bg-bg" data-open={open}>
+    <li className="reveal-card group relative aspect-square overflow-hidden bg-bg" data-open={open} data-surface="red">
       <div className="corner-fill absolute inset-0 bg-red-500" aria-hidden="true" />
       <div className={`relative flex h-full flex-col p-6 transition-colors duration-700 md:p-8 ${onFill}`}>
         <div className="flex items-start justify-between">

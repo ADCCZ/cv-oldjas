@@ -23,6 +23,12 @@ export const en = {
     siteMenu: "Site menu",
   },
 
+  /** Labels of the custom cursor (fine pointers only). */
+  cursor: {
+    view: "View project ↗",
+    drag: "Drag ↔",
+  },
+
   nav: {
     about: "About",
     projects: "Projects",
@@ -92,7 +98,6 @@ export const en = {
     title: "Projects",
     repo: "Repository ↗",
     live: "Live demo ↗",
-    viewProject: "View project ↗",
     allOnGithub: "Everything on GitHub ↗",
     privateOwn: "private repo, access on request",
     githubOffline: "GitHub isn’t responding right now – the data is from the last backup.",
