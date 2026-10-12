@@ -61,13 +61,15 @@ ${PALETTE}
 ${NOISE}
 
 // Glyph coverage at p (r = name, g = red dash). Every row repeats its copy seamlessly – so does
-// the texture (fract); the rows never overlap.
+// the texture (fract); the rows never overlap. textureLod: the texture has no mipmaps, and reads
+// without derivatives inside loops and branches keep the Direct3D shader compiler (Windows) from
+// unrolling the shader into something that stalls integrated GPUs until the context is lost.
 vec2 coverage(vec2 p) {
   vec2 c = vec2(0.0);
   for (int i = 0; i < 3; i++) {
     if (i >= uRows) break;
     vec2 n = (p - uCopy[i].xy) / uCopy[i].zw;
-    if (n.y > 0.0 && n.y < 1.0) c += texture(uName, vec2(fract(n.x), 1.0 - n.y)).rg;
+    if (n.y > 0.0 && n.y < 1.0) c += textureLod(uName, vec2(fract(n.x), 1.0 - n.y), 0.0).rg;
   }
   return c;
 }
@@ -119,7 +121,7 @@ void main() {
 
   vec3 inner = uPlane;
   if (mask > 0.0 && glyph > 0.0) {
-    vec2 flow = texture(uVelocity, vUv).xy;
+    vec2 flow = textureLod(uVelocity, vUv, 0.0).xy;
     vec3 m = metal(p / uEm, flow, uTime);
     // Bevel: light from the top left catches one side of every stroke, the other falls into shade.
     float b = 0.012 * uEm;
