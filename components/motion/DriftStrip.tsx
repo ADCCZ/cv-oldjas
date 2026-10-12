@@ -145,7 +145,8 @@ export function DriftStrip({ speed = 30 }: Props) {
           draggable = Draggable.create(proxy, {
             type: "x",
             trigger: strip,
-            dragClickables: true, // a drag may start on a card link; a plain click still follows it
+            // Links keep their native click (and Ctrl+click); a drag starts anywhere else on the strip.
+            dragClickables: false,
             minimumMovement: 4,
             onPress() {
               lastX = this.x;
