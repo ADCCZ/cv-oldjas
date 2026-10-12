@@ -1,3 +1,4 @@
+import { AboutFacts } from "@/components/motion/AboutFacts";
 import { AboutMotion } from "@/components/motion/AboutMotion";
 import { CompassSvg } from "@/components/ui/CompassSvg";
 import { Icon } from "@/components/ui/Icon";
@@ -26,11 +27,14 @@ export function About({ t }: { t: Dictionary }) {
         aria-label={t.about.factsLabel}
         className="col-span-12 self-start md:col-span-8 md:col-start-3 lg:sticky lg:top-28 lg:col-span-4 lg:col-start-9"
       >
-        <CompassSvg className="mx-auto mb-10 w-56 md:w-72" />
-        <ul className="border-t border-line">
+        {/* The WebGL layer draws the 3D compass into this box; the SVG is the fallback. */}
+        <div data-compass className="relative mx-auto mb-10 aspect-square w-56 md:w-60 lg:w-72">
+          <CompassSvg className="compass-svg size-full" />
+        </div>
+        <ul data-facts className="border-t border-line">
           {t.about.facts.map((fact) => (
-            <li key={fact.text} className="flex items-center gap-4 border-b border-line py-4">
-              <span className="text-gold-text">
+            <li key={fact.text} data-fact className="fact flex items-center gap-4 border-b border-line py-4">
+              <span data-fact-icon className="fact-icon text-gold-text">
                 <Icon name={fact.icon} />
               </span>
               <span>{fact.text}</span>
@@ -39,6 +43,7 @@ export function About({ t }: { t: Dictionary }) {
         </ul>
       </aside>
       <AboutMotion />
+      <AboutFacts />
     </section>
   );
 }

@@ -23,6 +23,19 @@ export const aboutState = {
 };
 
 /**
+ * Compass bearing (degrees, clockwise from north) from the centre of `from` to the centre of `to`
+ * on screen. The compass needle points at the highlighted fact – literally, wherever the layout
+ * puts it (beside the compass, below it, on a phone).
+ */
+export function bearing(from: Element, to: Element): number {
+  const a = from.getBoundingClientRect();
+  const b = to.getBoundingClientRect();
+  const dx = b.left + b.width / 2 - (a.left + a.width / 2);
+  const dy = b.top + b.height / 2 - (a.top + a.height / 2);
+  return (Math.atan2(dx, -dy) * 180) / Math.PI;
+}
+
+/**
  * `html[data-webgl]`: "on" while the WebGL layer runs, "off" when the browser cannot run it.
  * CSS and the DOM fallbacks (SVG compass needle, CSS cover hover) key off this attribute.
  */

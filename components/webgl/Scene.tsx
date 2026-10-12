@@ -3,6 +3,7 @@
 import { Canvas, useThree } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
+import { Compass } from "./Compass";
 import { HeroReveal } from "./HeroReveal";
 import { layer, prepareStages } from "./stage";
 
@@ -97,6 +98,7 @@ export default function Scene({ onLost }: { onLost: () => void }) {
     >
       <Driver onLost={onLost} />
       <HeroReveal />
+      <Compass />
     </Canvas>
   );
 }

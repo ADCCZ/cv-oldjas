@@ -1,6 +1,6 @@
 /**
- * Flat SVG compass – shown next to About until the 3D compass (WebGL phase) replaces it,
- * and kept as its fallback for reduced motion / no WebGL.
+ * Flat SVG compass next to About – the fallback of the 3D compass (components/webgl/Compass) for
+ * reduced motion and browsers without WebGL. AboutFacts swings its needle ([data-compass-needle]).
  */
 const C = 100;
 
@@ -56,7 +56,7 @@ export function CompassSvg({ className = "", needleRotation = 0 }: { className?:
         );
       })}
 
-      <g transform={`rotate(${needleRotation} ${C} ${C})`}>
+      <g data-compass-needle transform={`rotate(${needleRotation} ${C} ${C})`}>
         <path d={`M${C} 34 L${C + 7} ${C} L${C - 7} ${C} Z`} fill="var(--red-500)" />
         <path d={`M${C} 166 L${C + 7} ${C} L${C - 7} ${C} Z`} fill="var(--fg-muted)" opacity={0.55} />
         <circle cx={C} cy={C} r={5} fill="var(--gold)" />

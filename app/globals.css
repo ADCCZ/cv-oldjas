@@ -868,6 +868,31 @@ html[data-webgl-idle] .webgl-layer {
   visibility: hidden;
 }
 
+/* About facts: while the text is read, one fact after another lights up (AboutFacts). */
+[data-facts].is-live .fact {
+  color: var(--fg-muted);
+  transition: color 0.4s var(--ease-inout);
+}
+
+[data-facts].is-live .fact-icon {
+  color: var(--fg-muted);
+  transition: color 0.4s var(--ease-inout);
+}
+
+[data-facts].is-live .fact[data-active],
+[data-facts].is-live .fact[data-active] .fact-icon {
+  color: var(--fg);
+}
+
+[data-facts].is-live .fact[data-active] .fact-icon {
+  color: var(--gold-text);
+}
+
+/* The 3D compass is drawn – the flat one steps back. */
+html[data-compass-gl] .compass-svg {
+  opacity: 0;
+}
+
 /* WebGL draws the hero name itself (plain and revealed) – the DOM marquee steps back meanwhile. */
 html[data-hero-gl] [data-hero-name] {
   opacity: 0;
