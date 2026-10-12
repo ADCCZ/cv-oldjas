@@ -1,0 +1,369 @@
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+/* next-themes writes [data-theme] on <html>. The CSS default is dark, so the page never flashes light. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+
+/* ==========================================================================
+   Design tokens – the 60 / 30 / 10 rule
+   60 % base (bg, surface) · 30 % dominant red accent · 10 % gold detail
+   ========================================================================== */
+:root {
+  /* 60 % – base */
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --fg: #f2eee6;
+  --fg-muted: #8c877e;
+
+  /* 30 % – red scale, identical in both themes (900 and 700 are interpolated steps) */
+  --red-950: #2a0306;
+  --red-900: #430609;
+  --red-800: #5c0a10;
+  --red-700: #7d0d16;
+  --red-600: #9e0f1c;
+  --red-500: #d2162a;
+  /* Red as text: on dark only at >= 24 px (contrast ~3.7 : 1). */
+  --red-text: #d2162a;
+
+  /* 10 % – gold, never as a large area */
+  --gold: #d4a63a;
+  --gold-soft: #e8c770;
+  --gold-text: #d4a63a;
+  --focus: #d4a63a;
+
+  /* Fixed colours for text on red surfaces – they do not flip with the theme. */
+  --cream: #f2eee6;
+  --ink: #0e0e0e;
+
+  --line: color-mix(in srgb, var(--fg) 12%, transparent);
+  --line-strong: color-mix(in srgb, var(--fg) 30%, transparent);
+  /* Status dot "open to work" – the single deliberate exception from the palette. */
+  --status: #3ecf71;
+
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --gutter: 16px;
+  --header-h: 4.5rem;
+  --bar-h: 4rem;
+
+  color-scheme: dark;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 24px;
+  }
+}
+
+[data-theme="light"] {
+  --bg: #f6f3ee;
+  --surface: #ece7df;
+  --fg: #0e0e0e;
+  --fg-muted: #6b665e;
+  --red-text: #9e0f1c;
+  --gold-text: #8a6a12;
+  --focus: #8a6a12;
+  color-scheme: light;
+}
+
+/* Without JavaScript next-themes cannot set [data-theme] – follow the OS preference instead. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg: #f6f3ee;
+    --surface: #ece7df;
+    --fg: #0e0e0e;
+    --fg-muted: #6b665e;
+    --red-text: #9e0f1c;
+    --gold-text: #8a6a12;
+    --focus: #8a6a12;
+    color-scheme: light;
+  }
+}
+
+/* Only the design tokens exist as Tailwind colours – no stray default palette. */
+@theme {
+  --color-*: initial;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-red-950: var(--red-950);
+  --color-red-900: var(--red-900);
+  --color-red-800: var(--red-800);
+  --color-red-700: var(--red-700);
+  --color-red-600: var(--red-600);
+  --color-red-500: var(--red-500);
+  --color-red-text: var(--red-text);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-gold-text: var(--gold-text);
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-status: var(--status);
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --font-hand: var(--font-caveat), cursive;
+
+  --ease-brand: var(--ease-inout);
+  --ease-reveal: var(--ease-out-expo);
+}
+
+/* ==========================================================================
+   Typography & layout utilities
+   ========================================================================== */
+
+/* The 12-column grid, edge to edge with a 24 px (mobile 16 px) gutter. */
+@utility site-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  padding-inline: var(--gutter);
+}
+
+@utility px-gutter {
+  padding-inline: var(--gutter);
+}
+
+/* Display sizes – tight tracking on everything big. */
+@utility text-hero {
+  font-size: clamp(6rem, 22vw, 26rem);
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+}
+
+@utility text-h2 {
+  font-size: clamp(2.5rem, 6vw, 6rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+}
+
+@utility tracking-display {
+  letter-spacing: -0.04em;
+}
+
+/* Archivo at its widest and heaviest – covers, footer name. */
+@utility font-wide {
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+@layer base {
+  /* Clip on both: nothing may widen the layout viewport on phones (sticky still works with clip). */
+  html {
+    overflow-x: clip;
+    background: var(--bg);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100svh;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    overflow-x: clip;
+  }
+
+  @media (min-width: 768px) {
+    body {
+      font-size: 1.0625rem;
+    }
+  }
+
+  ::selection {
+    background: var(--red-500);
+    color: var(--cream);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  /* Programmatic focus targets (sections after a nav jump) need no ring. */
+  [tabindex="-1"]:focus {
+    outline: none;
+  }
+
+  /* Hidden anchors kept for links from the old website. */
+  .anchor-alias {
+    display: block;
+    height: 0;
+    overflow: hidden;
+    scroll-margin-top: var(--header-h);
+  }
+}
+
+/* ==========================================================================
+   Components
+   ========================================================================== */
+@layer components {
+  /* Pill buttons – corners are either 0 or fully round, nothing in between. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    border-radius: 9999px;
+    padding: 0.95em 1.5em;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+      background-color 0.5s var(--ease-inout),
+      color 0.5s var(--ease-inout),
+      border-color 0.5s var(--ease-inout);
+  }
+
+  .pill-red {
+    background: var(--red-500);
+    color: var(--cream);
+  }
+
+  .pill-red:hover {
+    background: var(--red-600);
+  }
+
+  .pill-outline {
+    border: 1px solid var(--line-strong);
+    color: var(--fg);
+  }
+
+  .pill-outline:hover {
+    border-color: var(--fg);
+  }
+
+  /* Small outline label in mono (technologies, cover tags). */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 9999px;
+    padding: 0.4em 0.85em;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Gold underline that draws from left to right on hover. */
+  .link-draw {
+    background: linear-gradient(var(--gold), var(--gold)) 0 100% / 0 1px no-repeat;
+    transition: background-size 0.7s var(--ease-inout);
+  }
+
+  .link-draw:hover,
+  .link-draw:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /* Infinite name in the hero: two identical copies, the track moves by exactly one copy. */
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 60s linear infinite;
+  }
+
+  @keyframes marquee {
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  .status-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    flex: none;
+    border-radius: 9999px;
+    background: var(--status);
+    animation: status-pulse 2.4s var(--ease-inout) infinite;
+  }
+
+  @keyframes status-pulse {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--status) 55%, transparent);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 0.55rem transparent;
+    }
+  }
+
+  /* Card that fills with red from the top-right corner (Skills). */
+  .corner-fill {
+    clip-path: circle(0% at 100% 0%);
+    transition: clip-path 0.9s var(--ease-inout);
+  }
+
+  .reveal-card[data-open="true"] .corner-fill,
+  .reveal-card:focus-within .corner-fill {
+    clip-path: circle(150% at 100% 0%);
+  }
+
+  @media (hover: hover) {
+    .reveal-card:hover .corner-fill {
+      clip-path: circle(150% at 100% 0%);
+    }
+  }
+}
+
+/* Film grain over the whole page (4–6 % opacity). */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   Reduced motion: no marquee, no scroll effects – only short fades remain.
+   ========================================================================== */
+.reduced-only {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.15s !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+
+  .motion-only {
+    display: none !important;
+  }
+
+  .reduced-only {
+    display: revert;
+  }
+}
