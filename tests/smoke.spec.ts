@@ -130,6 +130,79 @@ test("the intro loader plays on the first visit and then reveals the hero", asyn
   await context.close();
 });
 
+test("the stats strip loops through clones that screen readers skip", async ({ page }) => {
+  await page.goto("/");
+  const copies = page.locator("#stats [data-strip-copy]");
+  await expect(copies).toHaveCount(3);
+  for (const i of [0, 2]) {
+    await expect(copies.nth(i)).toHaveAttribute("aria-hidden", "true");
+    await expect(copies.nth(i)).toHaveAttribute("inert", "");
+  }
+  await expect(copies.nth(1)).not.toHaveAttribute("aria-hidden", /.*/);
+  // Screen readers get every number exactly once.
+  await expect(page.getByRole("group", { name: "In numbers" }).getByRole("listitem")).toHaveCount(8);
+});
+
+test("the custom cursor follows a mouse and switches over project covers", async ({ page }) => {
+  await page.goto("/");
+  await page.mouse.move(400, 300);
+  await page.mouse.move(420, 320);
+  const cursor = page.locator(".cursor");
+  await expect(cursor).toHaveAttribute("data-visible", "true");
+
+  // The covers sit in the pinned, horizontally moving strip – point at one once it has settled.
+  await page.evaluate(() => document.getElementById("projects")?.scrollIntoView());
+  await page.waitForTimeout(1200);
+  const cover = await page.locator("[data-cursor='view']").first().boundingBox();
+  expect(cover).not.toBeNull();
+  await page.mouse.move(cover!.x + cover!.width / 2, cover!.y + cover!.height / 2, { steps: 4 });
+  await expect(cursor).toHaveAttribute("data-state", "view");
+});
+
+test("touch devices keep the system cursor and the plain stack grid", async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  await context.addInitScript(SKIP_INTRO);
+  const page = await context.newPage();
+  await page.goto("/");
+  await expect(page.locator(".cursor")).toHaveCount(0);
+  await page.locator("#stack").scrollIntoViewIfNeeded();
+  await expect(page.locator("#stack-tiles")).not.toHaveAttribute("data-mode", "pile");
+  await expect(page.locator("#stats .stat-pill")).toHaveCount(0);
+  await context.close();
+});
+
+test("the stack pile sorts into the grid and back without moving the page", async ({ page }) => {
+  await page.goto("/");
+  const tiles = page.locator("#stack-tiles");
+  await tiles.scrollIntoViewIfNeeded();
+  await expect(tiles).toHaveAttribute("data-mode", "pile");
+  const sort = page.locator("#stack").getByRole("button", { name: "Sort" });
+  await expect(sort).toBeEnabled();
+
+  const height = () => page.evaluate(() => document.documentElement.scrollHeight);
+  const before = await height();
+  await sort.click();
+  await expect(tiles).toHaveAttribute("data-mode", "grid");
+  const scatter = page.locator("#stack").getByRole("button", { name: "Scatter" });
+  await expect(scatter).toBeVisible();
+  expect(await height()).toBe(before);
+
+  await scatter.click();
+  await expect(tiles).toHaveAttribute("data-mode", "pile");
+  expect(await height()).toBe(before);
+});
+
+test("archive rows open with the keyboard", async ({ page }) => {
+  await page.goto("/");
+  const row = page.locator("[data-archive-row]").first();
+  await row.locator("summary").focus();
+  await page.keyboard.press("Enter");
+  await expect(row).toHaveAttribute("open", "");
+  await expect(row.locator("[data-archive-body] p").first()).toBeVisible();
+  await page.keyboard.press("Enter");
+  await expect(row).not.toHaveAttribute("open", "");
+});
+
 test("unknown pages return 404", async ({ page }) => {
   const response = await page.goto("/this-page-does-not-exist");
   expect(response?.status()).toBe(404);
@@ -164,5 +237,9 @@ test.describe("prefers-reduced-motion: reduce", () => {
     }
     // The infinite marquee is replaced by the static name.
     await expect(page.locator(".marquee-track")).toBeHidden();
+    // No drifting clones, no physics, no custom cursor.
+    await expect(page.locator("#stats [data-strip-copy]").nth(0)).toBeHidden();
+    await expect(page.locator("#stack-tiles")).not.toHaveAttribute("data-mode", /.*/);
+    await expect(page.locator(".cursor")).toHaveCount(0);
   });
 });
