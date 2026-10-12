@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Intro } from "@/components/layout/Intro";
 import { Providers } from "@/components/layout/Providers";
 import { links } from "@/content/links.config";
 import { getDictionary } from "@/lib/dictionary";
@@ -12,6 +13,12 @@ type Props = {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 };
+
+/**
+ * Runs before first paint and decides the intro (see lib/motion.ts – IntroState):
+ * first visit in the tab → "play", loader already seen → "replay", deep link or reduced motion → "skip".
+ */
+const INTRO_SCRIPT = `(function(){var s="skip";try{var rm=matchMedia("(prefers-reduced-motion: reduce)").matches;var deep=location.hash.length>1;var seen=sessionStorage.getItem("cv:intro")==="1";s=rm||deep?"skip":seen?"replay":"play"}catch(e){}document.documentElement.dataset.intro=s})();`;
 
 // Only /en (served as /) and /cs exist – everything else is a 404.
 export const dynamicParams = false;
@@ -68,13 +75,17 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <html lang={locale} className={fontVariables} suppressHydrationWarning>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: INTRO_SCRIPT }} />
         <a
           href="#main"
           className="pill pill-red fixed top-3 left-3 z-[200] -translate-y-24 focus-visible:translate-y-0"
         >
           {t.a11y.skipLink}
         </a>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Intro />
+          {children}
+        </Providers>
         <div className="grain" aria-hidden="true" />
         {/* Analytics only on Vercel – locally the scripts would 404 and pollute the console. */}
         {process.env.VERCEL ? (
