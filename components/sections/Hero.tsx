@@ -1,4 +1,5 @@
 import { Clock } from "@/components/layout/Clock";
+import { HeroMotion } from "@/components/motion/HeroMotion";
 import { Marquee } from "@/components/ui/Marquee";
 import { TrackedLink } from "@/components/ui/TrackedLink";
 import { links } from "@/content/links.config";
@@ -22,14 +23,18 @@ export function Hero({ t, locale }: Props) {
   return (
     <section id="top" aria-labelledby="hero-title" className="relative flex min-h-svh flex-col justify-between pt-24 md:pt-28">
       <div className="site-grid">
-        <div className="col-span-12 md:col-span-7 md:col-start-4 lg:col-span-5 lg:col-start-4">
-          <p className="text-2xl leading-tight font-medium tracking-tight md:text-3xl">{t.hero.role}</p>
-          <p className="mt-1 font-serif text-2xl text-fg-muted italic md:text-3xl">{t.hero.nickname}</p>
+        <div data-hero-intro className="col-span-12 md:col-span-7 md:col-start-4 lg:col-span-5 lg:col-start-4">
+          <p data-hero-line className="text-2xl leading-tight font-medium tracking-tight md:text-3xl">
+            {t.hero.role}
+          </p>
+          <p data-hero-line className="mt-1 font-serif text-2xl text-fg-muted italic md:text-3xl">
+            {t.hero.nickname}
+          </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a href="#projects" className="pill pill-red">
+            <a href="#projects" data-hero-pop className="pill pill-red">
               {t.hero.ctaWork}
             </a>
-            <a href="#contact" className="pill pill-outline">
+            <a href="#contact" data-hero-pop className="pill pill-outline">
               {t.hero.ctaContact}
             </a>
           </div>
@@ -45,14 +50,16 @@ export function Hero({ t, locale }: Props) {
         </span>
       </h1>
 
-      <div className="site-grid eyebrow items-center gap-y-3 border-t border-line py-4">
-        <p className="col-span-12 text-fg-muted md:col-span-4">{t.hero.degree}</p>
-        <p className="col-span-12 flex items-center gap-2 md:col-span-5 md:justify-center">
+      <div data-hero-bar className="site-grid eyebrow items-center gap-y-3 border-t border-line py-4">
+        <p data-hero-pop className="col-span-12 text-fg-muted md:col-span-4">
+          {t.hero.degree}
+        </p>
+        <p data-hero-pop className="col-span-12 flex items-center gap-2 md:col-span-5 md:justify-center">
           <span className="status-dot" aria-hidden="true" />
           <span className="hidden sm:inline">{status}</span>
           <span className="sm:hidden">{statusShort}</span>
         </p>
-        <div className="col-span-12 flex items-center gap-5 md:col-span-3 md:justify-end">
+        <div data-hero-pop className="col-span-12 flex items-center gap-5 md:col-span-3 md:justify-end">
           <TrackedLink
             href={links.github}
             target="_blank"
@@ -66,6 +73,7 @@ export function Hero({ t, locale }: Props) {
           <Clock label={t.hero.clockLabel} />
         </div>
       </div>
+      <HeroMotion />
     </section>
   );
 }

@@ -474,8 +474,8 @@ html[data-intro="replay"] [data-hero-name] {
   animation: none;
 }
 
-/* Masks for the letter rise; removed again so exploding letters may leave the line. */
-[data-hero-name].is-masked {
+/* Masks for letter rises (hero, footer); removed afterwards so letters may leave the line again. */
+.is-masked {
   overflow: clip;
 }
 
