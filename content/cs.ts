@@ -36,6 +36,7 @@ export const cs: Dictionary = {
     menu: "Menu",
     close: "Zavřít",
     downloadCv: "Stáhnout CV (PDF)",
+    logo: ["OJŠ", "OlďJaŠ", "Oldřich Jan Švehla"],
   },
 
   hero: {

@@ -20,6 +20,7 @@ type Props = {
     menu: string;
     close: string;
     downloadCv: string;
+    logo: readonly string[];
     mainNav: string;
     siteMenu: string;
     language: string;
@@ -143,7 +144,7 @@ export function Nav({ locale, projectCount, cvHref, labels }: Props) {
           {menuButton(`hidden md:inline-flex ${compact ? "pointer-events-auto opacity-100" : "opacity-0"}`, !compact)}
 
           <a href="#top" aria-label={labels.home} className="pointer-events-auto text-fg transition-colors duration-200 hover:text-gold-text md:hidden">
-            <Logo />
+            <Logo names={labels.logo.slice(0, 1)} />
           </a>
         </div>
 
@@ -152,7 +153,7 @@ export function Nav({ locale, projectCount, cvHref, labels }: Props) {
           aria-label={labels.home}
           className="pointer-events-auto absolute left-1/2 hidden -translate-x-1/2 text-fg transition-colors duration-200 hover:text-gold-text md:block"
         >
-          <Logo />
+          <Logo names={labels.logo} />
         </a>
 
         <div className="pointer-events-auto flex items-center gap-2 md:gap-3">

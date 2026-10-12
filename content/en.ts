@@ -39,6 +39,8 @@ export const en = {
     menu: "Menu",
     close: "Close",
     downloadCv: "Download CV (PDF)",
+    /** The header monogram unfolds through these on hover (Logo). */
+    logo: ["OJŠ", "OlďJaŠ", "Oldřich Jan Švehla"],
   },
 
   hero: {
