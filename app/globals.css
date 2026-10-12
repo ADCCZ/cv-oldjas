@@ -163,6 +163,8 @@
   /* Clip on both: nothing may widen the layout viewport on phones (sticky still works with clip). */
   html {
     overflow-x: clip;
+    /* Reserve the scrollbar so opening the menu (scroll lock) does not shift the layout. */
+    scrollbar-gutter: stable;
     background: var(--bg);
     color: var(--fg);
     -webkit-font-smoothing: antialiased;
@@ -199,6 +201,11 @@
   /* Programmatic focus targets (sections after a nav jump) need no ring. */
   [tabindex="-1"]:focus {
     outline: none;
+  }
+
+  /* Lenis clips a stopped page; hidden keeps the reserved scrollbar gutter (no layout shift). */
+  html.lenis:not(.lenis-autoToggle).lenis-stopped {
+    overflow: hidden;
   }
 
   /* Hidden anchors kept for links from the old website. */
@@ -365,5 +372,65 @@
 
   .reduced-only {
     display: revert;
+  }
+}
+
+/* ==========================================================================
+   Fullscreen menu – the sheet wipes down, then each line is revealed (clip-path).
+   ========================================================================== */
+.menu-overlay {
+  visibility: hidden;
+  clip-path: inset(0 0 100% 0);
+  transition:
+    clip-path 0.7s var(--ease-inout),
+    visibility 0s linear 0.7s;
+}
+
+.menu-overlay[data-open="true"] {
+  visibility: visible;
+  clip-path: inset(0 0 0 0);
+  transition:
+    clip-path 0.8s var(--ease-inout),
+    visibility 0s;
+}
+
+.menu-line {
+  clip-path: inset(0 0 100% 0);
+  translate: 0 35%;
+  transition:
+    clip-path 0.3s var(--ease-inout),
+    translate 0.3s var(--ease-inout);
+}
+
+.menu-overlay[data-open="true"] .menu-line {
+  clip-path: inset(0 0 0 0);
+  translate: 0 0;
+  transition:
+    clip-path 0.9s var(--ease-out-expo) calc(0.35s + var(--i) * 0.07s),
+    translate 0.9s var(--ease-out-expo) calc(0.35s + var(--i) * 0.07s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No wipes – the menu simply fades in. */
+  .menu-overlay,
+  .menu-overlay[data-open="true"],
+  .menu-line,
+  .menu-overlay[data-open="true"] .menu-line {
+    clip-path: none;
+    translate: none;
+  }
+
+  .menu-overlay {
+    opacity: 0;
+    transition:
+      opacity 0.15s linear,
+      visibility 0s linear 0.15s !important;
+  }
+
+  .menu-overlay[data-open="true"] {
+    opacity: 1;
+    transition:
+      opacity 0.15s linear,
+      visibility 0s !important;
   }
 }

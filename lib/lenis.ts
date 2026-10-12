@@ -58,6 +58,7 @@ export function scrollToId(id: string, { immediate = false }: { immediate?: bool
       immediate,
       duration: 1.2,
       easing: easeInOutCubic,
+      force: true,
     });
   } else if (id === "top") {
     window.scrollTo({ top: 0, behavior: immediate || prefersReducedMotion() ? "auto" : "smooth" });
@@ -65,4 +66,18 @@ export function scrollToId(id: string, { immediate = false }: { immediate?: bool
     el.scrollIntoView({ behavior: immediate || prefersReducedMotion() ? "auto" : "smooth", block: "start" });
   }
   return true;
+}
+
+/**
+ * Freezes page scrolling while the fullscreen menu is open. Both functions are idempotent and
+ * synchronous on purpose: a menu link must unlock the page before the jump to its section starts.
+ */
+export function lockScroll(): void {
+  if (lenis) lenis.stop();
+  else document.documentElement.style.overflow = "hidden";
+}
+
+export function unlockScroll(): void {
+  if (lenis) lenis.start();
+  document.documentElement.style.overflow = "";
 }

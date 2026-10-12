@@ -20,6 +20,7 @@ export const en = {
     themeToDark: "Switch to dark theme",
     home: "Oldřich Jan Švehla – back to top",
     openInNewTab: "opens in a new tab",
+    siteMenu: "Site menu",
   },
 
   nav: {
@@ -29,6 +30,9 @@ export const en = {
     journey: "Journey",
     contact: "Contact",
     cta: "Get in touch",
+    menu: "Menu",
+    close: "Close",
+    downloadCv: "Download CV (PDF)",
   },
 
   hero: {

@@ -18,6 +18,7 @@ export const cs: Dictionary = {
     themeToDark: "Přepnout na tmavé téma",
     home: "Oldřich Jan Švehla – zpět nahoru",
     openInNewTab: "otevře se v nové záložce",
+    siteMenu: "Menu webu",
   },
 
   nav: {
@@ -27,6 +28,9 @@ export const cs: Dictionary = {
     journey: "Cesta",
     contact: "Kontakt",
     cta: "Napiš mi",
+    menu: "Menu",
+    close: "Zavřít",
+    downloadCv: "Stáhnout CV (PDF)",
   },
 
   hero: {
