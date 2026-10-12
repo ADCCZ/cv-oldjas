@@ -1,0 +1,6 @@
+# Keep LF line endings in the working copy on every platform (CI and Vercel run on Linux).
+* text=auto eol=lf
+*.pdf binary
+*.png binary
+*.jpg binary
+*.webp binary
