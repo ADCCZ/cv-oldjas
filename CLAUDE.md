@@ -9,9 +9,11 @@ The full brief is in `docs/PROMPT.md`; effect decisions from the reference resea
 
 - Next.js 15 (App Router, SSG + ISR) · React 19 · TypeScript 5.9 (strict, `noUncheckedIndexedAccess`)
 - Tailwind CSS v4 – design tokens are CSS variables in `app/globals.css`, the default palette is removed
-- GSAP 3 (+ ScrollTrigger, later SplitText, Flip, Observer, Draggable, InertiaPlugin) – register plugins only in `lib/gsap.ts`
+- GSAP 3 (ScrollTrigger, SplitText; Draggable, InertiaPlugin, Flip loaded on demand via `loadDraggable()` / `loadFlip()`) –
+  register plugins only in `lib/gsap.ts`
 - Lenis smooth scroll driven by `gsap.ticker` (`lib/lenis.ts`); off with reduced motion
-- React Three Fiber + drei (one shared fixed `<Canvas>` + drei `<View>`), matter-js – later phases
+- matter-js (stats stickers, stack pile) – always a dynamic `import("matter-js")`, never in the first load
+- React Three Fiber + drei (one shared fixed `<Canvas>` + drei `<View>`) – phase 5
 - next-themes (dark default, follows `prefers-color-scheme`), simple-icons, Vercel Analytics + Speed Insights
 - Playwright for smoke tests, PDF CV generation and screenshots
 - Node 24 (`.nvmrc`)
@@ -34,6 +36,16 @@ The full brief is in `docs/PROMPT.md`; effect decisions from the reference resea
   no percentage skill bars, no stock phrases, no invented references or numbers – only facts from `docs/PROMPT.md`.
   Every animation needs a reason. **No easter eggs** (no terminal, stamps, mascot, hidden games).
 
+## Interactions (phase 4)
+
+- Cursor states are declared in markup: `data-cursor="view"` (project covers), `data-cursor="drag"` (strips, pile
+  tiles); links get the ring, `.btn` the magnetic pull. `data-surface="red"` marks red surfaces – the ring drops
+  `mix-blend-mode: difference` there (it would turn cyan). Fine pointer + full motion only.
+- Magnetic `.btn`: the pull goes through `--mag-x/--mag-y` and the CSS `translate` property – never GSAP `x/y` on `.btn`.
+- Drifting strip (`DriftStrip`): `[data-strip]` scroller with three identical `[data-strip-copy]` blocks (clone,
+  original, clone); clones are `aria-hidden` (+ `inert` when they hold no links) and `motion-only`.
+- The stack pile box keeps the sorted grid's height – switching must never change the page height (anchors below).
+
 ## Language
 
 - English is the main language on `/`, Czech on `/cs`. No redirect by browser language; the toggle stores `lang` cookie.
@@ -52,9 +64,10 @@ Old PDF paths `/cv.pdf` and `/cv-plain.pdf` must keep working.
 ```
 app/[locale]/        layout (html lang, metadata) + the single page
 app/not-found.tsx    global 404 (both languages)
-components/layout/   Nav, MenuOverlay, Footer, Clock, ThemeToggle, LangToggle, Providers, SmoothScroll
+components/layout/   Nav, MenuOverlay, Footer, Cursor, Intro, Clock, ThemeToggle, LangToggle, Providers, SmoothScroll
+components/motion/   client "controllers" that animate server-rendered markup (GSAP, physics, strips)
 components/sections/ Hero, About, Stats, Projects, ProjectArchive, Stack, Skills, Journey, OffCode, Contact
-components/ui/       small building blocks (SectionHeading, Marquee, Sticker, TechPill, SkillCard, …)
+components/ui/       small building blocks (SectionHeading, Marquee, ButtonContent, TechPill, SkillCard, …)
 components/webgl/    shared Canvas, shaders (later)
 content/             en.ts, cs.ts, projects.config.ts, stack.config.ts, stats.config.ts, links.config.ts, github-snapshot.json
 lib/                 gsap, lenis, github, i18n, sections, fonts, analytics, hooks
