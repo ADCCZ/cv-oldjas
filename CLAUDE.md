@@ -48,7 +48,7 @@ Old PDF paths `/cv.pdf` and `/cv-plain.pdf` must keep working.
 ```
 app/[locale]/        layout (html lang, metadata) + the single page
 app/not-found.tsx    global 404 (both languages)
-components/layout/   Nav, Footer, Clock, ThemeToggle, LangToggle, Providers, SmoothScroll
+components/layout/   Nav, MenuOverlay, Footer, Clock, ThemeToggle, LangToggle, Providers, SmoothScroll
 components/sections/ Hero, About, Stats, Projects, ProjectArchive, Stack, Skills, Journey, OffCode, Contact
 components/ui/       small building blocks (SectionHeading, Marquee, Sticker, TechPill, SkillCard, …)
 components/webgl/    shared Canvas, shaders (later)
