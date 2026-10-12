@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
 import { Nav } from "@/components/layout/Nav";
+import { MotionRoot } from "@/components/motion/MotionRoot";
 import { About } from "@/components/sections/About";
 import { Contact } from "@/components/sections/Contact";
 import { FULL_NAME, Hero } from "@/components/sections/Hero";
@@ -57,6 +58,7 @@ export default async function HomePage({ params }: Props) {
         <Contact t={t} locale={locale} />
       </main>
       <Footer t={t} locale={locale} projectCount={projects.length} />
+      <MotionRoot />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person) }} />
     </>
   );
