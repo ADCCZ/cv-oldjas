@@ -4,6 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import type { Draggable as DraggableType } from "gsap/Draggable";
 import type { Flip as FlipType } from "gsap/Flip";
+import type { InertiaPlugin as InertiaPluginType } from "gsap/InertiaPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 
@@ -20,15 +21,16 @@ if (typeof window !== "undefined") {
  * they are loaded on demand – a separate chunk instead of more JavaScript in the first load.
  * The promises are cached: every caller gets the same, already registered plugin.
  */
-let draggableLoad: Promise<typeof DraggableType> | null = null;
+type DraggableBundle = { Draggable: typeof DraggableType; InertiaPlugin: typeof InertiaPluginType };
+let draggableLoad: Promise<DraggableBundle> | null = null;
 let flipLoad: Promise<typeof FlipType> | null = null;
 
-/** Draggable + InertiaPlugin (throwing with momentum). */
-export function loadDraggable(): Promise<typeof DraggableType> {
+/** Draggable + InertiaPlugin (it also tracks the drag velocity for a throw). */
+export function loadDraggable(): Promise<DraggableBundle> {
   draggableLoad ??= Promise.all([import("gsap/Draggable"), import("gsap/InertiaPlugin")]).then(
     ([{ Draggable }, { InertiaPlugin }]) => {
       gsap.registerPlugin(Draggable, InertiaPlugin);
-      return Draggable;
+      return { Draggable, InertiaPlugin };
     },
   );
   return draggableLoad;

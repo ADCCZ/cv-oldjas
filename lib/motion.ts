@@ -55,3 +55,9 @@ export function introState(): IntroState {
 
 /** Fired by the loader when its curtain starts lifting – the hero letters rise on this cue. */
 export const INTRO_REVEAL_EVENT = "cv:intro-reveal";
+
+/**
+ * Dispatched on a drifting strip ([data-strip], DriftStrip) whenever its content moves; detail =
+ * horizontal movement of the content in px (negative = to the left). The stats stickers ride on it.
+ */
+export const STRIP_MOVE_EVENT = "cv:strip-move";

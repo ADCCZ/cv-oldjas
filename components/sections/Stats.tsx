@@ -1,60 +1,74 @@
+import { DriftStrip } from "@/components/motion/DriftStrip";
 import { StatsMotion } from "@/components/motion/StatsMotion";
-import { Sticker } from "@/components/ui/Sticker";
 import { stats } from "@/content/stats.config";
 import type { Dictionary } from "@/lib/dictionary";
 
-const STICKER_TILT = [-9, 7, -5];
+/** Clone, original, clone – DriftStrip loops inside the middle copy. */
+const COPIES = [0, 1, 2] as const;
+const ORIGINAL = 1;
 
 /**
- * Stats strip (griflan.com style): cells separated by hairlines.
- * Scrolls horizontally for now; the auto-moving, draggable strip comes with the interactions.
+ * Stats strip (griflan.com style): cells separated by hairlines that drift to the left by
+ * Only the middle copy is read by screen readers; the clones are aria-hidden, inert and – with
+ * reduced motion – not rendered at all, leaving a plain horizontal scroller.
  */
 export function Stats({ t }: { t: Dictionary }) {
-  let stickerIndex = 0;
-
   return (
-    <section id="stats" aria-labelledby="stats-title" className="border-y border-line">
+    <section id="stats" aria-labelledby="stats-title" className="relative border-y border-line">
       <h2 id="stats-title" className="sr-only">
         {t.stats.title}
       </h2>
-      <ul
+      <div
+        data-strip
+        data-cursor="drag"
+        role="group"
         tabIndex={0}
         aria-label={t.stats.title}
-        className="relative flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none]"
+        className="overflow-x-auto overscroll-x-contain select-none [scrollbar-width:none] motion-reduce:snap-x motion-reduce:snap-mandatory"
       >
-        {stats.map((stat) => {
-          const tilt = stat.sticker ? STICKER_TILT[stickerIndex++ % STICKER_TILT.length] : 0;
-          return (
-            <li
-              key={stat.id}
-              className="relative flex min-h-[19rem] w-[78vw] shrink-0 snap-start flex-col justify-between border-r border-line p-6 sm:w-[42vw] lg:w-[24vw] md:p-8"
-            >
-              <p className="font-serif text-[clamp(4.5rem,9vw,8.5rem)] leading-[0.85] tracking-tight">
-                {typeof stat.value === "number" ? (
-                  <>
-                    {/* The animated count is decorative; screen readers get the final value. */}
-                    <span className="sr-only">
-                      {stat.value}
-                      {stat.suffix}
-                    </span>
-                    <span aria-hidden="true" data-count={stat.value}>
-                      {stat.value}
-                    </span>
-                    <span aria-hidden="true">{stat.suffix}</span>
-                  </>
-                ) : (
-                  stat.value
-                )}
-              </p>
-              <p className="mt-6 max-w-[26ch] text-sm text-fg-muted">{t.stats.labels[stat.id]}</p>
-              {stat.sticker ? (
-                <Sticker text={t.stats.stickers[stat.sticker]} rotate={tilt} className="absolute top-6 right-6" />
-              ) : null}
-            </li>
-          );
-        })}
-      </ul>
+        <div className="flex w-max">
+          {COPIES.map((copy) => {
+            const original = copy === ORIGINAL;
+            return (
+              <ul
+                key={copy}
+                data-strip-copy
+                aria-hidden={original ? undefined : true}
+                inert={!original}
+                className={`flex ${original ? "" : "motion-only"}`}
+              >
+                {stats.map((stat, i) => (
+                  <li
+                    key={stat.id}
+                    className="flex min-h-[19rem] w-[78vw] shrink-0 flex-col justify-between border-r border-line p-6 motion-reduce:snap-start sm:w-[42vw] md:p-8 md:pb-16 lg:w-[24vw]"
+                  >
+                    <p className="font-serif text-[clamp(4.5rem,9vw,8.5rem)] leading-[0.85] tracking-tight">
+                      {typeof stat.value === "number" ? (
+                        <>
+                          {/* The animated count is decorative; screen readers get the final value. */}
+                          <span className="sr-only">
+                            {stat.value}
+                            {stat.suffix}
+                          </span>
+                          <span aria-hidden="true" data-count={stat.value} data-count-order={i}>
+                            {stat.value}
+                          </span>
+                          <span aria-hidden="true">{stat.suffix}</span>
+                        </>
+                      ) : (
+                        stat.value
+                      )}
+                    </p>
+                    <p className="mt-6 max-w-[26ch] text-sm text-fg-muted">{t.stats.labels[stat.id]}</p>
+                  </li>
+                ))}
+              </ul>
+            );
+          })}
+        </div>
+      </div>
       <StatsMotion />
+      <DriftStrip speed={30} />
     </section>
   );
 }

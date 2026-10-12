@@ -4,7 +4,10 @@ import { useRef } from "react";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { MOTION_OK } from "@/lib/motion";
 
-/** Stats: every number counts up from 0 the first time the strip scrolls into view. */
+/**
+ * Stats: every number counts up from 0 the first time the strip scrolls into view. The strip loops
+ * through clones, so the stagger follows a number's place in its copy, not in the whole strip.
+ */
 export function StatsMotion() {
   const marker = useRef<HTMLSpanElement>(null);
 
@@ -23,7 +26,7 @@ export function StatsMotion() {
         start: "top 85%",
         once: true,
         onEnter: () =>
-          counters.forEach((el, i) => {
+          counters.forEach((el) => {
             const target = Number(el.dataset.count) || 0;
             const value = { n: 0 };
             tweens.push(
@@ -31,7 +34,7 @@ export function StatsMotion() {
                 n: target,
                 // Years need longer to read as counting, small numbers would flash by.
                 duration: target > 100 ? 2.2 : 1.4,
-                delay: i * 0.08,
+                delay: (Number(el.dataset.countOrder) || 0) * 0.08,
                 ease: "power3.out",
                 onUpdate: () => (el.textContent = String(Math.round(value.n))),
               }),
