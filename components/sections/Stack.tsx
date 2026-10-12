@@ -1,3 +1,4 @@
+import { StackPhysics } from "@/components/motion/StackPhysics";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { TechPill } from "@/components/ui/TechPill";
 import { getProject } from "@/content/projects.config";
@@ -11,8 +12,8 @@ const LEVELS: Level[] = [1, 2, 3, 4, 5];
 
 /**
  * Stack – technologies grouped by category, tile size = level.
- * This sorted grid is also the final view on mobile and with reduced motion;
- * the falling physics pile is layered on top of it in the interactions phase.
+ * From md up (full motion) the tiles fall into a physics pile and can be sorted back into this
+ * grid (StackPhysics); phones and reduced motion get the sorted grid only.
  */
 export function Stack({ t, locale }: { t: Dictionary; locale: Locale }) {
   const levelText = (level?: Level) => (level ? `${level}/5 – ${t.stack.levels[level - 1]}` : t.stack.planned);
@@ -42,10 +43,12 @@ export function Stack({ t, locale }: { t: Dictionary; locale: Locale }) {
         </ol>
       </div>
 
-      <div className="col-span-12 grid gap-x-(--gutter) gap-y-12 md:grid-cols-2 xl:grid-cols-3">
+      <div id="stack-tiles" data-stack-pile className="col-span-12 grid gap-x-(--gutter) gap-y-12 md:grid-cols-2 xl:grid-cols-3">
         {stack.map((category) => (
           <div key={category.id}>
-            <h3 className="eyebrow mb-5 text-fg-muted">{category.name[locale]}</h3>
+            <h3 data-stack-heading className="eyebrow mb-5 text-fg-muted">
+              {category.name[locale]}
+            </h3>
             <ul className="flex flex-wrap items-center gap-2">
               {category.items.map((tech) => (
                 <TechPill
@@ -67,6 +70,7 @@ export function Stack({ t, locale }: { t: Dictionary; locale: Locale }) {
           </div>
         ))}
       </div>
+      <StackPhysics controls="stack-tiles" sortLabel={t.stack.sort} scatterLabel={t.stack.scatter} />
     </section>
   );
 }

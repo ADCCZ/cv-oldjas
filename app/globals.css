@@ -805,3 +805,38 @@ html.has-cursor * {
   white-space: nowrap;
   will-change: transform;
 }
+
+/* Stack physics pile (StackPhysics): the tiles leave the flow and the simulation places them. */
+[data-stack-pile][data-mode="pile"] {
+  position: relative;
+  overflow: clip;
+  border-bottom: 1px solid var(--line);
+}
+
+[data-mode="pile"] [data-stack-heading] {
+  visibility: hidden;
+}
+
+[data-mode="pile"] [data-tile] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+/* Waiting above the box until its turn to fall. */
+[data-mode="pile"] [data-tile]:not([data-live]) {
+  visibility: hidden;
+}
+
+[data-mode="pile"] [data-tile]:is(:hover, :focus-within, [data-open="true"]) {
+  z-index: 30;
+}
+
+[data-mode="pile"] [data-tile][data-grabbed] {
+  z-index: 40;
+}
+
+[data-stack-pile][data-dragging] [data-tech-panel] {
+  display: none !important;
+}

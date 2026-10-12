@@ -31,7 +31,8 @@ const SIZE: Record<Level, string> = {
 /**
  * Technology tile with a small disclosure panel (level in words + projects where it was used).
  * Hover shows the panel on desktop; click / tap / Enter toggles it, Esc or a click outside closes it.
- * Physics in the interactions phase moves these same elements around.
+ * The physics pile (StackPhysics) moves these same elements: the <li> is translated, the button
+ * rotated, so the panel next to it never turns upside down.
  */
 export function TechPill({ id, name, level, planned = false, iconPath, levelText, usedInLabel, usedIn }: Props) {
   const [open, setOpen] = useState(false);
@@ -66,7 +67,15 @@ export function TechPill({ id, name, level, planned = false, iconPath, levelText
       : "border-line-strong bg-surface";
 
   return (
-    <li ref={rootRef} className="group relative" data-open={open} onPointerEnter={placePanel} onFocus={placePanel}>
+    <li
+      ref={rootRef}
+      data-tile
+      data-level={planned ? 0 : (level ?? 0)}
+      data-open={open}
+      className="group relative"
+      onPointerEnter={placePanel}
+      onFocus={placePanel}
+    >
       <button
         type="button"
         aria-expanded={open}
@@ -87,6 +96,7 @@ export function TechPill({ id, name, level, planned = false, iconPath, levelText
 
       <div
         id={panelId}
+        data-tech-panel
         // Closed panels are display:none – a hidden-but-laid-out panel would widen the page on phones.
         className={`absolute bottom-full z-20 hidden w-64 max-w-[calc(100vw-2rem)] pb-2 group-data-[open=true]:block [@media(hover:hover)]:group-hover:block ${
           alignRight ? "right-0" : "left-0"

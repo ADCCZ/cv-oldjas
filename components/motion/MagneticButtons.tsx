@@ -32,11 +32,13 @@ export function MagneticButtons() {
   useEffect(() => {
     if (!enabled) return;
 
-    const magnets: Magnet[] = Array.from(document.querySelectorAll<HTMLElement>(".btn"), (el) => ({
-      el,
-      offset: { x: 0, y: 0 },
-      active: false,
-    }));
+    // Buttons are looked up on every pass – some appear only after hydration (the stack Sort button).
+    const magnets = new Map<HTMLElement, Magnet>();
+    const magnetFor = (el: HTMLElement) => {
+      let magnet = magnets.get(el);
+      if (!magnet) magnets.set(el, (magnet = { el, offset: { x: 0, y: 0 }, active: false }));
+      return magnet;
+    };
     const pointer = { x: -1e4, y: -1e4 };
     let dirty = false;
 
@@ -54,8 +56,9 @@ export function MagneticButtons() {
     };
 
     const update = () => {
-      for (const magnet of magnets) {
-        const rect = magnet.el.getBoundingClientRect();
+      for (const el of document.querySelectorAll<HTMLElement>(".btn")) {
+        const magnet = magnetFor(el);
+        const rect = el.getBoundingClientRect();
         // The rect already contains the current pull – measure from the resting position.
         const cx = rect.left + rect.width / 2 - magnet.offset.x;
         const cy = rect.top + rect.height / 2 - magnet.offset.y;
@@ -65,7 +68,7 @@ export function MagneticButtons() {
         const edge = Math.hypot(Math.max(Math.abs(dx) - rect.width / 2, 0), Math.max(Math.abs(dy) - rect.height / 2, 0));
 
         const usable =
-          edge < RADIUS && rect.width > 0 && (magnet.el.checkVisibility?.({ opacityProperty: true, visibilityProperty: true }) ?? true);
+          edge < RADIUS && rect.width > 0 && (el.checkVisibility?.({ opacityProperty: true, visibilityProperty: true }) ?? true);
         if (!usable) {
           release(magnet);
           continue;
@@ -116,7 +119,7 @@ export function MagneticButtons() {
       window.removeEventListener("scroll", onScroll);
       document.removeEventListener("pointerout", onLeave);
       gsap.ticker.remove(tick);
-      for (const magnet of magnets) {
+      for (const magnet of magnets.values()) {
         gsap.killTweensOf(magnet.offset);
         magnet.el.style.removeProperty("--mag-x");
         magnet.el.style.removeProperty("--mag-y");
