@@ -74,6 +74,33 @@ test("nothing overflows horizontally on a phone", async ({ browser }) => {
   await context.close();
 });
 
+test("the fullscreen menu traps focus, closes with Escape and navigates", async ({ browser }) => {
+  // On phones the MENU :: button is always in the header.
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const page = await context.newPage();
+  await page.goto("/");
+
+  const menuButton = page.getByRole("button", { name: "Menu" });
+  const dialog = page.getByRole("dialog", { name: "Site menu" });
+  await menuButton.click();
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("link", { name: /About/ })).toBeFocused();
+
+  // Tab never leaves the dialog.
+  for (let i = 0; i < 12; i++) await page.keyboard.press("Tab");
+  expect(await dialog.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(menuButton).toBeFocused();
+
+  await menuButton.click();
+  await dialog.getByRole("link", { name: /Contact/ }).click();
+  await expect(dialog).toBeHidden();
+  await expect(page).toHaveURL(/#contact$/);
+  await context.close();
+});
+
 test("unknown pages return 404", async ({ page }) => {
   const response = await page.goto("/this-page-does-not-exist");
   expect(response?.status()).toBe(404);
