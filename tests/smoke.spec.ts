@@ -6,6 +6,13 @@ const SECTIONS = ["top", "about", "stats", "projects", "stack", "skills", "journ
 const LEGACY_ANCHORS = ["education", "experience", "leadership"];
 const PDFS = ["/cv.pdf", "/cv-plain.pdf", "/cv-cs.pdf", "/cv-plain-cs.pdf"];
 
+/** Mark the intro as already seen, so the tests do not wait for the loader (it has its own test). */
+const SKIP_INTRO = () => sessionStorage.setItem("cv:intro", "1");
+
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(SKIP_INTRO);
+});
+
 function collectErrors(page: Page): string[] {
   const errors: string[] = [];
   page.on("console", (msg) => {
@@ -65,6 +72,7 @@ test("/en redirects to the canonical /", async ({ page }) => {
 test("nothing overflows horizontally on a phone", async ({ browser }) => {
   // A wider document makes mobile browsers zoom out the whole page (fixed header slides off-screen).
   const context = await browser.newContext({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true });
+  await context.addInitScript(SKIP_INTRO);
   const page = await context.newPage();
   for (const path of ["/", "/cs"]) {
     await page.goto(path);
@@ -77,6 +85,7 @@ test("nothing overflows horizontally on a phone", async ({ browser }) => {
 test("the fullscreen menu traps focus, closes with Escape and navigates", async ({ browser }) => {
   // On phones the MENU :: button is always in the header.
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  await context.addInitScript(SKIP_INTRO);
   const page = await context.newPage();
   await page.goto("/");
 
@@ -98,6 +107,26 @@ test("the fullscreen menu traps focus, closes with Escape and navigates", async 
   await dialog.getByRole("link", { name: /Contact/ }).click();
   await expect(dialog).toBeHidden();
   await expect(page).toHaveURL(/#contact$/);
+  await context.close();
+});
+
+test("the intro loader plays on the first visit and then reveals the hero", async ({ browser }) => {
+  const context = await browser.newContext(); // fresh session storage → intro plays
+  const page = await context.newPage();
+  const errors = collectErrors(page);
+  await page.goto("/");
+
+  await expect(page.locator(".intro")).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("data-intro", "done", { timeout: 15_000 });
+  await expect(page.locator(".intro")).toBeHidden();
+  await expect(page.locator("[data-hero-name]")).toBeVisible();
+
+  expect(errors).toEqual([]);
+
+  // A deep link from an old application (opened in a new tab) skips the intro entirely.
+  const deep = await context.newPage();
+  await deep.goto("/#education");
+  await expect(deep.locator("html")).toHaveAttribute("data-intro", "skip");
   await context.close();
 });
 
