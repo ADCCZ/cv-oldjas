@@ -1,0 +1,35 @@
+{
+  "fetchedAt": "2026-10-12T12:17:47.328Z",
+  "repos": {
+    "ADCCZ/campmaster-3000": {
+      "language": "JavaScript",
+      "stars": 0,
+      "pushedAt": "2026-05-25T17:21:44Z",
+      "topics": []
+    },
+    "ADCCZ/web_oblastni-stranky_jk": {
+      "language": "Latte",
+      "stars": 0,
+      "pushedAt": "2026-09-29T09:40:27Z",
+      "topics": []
+    },
+    "ADCCZ/bkp-tmwmf": {
+      "language": "Python",
+      "stars": 0,
+      "pushedAt": "2026-09-23T11:05:23Z",
+      "topics": []
+    },
+    "ADCCZ/tmwmf_sem_UPS": {
+      "language": "C",
+      "stars": 0,
+      "pushedAt": "2026-09-23T10:56:25Z",
+      "topics": []
+    },
+    "ADCCZ/web-foodapp": {
+      "language": "Twig",
+      "stars": 0,
+      "pushedAt": "2026-09-23T10:48:24Z",
+      "topics": []
+    }
+  }
+}
