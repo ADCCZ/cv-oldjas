@@ -37,7 +37,7 @@ export function ProjectCover({ project, index, total, locale }: Props) {
         </div>
       ) : (
         <div data-parallax className="absolute inset-0 flex scale-[1.14] flex-col p-[9cqw]" aria-hidden="true">
-          <div className="flex items-start justify-between gap-[4cqw] font-mono text-[2.4cqw] leading-tight">
+          <div className="flex items-start justify-between gap-[4cqw] font-label text-[2.4cqw] leading-tight">
             <span className="text-[3.4cqw] text-gold-soft">{pad(index + 1)}</span>
             <span className="max-w-[60%] text-right opacity-80">{project.stack.map((s) => tx(s, locale)).join(" · ")}</span>
           </div>

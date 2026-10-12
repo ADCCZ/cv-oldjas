@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { ButtonContent } from "@/components/ui/ButtonContent";
 import { Logo } from "@/components/ui/Logo";
 import type { Locale } from "@/content/types";
 import { lockScroll, unlockScroll } from "@/lib/lenis";
@@ -90,10 +91,9 @@ export function Nav({ locale, projectCount, cvHref, labels }: Props) {
       aria-expanded={menuOpen}
       aria-controls="site-menu"
       inert={hidden}
-      className={`eyebrow items-center gap-2 rounded-full border border-line-strong px-4 py-2.5 transition-[opacity,border-color] duration-500 hover:border-fg ${className}`}
+      className={`btn btn-outline btn-sm transition-opacity duration-500 ${className}`}
     >
-      {labels.menu}
-      <span aria-hidden="true">::</span>
+      <ButtonContent label={labels.menu} icon="::" />
     </button>
   );
 
@@ -132,7 +132,7 @@ export function Nav({ locale, projectCount, cvHref, labels }: Props) {
                         aria-hidden="true"
                       />
                       <span className={isActive ? "text-gold-text" : undefined}>{labels[item]}</span>
-                      {item === "projects" ? <span className="font-mono text-xs text-fg-muted">({projectCount})</span> : null}
+                      {item === "projects" ? <span className="font-label text-xs text-fg-muted">({projectCount})</span> : null}
                     </a>
                   </li>
                 );
@@ -158,8 +158,8 @@ export function Nav({ locale, projectCount, cvHref, labels }: Props) {
         <div className="pointer-events-auto flex items-center gap-2 md:gap-3">
           <LangToggle locale={locale} label={labels.language} activeSection={active} />
           <ThemeToggle toLight={labels.themeToLight} toDark={labels.themeToDark} />
-          <a href="#contact" className="pill pill-red hidden py-3! text-sm sm:inline-flex">
-            {labels.cta}
+          <a href="#contact" className="btn btn-primary btn-sm hidden sm:inline-flex">
+            <ButtonContent label={labels.cta} icon={null} />
           </a>
           {menuButton("inline-flex md:hidden")}
         </div>

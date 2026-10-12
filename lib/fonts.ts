@@ -1,9 +1,9 @@
-import { Archivo, Caveat, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Archivo, Caveat, Instrument_Serif } from "next/font/google";
 
 /**
  * All fonts are self-hosted by next/font with the latin-ext subset (Czech diacritics: ŘŠČŽĚŮ).
- * Archivo is variable on both weight (100–900) and width (62–125 %) – the width axis drives
- * the hover effect of the giant name in the footer.
+ * Archivo is variable on both weight (100–900) and width (62–125 %). It also sets every label,
+ * number and clock (caps, slightly wide via the width axis) – the site has no monospace font.
  */
 export const archivo = Archivo({
   subsets: ["latin", "latin-ext"],
@@ -21,13 +21,6 @@ export const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
-/** Section numbers, labels, clocks. */
-export const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-jetbrains",
-  display: "swap",
-});
-
 /** Handwritten text on the stickers only – not preloaded, it is never above the fold. */
 export const caveat = Caveat({
   subsets: ["latin", "latin-ext"],
@@ -37,4 +30,4 @@ export const caveat = Caveat({
   preload: false,
 });
 
-export const fontVariables = [archivo, instrumentSerif, jetbrainsMono, caveat].map((f) => f.variable).join(" ");
+export const fontVariables = [archivo, instrumentSerif, caveat].map((f) => f.variable).join(" ");

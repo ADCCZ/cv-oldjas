@@ -38,7 +38,7 @@ export function LangToggle({ locale, label, activeSection, tone = "default", cla
   };
 
   return (
-    <div role="group" aria-label={label} className={`flex items-center font-mono text-xs ${className}`}>
+    <div role="group" aria-label={label} className={`flex items-center font-label text-xs ${className}`}>
       {locales.map((l, i) => (
         <span key={l} className="flex items-center">
           {i > 0 && (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { ButtonContent } from "@/components/ui/ButtonContent";
 import { TrackedLink } from "@/components/ui/TrackedLink";
 import type { Locale } from "@/content/types";
 import { pad } from "@/lib/i18n";
@@ -77,10 +78,9 @@ export function MenuOverlay({ open, onClose, locale, activeItem, activeSection, 
         <button
           type="button"
           onClick={() => onClose({ restoreFocus: true })}
-          className="eyebrow flex items-center gap-2 rounded-full border border-cream/30 px-4 py-2.5 transition-colors duration-300 hover:border-cream"
+          className="btn btn-on-red btn-sm"
         >
-          {labels.close}
-          <span aria-hidden="true">✕</span>
+          <ButtonContent label={labels.close} icon="✕" />
         </button>
         <LangToggle locale={locale} label={labels.language} activeSection={activeSection} tone="onRed" />
       </div>
@@ -96,14 +96,14 @@ export function MenuOverlay({ open, onClose, locale, activeItem, activeSection, 
                 className="menu-line group flex items-center gap-4 py-1 md:gap-8 md:py-2"
                 style={{ "--i": i } as React.CSSProperties}
               >
-                <span className="w-8 font-mono text-sm text-gold-soft" aria-hidden="true">
+                <span className="w-8 font-label text-sm text-gold-soft" aria-hidden="true">
                   {pad(i + 1)}
                 </span>
                 <span className="text-[clamp(2.75rem,8.5vw,8.5rem)] leading-[1.02] font-bold tracking-display transition-colors duration-300 group-hover:text-gold-soft">
                   {labels[item]}
                 </span>
                 {item === "projects" ? (
-                  <span className="self-start pt-[0.8em] font-mono text-sm text-cream/70">({projectCount})</span>
+                  <span className="self-start pt-[0.8em] font-label text-sm text-cream/70">({projectCount})</span>
                 ) : null}
                 {item === activeItem ? <span className="ml-auto size-2.5 rounded-full bg-gold" aria-hidden="true" /> : null}
               </a>

@@ -1,3 +1,4 @@
+import { ButtonContent } from "@/components/ui/ButtonContent";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { TrackedLink } from "@/components/ui/TrackedLink";
 import { links } from "@/content/links.config";
@@ -27,17 +28,17 @@ export function Contact({ t, locale }: { t: Dictionary; locale: Locale }) {
 
       <div className="col-span-12 flex flex-col items-start gap-4">
         <div className="flex flex-wrap gap-3">
-          <TrackedLink href={`mailto:${links.email}`} event="email_click" data={{ place: "contact-button" }} className="pill pill-red">
-            {t.contact.emailButton}
+          <TrackedLink href={`mailto:${links.email}`} event="email_click" data={{ place: "contact-button" }} className="btn btn-primary">
+            <ButtonContent label={t.contact.emailButton} />
           </TrackedLink>
           <TrackedLink
             href={cv.design}
             event="cv_download"
             data={{ lang: locale, version: "design" }}
-            className="pill pill-outline"
+            className="btn btn-outline"
             download
           >
-            {t.contact.cvButton}
+            <ButtonContent label={t.contact.cvButton} />
           </TrackedLink>
         </div>
         <TrackedLink

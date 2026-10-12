@@ -117,7 +117,7 @@
 
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --font-label: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   --font-hand: var(--font-caveat), cursive;
 
   --ease-brand: var(--ease-inout);
@@ -205,6 +205,11 @@
     outline-offset: 3px;
   }
 
+  /* Numbers in labels must not jump while they change (clock, counters). */
+  .font-label {
+    font-variant-numeric: tabular-nums;
+  }
+
   /* Programmatic focus targets (sections after a nav jump) need no ring. */
   [tabindex="-1"]:focus {
     outline: none;
@@ -228,60 +233,157 @@
    Components
    ========================================================================== */
 @layer components {
-  /* Pill buttons – corners are either 0 or fully round, nothing in between. */
-  .pill {
+  /*
+   * Buttons (juncastudio.com style): square corners, a label block and a separate square for the
+   * icon (ButtonContent). On hover the text rolls up to an identical copy.
+   */
+  .btn {
+    --btn-bg: transparent;
+    --btn-fg: var(--fg);
+    --btn-line: var(--line-strong);
+    display: inline-flex;
+    align-items: stretch;
+    gap: 2px;
+    height: 3rem;
+    font-family: var(--font-label);
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-stretch: 112%;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .btn-face,
+  .btn-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5em;
-    border-radius: 9999px;
-    padding: 0.95em 1.5em;
-    font-size: 0.95rem;
-    font-weight: 500;
-    line-height: 1;
-    white-space: nowrap;
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    box-shadow: inset 0 0 0 1px var(--btn-line);
     transition:
       background-color 0.5s var(--ease-inout),
       color 0.5s var(--ease-inout),
-      border-color 0.5s var(--ease-inout);
+      box-shadow 0.5s var(--ease-inout);
   }
 
-  .pill-red {
-    background: var(--red-500);
-    color: var(--cream);
+  .btn-face {
+    padding-inline: 1.35rem;
   }
 
-  .pill-red:hover {
-    background: var(--red-600);
+  .btn-icon {
+    width: 3rem;
+    font-size: 1rem;
   }
 
-  .pill-outline {
-    border: 1px solid var(--line-strong);
-    color: var(--fg);
+  .btn-roll {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    line-height: 1.25;
   }
 
-  .pill-outline:hover {
-    border-color: var(--fg);
+  .btn-roll > span {
+    display: block;
+    transition: translate 0.55s var(--ease-inout);
   }
 
-  /* Small outline label in mono (technologies, cover tags). */
+  .btn-roll > span + span {
+    position: absolute;
+    inset: 100% 0 auto;
+  }
+
+  .btn-icon .btn-roll > span {
+    transition-delay: 0.06s;
+  }
+
+  .btn:focus-visible .btn-roll > span {
+    translate: 0 -100%;
+  }
+
+  @media (hover: hover) {
+    .btn:hover .btn-roll > span {
+      translate: 0 -100%;
+    }
+  }
+
+  .btn-sm {
+    height: 2.5rem;
+    font-size: 0.72rem;
+  }
+
+  .btn-sm .btn-face {
+    padding-inline: 1rem;
+  }
+
+  .btn-sm .btn-icon {
+    width: 2.5rem;
+  }
+
+  .btn-primary {
+    --btn-bg: var(--red-500);
+    --btn-fg: var(--cream);
+    --btn-line: transparent;
+  }
+
+  .btn-primary:hover {
+    --btn-bg: var(--red-600);
+  }
+
+  .btn-outline:hover {
+    --btn-bg: var(--fg);
+    --btn-fg: var(--bg);
+    --btn-line: var(--fg);
+  }
+
+  /* On red surfaces (journey CTA, menu overlay). */
+  .btn-cream {
+    --btn-bg: var(--cream);
+    --btn-fg: var(--red-600);
+    --btn-line: transparent;
+  }
+
+  .btn-cream:hover {
+    --btn-bg: var(--ink);
+    --btn-fg: var(--cream);
+  }
+
+  .btn-on-red {
+    --btn-fg: var(--cream);
+    --btn-line: color-mix(in srgb, var(--cream) 35%, transparent);
+  }
+
+  .btn-on-red:hover {
+    --btn-bg: var(--cream);
+    --btn-fg: var(--red-950);
+    --btn-line: var(--cream);
+  }
+
+  /* Small outline label (technologies, cover tags) – square like the buttons. */
   .tag {
     display: inline-flex;
     align-items: center;
     border: 1px solid var(--line-strong);
-    border-radius: 9999px;
-    padding: 0.4em 0.85em;
-    font-family: var(--font-mono);
+    padding: 0.45em 0.7em;
+    font-family: var(--font-label);
     font-size: 0.6875rem;
+    font-weight: 500;
+    font-stretch: 105%;
     line-height: 1;
     letter-spacing: 0.02em;
   }
 
+  /* Labels, section numbers, clocks: Archivo caps, slightly wide – no monospace font on the site. */
   .eyebrow {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
+    font-family: var(--font-label);
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-stretch: 112%;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
   }
 
   /* Gold underline that draws from left to right on hover. */

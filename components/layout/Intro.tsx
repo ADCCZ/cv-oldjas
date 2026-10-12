@@ -134,7 +134,7 @@ export function Intro() {
             OJ
           </span>
         </span>
-        <span data-intro-window className="relative mx-[0.06em] h-[0.78em] w-[0.12em] overflow-hidden rounded-full bg-red-800">
+        <span data-intro-window className="relative mx-[0.06em] h-[0.78em] w-[0.12em] overflow-hidden bg-red-800">
           {FRAMES.map((path, i) => (
             <svg
               key={i}
@@ -151,7 +151,7 @@ export function Intro() {
           Š
         </span>
       </div>
-      <span data-intro-count className="absolute bottom-8 left-1/2 -translate-x-1/2 font-mono text-sm tabular-nums">
+      <span data-intro-count className="absolute bottom-8 left-1/2 -translate-x-1/2 font-label text-sm tabular-nums">
         100
       </span>
     </div>

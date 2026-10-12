@@ -40,7 +40,7 @@ export function Clock({ label, showOffset = false, className = "" }: Props) {
   }, []);
 
   return (
-    <span className={`font-mono tabular-nums ${className}`}>
+    <span className={`font-label tabular-nums ${className}`}>
       <span className="sr-only">{label}: </span>
       {showOffset && now ? <span className="text-fg-muted">({utcOffset(now)}) </span> : null}
       <time dateTime={now?.toISOString()} suppressHydrationWarning>

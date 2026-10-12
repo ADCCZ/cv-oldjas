@@ -42,7 +42,7 @@ export function CopyEmail({ email, copyLabel, copiedLabel, writeLabel }: Props) 
         href={`mailto:${email}`}
         aria-label={writeLabel}
         onClick={() => track("email_click", { place: "contact-mailto" })}
-        className="grid size-7 place-items-center rounded-full border border-line-strong transition-colors duration-300 hover:border-gold hover:text-gold-text"
+        className="grid size-7 place-items-center border border-line-strong transition-colors duration-300 hover:border-gold hover:text-gold-text"
       >
         <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden="true">
           <path d="M3 5h18v14H3z" />
@@ -52,7 +52,7 @@ export function CopyEmail({ email, copyLabel, copiedLabel, writeLabel }: Props) 
       <span
         role="status"
         aria-live="polite"
-        className={`eyebrow pointer-events-none absolute -top-9 left-0 rounded-full bg-gold px-3 py-1.5 text-ink transition-opacity duration-300 ${
+        className={`eyebrow pointer-events-none absolute -top-9 left-0 bg-gold px-3 py-1.5 text-ink transition-opacity duration-300 ${
           copied ? "opacity-100" : "opacity-0"
         }`}
       >

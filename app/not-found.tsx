@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ButtonContent } from "@/components/ui/ButtonContent";
 import { fontVariables } from "@/lib/fonts";
 
 export const metadata: Metadata = {
@@ -19,11 +20,11 @@ export default function NotFound() {
             Tahle stránka se ztratila v lese.
           </p>
           <p className="col-span-12 flex flex-wrap gap-3">
-            <Link href="/" className="pill pill-red">
-              Back to the trail →
+            <Link href="/" className="btn btn-primary">
+              <ButtonContent label="Back to the trail →" />
             </Link>
-            <Link href="/cs" lang="cs" className="pill pill-outline">
-              Zpátky na cestu →
+            <Link href="/cs" lang="cs" className="btn btn-outline">
+              <ButtonContent label="Zpátky na cestu →" />
             </Link>
           </p>
         </main>

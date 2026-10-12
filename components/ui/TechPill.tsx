@@ -75,7 +75,7 @@ export function TechPill({ id, name, level, planned = false, iconPath, levelText
           placePanel();
           setOpen((v) => !v);
         }}
-        className={`inline-flex items-center rounded-full border leading-none font-medium whitespace-nowrap transition-colors duration-300 hover:border-fg ${SIZE[level ?? 2]} ${tone}`}
+        className={`inline-flex items-center border leading-none font-medium whitespace-nowrap transition-colors duration-300 hover:border-fg ${SIZE[level ?? 2]} ${tone}`}
       >
         {iconPath ? (
           <svg viewBox="0 0 24 24" className="size-[1em] shrink-0" fill="currentColor" aria-hidden="true" focusable="false">

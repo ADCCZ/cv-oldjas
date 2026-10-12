@@ -31,12 +31,12 @@ export function Stack({ t, locale }: { t: Dictionary; locale: Locale }) {
         <ol className="flex flex-wrap gap-x-8 gap-y-3 text-sm">
           {LEVELS.map((level) => (
             <li key={level} className="flex items-center gap-2">
-              <span className="font-mono text-gold-text">{level}</span>
+              <span className="font-label text-gold-text">{level}</span>
               <span>{t.stack.levels[level - 1]}</span>
             </li>
           ))}
           <li className="flex items-center gap-2">
-            <span className="inline-block h-3 w-6 rounded-full border border-dashed border-line-strong" aria-hidden="true" />
+            <span className="inline-block h-3 w-6 border border-dashed border-line-strong" aria-hidden="true" />
             <span>{t.stack.planned}</span>
           </li>
         </ol>

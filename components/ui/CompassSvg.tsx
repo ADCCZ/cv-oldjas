@@ -46,7 +46,8 @@ export function CompassSvg({ className = "", needleRotation = 0 }: { className?:
             y={p.y}
             textAnchor="middle"
             dominantBaseline="central"
-            fontFamily="var(--font-jetbrains), monospace"
+            fontFamily="var(--font-archivo), sans-serif"
+            fontWeight={600}
             fontSize={11}
             fill={label === "N" ? "var(--gold)" : "var(--fg-muted)"}
           >

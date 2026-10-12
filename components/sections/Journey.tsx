@@ -1,4 +1,5 @@
 import { JourneyMotion } from "@/components/motion/JourneyMotion";
+import { ButtonContent } from "@/components/ui/ButtonContent";
 import { ScrambleText } from "@/components/ui/ScrambleText";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import type { Dictionary } from "@/lib/dictionary";
@@ -45,7 +46,7 @@ function Folder({ index, total, title, aside, rows, children }: FolderProps) {
     >
       <div className="site-grid flex-1 content-start gap-y-2 py-6 md:gap-y-0 md:py-0 md:pb-14">
         <div className={`col-span-2 md:col-span-1 md:row-span-1 md:flex md:h-(--bar-h) md:items-center ${NUMBER_ROWS[rows]}`}>
-          <span className="sticky top-[calc(var(--header-h)+1rem)] block font-mono text-2xl text-gold-soft md:static" aria-hidden="true">
+          <span className="sticky top-[calc(var(--header-h)+1rem)] block font-label text-2xl text-gold-soft md:static" aria-hidden="true">
             {pad(index + 1)}
           </span>
         </div>
@@ -53,7 +54,7 @@ function Folder({ index, total, title, aside, rows, children }: FolderProps) {
         <h4 className="col-span-10 text-xl leading-tight font-bold tracking-tight md:col-span-8 md:flex md:h-(--bar-h) md:items-center md:text-[1.375rem] lg:text-[clamp(1.375rem,2.15vw,1.875rem)]">
           <ScrambleText text={title} className="md:line-clamp-2 lg:line-clamp-1" />
         </h4>
-        <div className="col-span-10 font-mono text-sm md:col-span-3 md:flex md:h-(--bar-h) md:items-center md:justify-end">
+        <div className="col-span-10 font-label text-sm md:col-span-3 md:flex md:h-(--bar-h) md:items-center md:justify-end">
           {aside}
         </div>
         {children}
@@ -130,8 +131,8 @@ export function Journey({ t }: { t: Dictionary }) {
             title={t.journey.next.title}
             rows={2}
             aside={
-              <a href="#contact" className="pill mt-2 bg-cream py-3! text-sm text-red-600 hover:bg-ink hover:text-cream md:mt-0">
-                {t.journey.next.cta}
+              <a href="#contact" className="btn btn-cream btn-sm mt-2 md:mt-0">
+                <ButtonContent label={t.journey.next.cta} icon="→" />
               </a>
             }
           />

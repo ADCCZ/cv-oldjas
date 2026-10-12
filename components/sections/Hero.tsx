@@ -1,5 +1,6 @@
 import { Clock } from "@/components/layout/Clock";
 import { HeroMotion } from "@/components/motion/HeroMotion";
+import { ButtonContent } from "@/components/ui/ButtonContent";
 import { Marquee } from "@/components/ui/Marquee";
 import { TrackedLink } from "@/components/ui/TrackedLink";
 import { links } from "@/content/links.config";
@@ -31,11 +32,11 @@ export function Hero({ t, locale }: Props) {
             {t.hero.nickname}
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a href="#projects" data-hero-pop className="pill pill-red">
-              {t.hero.ctaWork}
+            <a href="#projects" data-hero-pop className="btn btn-primary">
+              <ButtonContent label={t.hero.ctaWork} />
             </a>
-            <a href="#contact" data-hero-pop className="pill pill-outline">
-              {t.hero.ctaContact}
+            <a href="#contact" data-hero-pop className="btn btn-outline">
+              <ButtonContent label={t.hero.ctaContact} />
             </a>
           </div>
         </div>

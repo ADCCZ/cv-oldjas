@@ -105,7 +105,7 @@ export function Footer({ t, locale, projectCount }: Props) {
                 <a href={`#${item}`} className="link-draw">
                   {t.nav[item]}
                 </a>
-                {item === "projects" ? <span className="ml-1 font-mono text-xs text-fg-muted">({projectCount})</span> : null}
+                {item === "projects" ? <span className="ml-1 font-label text-xs text-fg-muted">({projectCount})</span> : null}
               </li>
             ))}
           </ul>

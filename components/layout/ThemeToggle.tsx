@@ -25,7 +25,7 @@ export function ThemeToggle({ toLight, toDark }: Props) {
       type="button"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={isDark ? toLight : toDark}
-      className="grid size-10 place-items-center rounded-full border border-line-strong text-fg transition-colors duration-500 hover:border-fg"
+      className="grid size-10 place-items-center border border-line-strong text-fg transition-colors duration-500 hover:border-fg"
     >
       <svg viewBox="0 0 24 24" className="size-[18px]" aria-hidden="true" focusable="false">
         <mask id="theme-toggle-moon">

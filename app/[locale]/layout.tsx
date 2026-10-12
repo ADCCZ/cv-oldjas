@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { ButtonContent } from "@/components/ui/ButtonContent";
 import { Intro } from "@/components/layout/Intro";
 import { Providers } from "@/components/layout/Providers";
 import { links } from "@/content/links.config";
@@ -78,9 +79,9 @@ export default async function LocaleLayout({ children, params }: Props) {
         <script dangerouslySetInnerHTML={{ __html: INTRO_SCRIPT }} />
         <a
           href="#main"
-          className="pill pill-red fixed top-3 left-3 z-[200] -translate-y-24 focus-visible:translate-y-0"
+          className="btn btn-primary fixed top-3 left-3 z-[200] -translate-y-24 focus-visible:translate-y-0"
         >
-          {t.a11y.skipLink}
+          <ButtonContent label={t.a11y.skipLink} icon={null} />
         </a>
         <Providers>
           <Intro />
