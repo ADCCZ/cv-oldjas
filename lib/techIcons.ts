@@ -1,0 +1,80 @@
+import {
+  siC,
+  siCmake,
+  siCplusplus,
+  siDocker,
+  siDotnet,
+  siGit,
+  siGithubactions,
+  siHtml5,
+  siJavascript,
+  siJest,
+  siKubernetes,
+  siLatex,
+  siLinux,
+  siMysql,
+  siNette,
+  siNextdotjs,
+  siNfc,
+  siNodedotjs,
+  siOpengl,
+  siOpenjdk,
+  siPandas,
+  siPhp,
+  siPostgresql,
+  siPython,
+  siReact,
+  siSocketdotio,
+  siSpringboot,
+  siTailwindcss,
+  siTypescript,
+  siVite,
+  siVuedotjs,
+  type SimpleIcon,
+} from "simple-icons";
+
+/**
+ * Monochrome technology logos from simple-icons, keyed by slug (`icon` in stack.config.ts).
+ * Named imports keep the bundle to the ~30 icons in use instead of the whole set.
+ * Some brands (C#, Power BI, AWS, Latte, Twig…) are not in simple-icons – those tiles are text-only.
+ */
+const ICONS: Record<string, SimpleIcon> = Object.fromEntries(
+  [
+    siC,
+    siCmake,
+    siCplusplus,
+    siDocker,
+    siDotnet,
+    siGit,
+    siGithubactions,
+    siHtml5,
+    siJavascript,
+    siJest,
+    siKubernetes,
+    siLatex,
+    siLinux,
+    siMysql,
+    siNette,
+    siNextdotjs,
+    siNfc,
+    siNodedotjs,
+    siOpengl,
+    siOpenjdk,
+    siPandas,
+    siPhp,
+    siPostgresql,
+    siPython,
+    siReact,
+    siSocketdotio,
+    siSpringboot,
+    siTailwindcss,
+    siTypescript,
+    siVite,
+    siVuedotjs,
+  ].map((icon) => [icon.slug, icon]),
+);
+
+/** SVG path (24×24 viewBox) of the logo, or undefined when the technology has none. */
+export function techIconPath(slug: string | undefined): string | undefined {
+  return slug ? ICONS[slug]?.path : undefined;
+}
