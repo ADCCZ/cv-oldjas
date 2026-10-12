@@ -57,6 +57,13 @@
   }
 }
 
+/* Tablets: Journey bars hold two lines of the longest title. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --bar-h: 5.25rem;
+  }
+}
+
 [data-theme="light"] {
   --bg: #f6f3ee;
   --surface: #ece7df;

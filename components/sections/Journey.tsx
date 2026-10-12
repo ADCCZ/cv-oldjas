@@ -5,53 +5,64 @@ import { shadeFor } from "@/lib/shade";
 
 type Row = { title: string; period: string; place: string; text: string[] };
 
+/** Static class names for Tailwind – how many grid rows the sticky number spans on phones. */
+const NUMBER_ROWS = { 2: "row-span-2", 3: "row-span-3", 4: "row-span-4" } as const;
+
 type FolderProps = {
   index: number;
   total: number;
-  children: React.ReactNode;
+  title: string;
+  aside: React.ReactNode;
+  rows: keyof typeof NUMBER_ROWS;
+  children?: React.ReactNode;
 };
 
 /**
- * One "folder" of the stack. From md up every row is sticky, offset by one bar height per index,
- * so the next row slides over the previous one and leaves only its ~64 px bar visible – a card
- * index (juncastudio.com style) with pure CSS. All rows share one minimum height, so no row gets
- * pushed out of the stack early when the list ends. Colours go from --red-950 to --red-500.
+ * One "folder" of a stack.
+ *
+ * md and up: every row is sticky, offset by one bar height per index, so the next row slides over
+ * the previous one and leaves only its ~64 px bar (number, title, period) visible – a card index
+ * (juncastudio.com style) in pure CSS. All rows share one minimum height, so no row is pushed out
+ * of the stack early when the list ends. Tablets get a taller bar (two title lines, see --bar-h).
+ *
+ * Phones: a plain vertical list; the number sticks below the header while its row scrolls by.
+ * Colours go from --red-950 to --red-500.
  */
-function Folder({ index, total, children }: FolderProps) {
+function Folder({ index, total, title, aside, rows, children }: FolderProps) {
   return (
     <li
-      className="flex flex-col text-cream md:sticky md:min-h-[60svh]"
+      className="border-t border-cream/15 text-cream md:sticky md:flex md:min-h-[min(60svh,34rem)] md:flex-col"
       style={{
         background: shadeFor(index, total),
         top: `calc(var(--header-h) + ${index} * var(--bar-h))`,
         zIndex: index + 1,
       }}
     >
-      {children}
-    </li>
-  );
-}
-
-function FolderBar({ number, title, aside }: { number: string; title: string; aside: React.ReactNode }) {
-  return (
-    <div className="site-grid min-h-(--bar-h) items-center gap-y-1 border-t border-cream/15 py-3">
-      <span className="col-span-2 font-mono text-2xl text-gold-soft md:col-span-1" aria-hidden="true">
-        {number}
-      </span>
-      <h4 className="col-span-10 text-xl leading-tight font-bold tracking-tight md:col-span-8 md:text-3xl">{title}</h4>
-      <div className="col-span-10 col-start-3 font-mono text-sm md:col-span-3 md:col-start-auto md:justify-self-end">
-        {aside}
+      <div className="site-grid flex-1 content-start gap-y-2 py-6 md:gap-y-0 md:py-0 md:pb-14">
+        <div className={`col-span-2 md:col-span-1 md:row-span-1 md:flex md:h-(--bar-h) md:items-center ${NUMBER_ROWS[rows]}`}>
+          <span className="sticky top-[calc(var(--header-h)+1rem)] block font-mono text-2xl text-gold-soft md:static" aria-hidden="true">
+            {pad(index + 1)}
+          </span>
+        </div>
+        {/* Sized so the longest title fits the bar: two lines on tablets, one line from lg up. */}
+        <h4 className="col-span-10 text-xl leading-tight font-bold tracking-tight md:col-span-8 md:flex md:h-(--bar-h) md:items-center md:text-[1.375rem] lg:text-[clamp(1.375rem,2.15vw,1.875rem)]">
+          <span className="md:line-clamp-2 lg:line-clamp-1">{title}</span>
+        </h4>
+        <div className="col-span-10 font-mono text-sm md:col-span-3 md:flex md:h-(--bar-h) md:items-center md:justify-end">
+          {aside}
+        </div>
+        {children}
       </div>
-    </div>
+    </li>
   );
 }
 
 function FolderBody({ row }: { row: Row }) {
   return (
-    <div className="site-grid flex-1 content-start gap-y-5 pt-3 pb-12 md:pb-16">
-      <p className="col-span-12 font-serif text-xl italic md:col-span-4 md:col-start-2 md:text-2xl">{row.place}</p>
+    <>
+      <p className="col-span-10 mt-3 font-serif text-xl italic md:col-span-4 md:col-start-2 md:mt-4 md:text-2xl">{row.place}</p>
       {row.text.length > 0 ? (
-        <ul className="col-span-12 space-y-3 md:col-span-6 md:col-start-7">
+        <ul className="col-span-10 mt-2 space-y-3 md:col-span-6 md:col-start-7 md:mt-5">
           {row.text.map((line) => (
             <li key={line.slice(0, 32)} className="flex gap-3">
               <span className="mt-[0.75em] h-px w-4 shrink-0 bg-gold-soft" aria-hidden="true" />
@@ -60,7 +71,7 @@ function FolderBody({ row }: { row: Row }) {
           ))}
         </ul>
       ) : null}
-    </div>
+    </>
   );
 }
 
@@ -84,8 +95,7 @@ export function Journey({ t }: { t: Dictionary }) {
         <h3 className="eyebrow mb-5 px-gutter text-fg-muted">{t.journey.education.title}</h3>
         <ol>
           {education.map((row, i) => (
-            <Folder key={row.title} index={i} total={education.length}>
-              <FolderBar number={pad(i + 1)} title={row.title} aside={row.period} />
+            <Folder key={row.title} index={i} total={education.length} title={row.title} aside={row.period} rows={row.text.length ? 4 : 3}>
               <FolderBody row={row} />
             </Folder>
           ))}
@@ -103,23 +113,21 @@ export function Journey({ t }: { t: Dictionary }) {
         </div>
         <ol>
           {experience.map((row, i) => (
-            <Folder key={row.title} index={i} total={experienceTotal}>
-              <FolderBar number={pad(i + 1)} title={row.title} aside={row.period} />
+            <Folder key={row.title} index={i} total={experienceTotal} title={row.title} aside={row.period} rows={4}>
               <FolderBody row={row} />
             </Folder>
           ))}
-          <Folder index={experience.length} total={experienceTotal}>
-            <FolderBar
-              number={pad(experienceTotal)}
-              title={t.journey.next.title}
-              aside={
-                <a href="#contact" className="pill bg-cream text-red-600 hover:bg-ink hover:text-cream">
-                  {t.journey.next.cta}
-                </a>
-              }
-            />
-            <div className="h-6 md:flex-1" />
-          </Folder>
+          <Folder
+            index={experience.length}
+            total={experienceTotal}
+            title={t.journey.next.title}
+            rows={2}
+            aside={
+              <a href="#contact" className="pill mt-2 bg-cream py-3! text-sm text-red-600 hover:bg-ink hover:text-cream md:mt-0">
+                {t.journey.next.cta}
+              </a>
+            }
+          />
         </ol>
       </div>
     </section>
