@@ -1,3 +1,4 @@
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { TrackedLink } from "@/components/ui/TrackedLink";
 import { links } from "@/content/links.config";
 import type { Locale } from "@/content/types";
@@ -11,20 +12,20 @@ export function Contact({ t, locale }: { t: Dictionary; locale: Locale }) {
 
   return (
     <section id="contact" aria-labelledby="contact-title" className="site-grid gap-y-10 pt-28 pb-20 md:pt-40 md:pb-28">
-      <div className="col-span-12 flex items-start gap-3 md:gap-5">
-        <span className="eyebrow mt-[0.6em] text-gold-text" aria-hidden="true">
-          07
-        </span>
-        <h2 id="contact-title" className="max-w-[18ch] text-[clamp(2.5rem,7vw,7.5rem)] leading-[0.92] font-bold tracking-display">
-          {t.contact.title}
-        </h2>
-      </div>
+      <SectionHeading
+        id="contact-title"
+        number="07"
+        className="col-span-12"
+        headingClassName="max-w-[18ch] text-[clamp(2.5rem,7vw,7.5rem)] leading-[0.92] tracking-display"
+      >
+        {t.contact.title}
+      </SectionHeading>
 
-      <p className="eyebrow col-span-12 text-fg-muted md:col-start-2">
+      <p className="eyebrow col-span-12 text-fg-muted">
         {availabilityLine(hoursPerWeek, t.availability.hoursUnit, location[locale])}
       </p>
 
-      <div className="col-span-12 flex flex-col items-start gap-4 md:col-start-2">
+      <div className="col-span-12 flex flex-col items-start gap-4">
         <div className="flex flex-wrap gap-3">
           <TrackedLink href={`mailto:${links.email}`} event="email_click" data={{ place: "contact-button" }} className="pill pill-red">
             {t.contact.emailButton}

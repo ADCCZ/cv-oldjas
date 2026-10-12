@@ -142,12 +142,18 @@ export function Projects({ t, locale, github }: Props) {
   return (
     <section id="projects" aria-labelledby="projects-title" className="py-28 md:py-40">
       <div className="site-grid items-end gap-y-6">
-        <SectionHeading id="projects-title" number="02" className="col-span-12 md:col-span-8">
+        <SectionHeading
+          id="projects-title"
+          number="02"
+          className="col-span-12"
+          aside={
+            <span aria-hidden="true">
+              <span className="text-fg">01</span> / {pad(total)}
+            </span>
+          }
+        >
           {t.projects.title}
         </SectionHeading>
-        <p className="eyebrow col-span-12 text-fg-muted md:col-span-4 md:justify-self-end" aria-hidden="true">
-          <span className="text-gold-text">01</span> / {pad(total)}
-        </p>
         {github.offline ? <p className="eyebrow col-span-12 text-fg-muted">{t.projects.githubOffline}</p> : null}
       </div>
 
