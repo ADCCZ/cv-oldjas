@@ -156,7 +156,8 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
 
   /** Grid → box: the box keeps the grid's height, tiles leave the flow (CSS, data-mode="pile"). */
   const enterPile = () => {
-    container.style.height = `${container.offsetHeight}px`;
+    // The exact, fractional height – a rounded one would still move the page by a pixel.
+    container.style.height = `${container.getBoundingClientRect().height}px`;
     container.dataset.mode = "pile";
     for (const tile of tiles) {
       sizes.set(tile, { w: tile.offsetWidth, h: tile.offsetHeight });
@@ -177,7 +178,8 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
 
   /** Smallest first (planned = 0), shuffled within a level – the strongest skills end up on top. */
   const dropIn = () => {
-    const order = [...tiles].sort((a, b) => Number(a.dataset.level) - Number(b.dataset.level) + rand(-0.6, 0.6));
+    const keyed = tiles.map((tile) => ({ tile, key: Number(tile.dataset.level) + rand(-0.6, 0.6) }));
+    const order = keyed.sort((a, b) => a.key - b.key).map(({ tile }) => tile);
     dropping = true;
     drop = gsap.timeline({ onComplete: () => (dropping = false) });
     order.forEach((tile, i) =>
@@ -213,9 +215,9 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
     let inside = true;
     for (const [tile, body] of bodies) {
       const { x, y } = body.position;
-      // Safety net: anything that escaped the box is dropped back in.
+      // Safety net: anything that escaped the box is put back inside, under the lid.
       if (y > height + 200 || x < -200 || x > width + 200) {
-        Body.setPosition(body, { x: width / 2, y: -100 });
+        Body.setPosition(body, { x: width / 2, y: sizes.get(tile)!.h });
         Body.setVelocity(body, { x: 0, y: 0 });
       }
       if (body.position.y < sizes.get(tile)!.h / 2) inside = false;
@@ -320,14 +322,16 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
     running = false;
     const faces = tiles.map(face);
     const state = Flip.getState(faces);
-    const from = container.offsetHeight;
+    const from = container.getBoundingClientRect().height;
     clearBodies();
     leavePile();
-    const to = container.offsetHeight; // differs only if the columns changed since the pile was built
+    const to = container.getBoundingClientRect().height; // differs only if the columns changed meanwhile
     await new Promise<void>((resolve) => {
       flip = gsap.timeline({ onComplete: resolve });
       flip.add(Flip.from(state, { targets: faces, duration: 1.1, ease: EASE.inOut, stagger: { amount: 0.25, from: "random" } }), 0);
-      if (from !== to) flip.fromTo(container, { height: from }, { height: to, duration: 1.1, ease: EASE.inOut, clearProps: "height" }, 0);
+      if (Math.abs(from - to) > 0.5) {
+        flip.fromTo(container, { height: from }, { height: to, duration: 1.1, ease: EASE.inOut, clearProps: "height" }, 0);
+      }
       flip.fromTo(
         headings,
         { autoAlpha: 0, y: 12 },
@@ -335,7 +339,7 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
         0.55,
       );
     });
-    if (from !== to) ScrollTrigger.refresh();
+    if (Math.abs(from - to) > 0.5) ScrollTrigger.refresh();
   };
 
   /** Every tile becomes a body where it sits in the grid and is tossed up into the box. */
