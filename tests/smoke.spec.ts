@@ -145,10 +145,13 @@ test("the stats strip loops through clones that screen readers skip", async ({ p
 
 test("the custom cursor follows a mouse and switches over project covers", async ({ page }) => {
   await page.goto("/");
-  await page.mouse.move(400, 300);
-  await page.mouse.move(420, 320);
+  // The cursor mounts after hydration – keep moving until it has picked the mouse up.
   const cursor = page.locator(".cursor");
-  await expect(cursor).toHaveAttribute("data-visible", "true");
+  let x = 400;
+  await expect(async () => {
+    await page.mouse.move((x += 10), 320);
+    await expect(cursor).toHaveAttribute("data-visible", "true", { timeout: 500 });
+  }).toPass();
 
   // The covers sit in the pinned, horizontally moving strip – point at one once it has settled.
   await page.evaluate(() => document.getElementById("projects")?.scrollIntoView());
