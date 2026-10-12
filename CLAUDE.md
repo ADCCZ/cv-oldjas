@@ -46,6 +46,29 @@ The full brief is in `docs/PROMPT.md`; effect decisions from the reference resea
   original, clone); clones are `aria-hidden` (+ `inert` when they hold no links) and `motion-only`.
 - The stack pile box keeps the sorted grid's height – switching must never change the page height (anchors below).
 
+## WebGL (phase 5)
+
+- One shared fixed R3F canvas (`components/webgl/Scene.tsx`) with drei `<View>`s that track DOM elements. `WebglRoot`
+  loads it via `next/dynamic` only with full motion, WebGL2 + float colour buffers, after the hero letters settled –
+  three.js never enters the first load (check the build output).
+- `frameloop="never"`: the Driver advances R3F from `gsap.ticker` (after Lenis/ScrollTrigger). Every effect registers a
+  stage (`stage.ts`) that says whether it needs the frame; with none the canvas is cleared and hidden (`html[data-webgl-idle]`).
+- Layering: canvas `z-40` over the content; while the hero reveal runs `html[data-webgl-layer="under"]` puts it at `z-5`,
+  under the hero copy (`z-[6]`) and About (`z-10`). WebGL then draws the whole name and `html[data-hero-gl]` hides the
+  DOM marquee; `HeroMotion` publishes `heroState` (`lib/webgl.ts`), the DOM name takes over as soon as letters scatter.
+- DOM hooks: `[data-marquee-row|copy]` (hero), `[data-compass]` + `.compass-svg`, `[data-facts] [data-fact] [data-fact-icon]`,
+  `[data-cover] [data-cover-frame] [data-cover-tags] [data-parallax]`, `[data-projects-clip]`.
+- Textures come from the DOM (`rasterize.ts`: glyphs at their Range rects, backgrounds, images) – a screenshot in
+  `public/projects/` is picked up by the ripples automatically.
+- Shaders: `RawShaderMaterial` GLSL3 mixing in sRGB, colours from the CSS tokens (`colors.ts`). Inside loops and branches
+  read textures with `textureLod(…, 0.0)` – derivatives there made Chrome on Windows lose the context on Intel GPUs.
+  Precompile with `precompile.ts`, never three's `compileAsync` (it polls disposed programs forever).
+- Fallbacks: `html[data-webgl="off"]` → DOM name, SVG compass (GSAP needle), CSS cover zoom + RGB split. Reduced motion
+  loads nothing.
+- Checking it: headless Chromium with `--enable-gpu --use-angle=d3d11 --ignore-gpu-blocklist` runs on the real GPU
+  (`--force_low_power_gpu` = the Intel iGPU, the "ordinary laptop"). After a lost context Chrome blocks WebGL for the rest
+  of that browser – one fresh browser per case.
+
 ## Language
 
 - English is the main language on `/`, Czech on `/cs`. No redirect by browser language; the toggle stores `lang` cookie.
@@ -68,7 +91,7 @@ components/layout/   Nav, MenuOverlay, Footer, Cursor, Intro, Clock, ThemeToggle
 components/motion/   client "controllers" that animate server-rendered markup (GSAP, physics, strips)
 components/sections/ Hero, About, Stats, Projects, ProjectArchive, Stack, Skills, Journey, OffCode, Contact
 components/ui/       small building blocks (SectionHeading, Marquee, ButtonContent, TechPill, SkillCard, …)
-components/webgl/    shared Canvas, shaders (later)
+components/webgl/    WebglRoot (lazy loader), Scene (shared Canvas + Driver), HeroReveal, Compass, Ripples, simulations, shaders
 content/             en.ts, cs.ts, projects.config.ts, stack.config.ts, stats.config.ts, links.config.ts, github-snapshot.json
 lib/                 gsap, lenis, github, i18n, sections, fonts, analytics, hooks
 scripts/             next.mjs + exfat-readlink.cjs (see below), later generate-cv.ts, screenshots.ts
