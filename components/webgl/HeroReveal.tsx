@@ -10,6 +10,7 @@ import {
   Mesh,
   NoColorSpace,
   NormalBlending,
+  OrthographicCamera,
   PlaneGeometry,
   RawShaderMaterial,
   RepeatWrapping,
@@ -23,7 +24,10 @@ import { onThemeChange, token } from "./colors";
 import { FLUID, FluidSim } from "./fluid";
 import { NOISE, PALETTE, QUAD_VERTEX } from "./glsl";
 import { rasterize, type Box } from "./rasterize";
+import { precompile } from "./precompile";
 import { addStage, layer, ORDER } from "./stage";
+
+const QUAD_CAMERA = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
 /*
  * Hero reveal (noth.in): the pointer stirs a fluid; where its dye is dense enough, a second layer
@@ -176,7 +180,6 @@ class HeroRevealLayer {
     this.copies = Array.from(hero.querySelectorAll<HTMLElement>("[data-marquee-track] > [data-marquee-copy]:first-child"));
     this.rect = hero.getBoundingClientRect();
     this.sim = new FluidSim(renderer, this.rect.width / Math.max(1, this.rect.height));
-    this.sim.warmUp().catch(() => {});
 
     const material = new RawShaderMaterial({
       glslVersion: GLSL3,
@@ -206,6 +209,8 @@ class HeroRevealLayer {
     this.mesh.frustumCulled = false;
     this.mesh.visible = false;
     this.readColors();
+    // Compile the composite and the fluid passes while the page is idle, not on the first frame.
+    this.cleanups.push(precompile(renderer, [{ object: this.mesh, camera: QUAD_CAMERA }]), this.sim.warmUp());
 
     const onMove = (event: PointerEvent) => {
       if (event.pointerType === "touch") return;

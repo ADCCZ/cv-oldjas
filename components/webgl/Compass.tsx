@@ -21,6 +21,7 @@ import {
 } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { aboutState, bearing } from "@/lib/webgl";
+import { precompile } from "./precompile";
 import { addStage, layer, ORDER } from "./stage";
 
 /*
@@ -145,6 +146,7 @@ function angleDelta(from: number, to: number): number {
 function CompassScene({ box }: { box: HTMLElement }) {
   const gl = useThree((state) => state.gl);
   const scene = useThree((state) => state.scene); // the View's own scene
+  const camera = useThree((state) => state.camera);
   const model = useMemo(() => buildModel(), []);
   const [motion] = useState(() => ({
     visible: false,
@@ -164,6 +166,8 @@ function CompassScene({ box }: { box: HTMLElement }) {
     const environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     scene.environment = environment;
     scene.environmentIntensity = 0.55;
+    // Compile the PBR programs while the page is idle, not on the first scroll into About.
+    const cancelCompile = precompile(gl, [{ object: model.root, camera, scene }]);
 
     const io = new IntersectionObserver(([entry]) => (motion.visible = !!entry?.isIntersecting));
     io.observe(box);
@@ -180,6 +184,7 @@ function CompassScene({ box }: { box: HTMLElement }) {
     }, ORDER.compass);
 
     return () => {
+      cancelCompile();
       remove();
       io.disconnect();
       window.removeEventListener("pointermove", onMove);
@@ -189,7 +194,7 @@ function CompassScene({ box }: { box: HTMLElement }) {
       model.dispose();
       delete document.documentElement.dataset.compassGl;
     };
-  }, [gl, scene, box, model, motion]);
+  }, [gl, scene, camera, box, model, motion]);
 
   useFrame((_, delta) => {
     if (!model.root.visible) return;

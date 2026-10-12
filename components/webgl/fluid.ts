@@ -17,6 +17,7 @@ import {
   type Texture,
   type WebGLRenderer,
 } from "three";
+import { passJob, precompile } from "./precompile";
 
 /*
  * Stable fluids (Jos Stam, 1999) on the GPU – the technique behind the noth.in hero reveal.
@@ -327,19 +328,12 @@ export class FluidSim {
   }
 
   /**
-   * Prepares every pass before the first stroke: the programs compile in parallel where the browser
-   * supports it (KHR_parallel_shader_compile), then each pass runs once into the real targets.
-   * Without this the first pointer move over the hero froze the page for a second on some GPUs.
+   * Prepares every pass before the first stroke: the programs compile in the background
+   * (precompile.ts), then each pass runs once into the real targets. Without this the first pointer
+   * move over the hero froze the page for a moment on integrated GPUs. Returns a cancel function.
    */
-  async warmUp() {
-    const scene = new Scene();
-    for (const material of Object.values(this.passes)) {
-      const mesh = new Mesh(this.quad.geometry, material);
-      mesh.frustumCulled = false;
-      scene.add(mesh);
-    }
-    await this.renderer.compileAsync(scene, this.camera);
-    this.prime();
+  warmUp(): () => void {
+    return precompile(this.renderer, [passJob(Object.values(this.passes))], () => this.prime());
   }
 
   /** One empty step through every pass – nothing is left to set up on the first real one. */
