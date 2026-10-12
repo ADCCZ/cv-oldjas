@@ -26,7 +26,7 @@ export function Hero({ t, locale }: Props) {
     <section
       id="top"
       aria-labelledby="hero-title"
-      className="relative z-[6] flex min-h-svh flex-col justify-between pt-24 md:pt-28"
+      className="relative z-[6] flex min-h-svh flex-col justify-between pt-24 select-none md:pt-28"
     >
       <div className="site-grid">
         <div data-hero-intro className="col-span-12 md:col-span-7 md:col-start-4 lg:col-span-5 lg:col-start-4">
