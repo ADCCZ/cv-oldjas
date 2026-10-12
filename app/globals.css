@@ -253,6 +253,8 @@
     line-height: 1;
     text-transform: uppercase;
     white-space: nowrap;
+    /* Magnetic pull (MagneticButtons) – `translate`, so GSAP transforms on the same element still work. */
+    translate: var(--mag-x, 0px) var(--mag-y, 0px);
   }
 
   .btn-face,
@@ -283,6 +285,8 @@
     display: block;
     overflow: hidden;
     line-height: 1.25;
+    /* The label follows the pull a half more than its button (parallax). */
+    translate: calc(var(--mag-x, 0px) * 0.5) calc(var(--mag-y, 0px) * 0.5);
   }
 
   .btn-roll > span {

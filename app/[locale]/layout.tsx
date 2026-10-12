@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ButtonContent } from "@/components/ui/ButtonContent";
 import { Cursor } from "@/components/layout/Cursor";
 import { Intro } from "@/components/layout/Intro";
+import { MagneticButtons } from "@/components/motion/MagneticButtons";
 import { Providers } from "@/components/layout/Providers";
 import { links } from "@/content/links.config";
 import { getDictionary } from "@/lib/dictionary";
@@ -90,6 +91,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         </Providers>
         <div className="grain" aria-hidden="true" />
         <Cursor viewLabel={t.cursor.view} dragLabel={t.cursor.drag} />
+        <MagneticButtons />
         {/* Analytics only on Vercel – locally the scripts would 404 and pollute the console. */}
         {process.env.VERCEL ? (
           <>
