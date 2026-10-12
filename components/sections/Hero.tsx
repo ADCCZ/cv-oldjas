@@ -14,7 +14,8 @@ type Props = { t: Dictionary; locale: Locale };
 
 /**
  * Hero – "the infinite name". The H1 is real HTML text (it is the LCP element);
- * the marquee copies around it are decorative.
+ * the marquee copies around it are decorative. z-[6]: above the WebGL canvas while the hero
+ * reveal runs (the copy stays on top of the liquid), below About (z-10), which slides over it.
  */
 export function Hero({ t, locale }: Props) {
   const { hoursPerWeek, location } = links.availability;
@@ -22,7 +23,7 @@ export function Hero({ t, locale }: Props) {
   const statusShort = `${t.hero.statusShort} · ${hoursPerWeek} ${t.availability.hoursUnit}`;
 
   return (
-    <section id="top" aria-labelledby="hero-title" className="relative flex min-h-svh flex-col justify-between pt-24 md:pt-28">
+    <section id="top" aria-labelledby="hero-title" className="relative z-[6] flex min-h-svh flex-col justify-between pt-24 md:pt-28">
       <div className="site-grid">
         <div data-hero-intro className="col-span-12 md:col-span-7 md:col-start-4 lg:col-span-5 lg:col-start-4">
           <p data-hero-line className="text-2xl leading-tight font-medium tracking-tight md:text-3xl">

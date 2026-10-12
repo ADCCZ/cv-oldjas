@@ -25,12 +25,12 @@ const INTERACTIVE = "[data-cursor], a[href], button, summary, label, [role='butt
 const RING_LERP = 0.22;
 const LABEL_LERP = 0.18;
 
-function resolveState(target: Element | null): { state: CursorState; red: boolean } {
+function resolveState(target: Element | null): { state: CursorState; surface: string } {
   const el = target?.closest(INTERACTIVE);
   const declared = el?.getAttribute("data-cursor");
   const state: CursorState =
     declared === "view" || declared === "drag" ? declared : el?.classList.contains("btn") ? "button" : el ? "link" : "default";
-  return { state, red: !!target?.closest('[data-surface="red"]') };
+  return { state, surface: target?.closest<HTMLElement>("[data-surface]")?.dataset.surface ?? "base" };
 }
 
 /**
@@ -41,6 +41,7 @@ function resolveState(target: Element | null): { state: CursorState; red: boolea
  * - Draggable strips and tiles: "Drag ↔".
  * - The ring uses mix-blend-mode: difference, so it stays visible on dark, light and images.
  *   Over red surfaces difference would turn it cyan – there ([data-surface="red"]) it is plain cream.
+ *   Over the hero while its WebGL liquid runs ([data-surface="fluid"]) it is plain text colour.
  *
  * Only with a fine pointer and full motion; touch devices and reduced motion keep the system cursor.
  * Elements are positioned by transforms in a GSAP ticker; states are CSS (globals.css, "Cursor").
@@ -88,10 +89,9 @@ export function Cursor({ viewLabel, dragLabel }: Props) {
         moved = true; // write the new position even if the pointer itself rests
       }
       state = next.state;
-      const surface = next.red ? "red" : "base";
       // Written only on change – the hit test also runs on resting frames.
       if (root.dataset.state !== next.state) root.dataset.state = next.state;
-      if (root.dataset.surface !== surface) root.dataset.surface = surface;
+      if (root.dataset.surface !== next.surface) root.dataset.surface = next.surface;
     };
 
     const onMove = (event: PointerEvent) => {

@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { EASE, gsap, ScrollTrigger, SplitText, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
 import { afterFonts, INTRO_REVEAL_EVENT, introState, MOTION_OK, rand, shuffled } from "@/lib/motion";
+import { HERO_READY_EVENT, heroState } from "@/lib/webgl";
 
 /** Idle marquee speed in px/s – proportional to the viewport, so it feels the same everywhere. */
 const baseSpeed = () => Math.max(40, window.innerWidth * 0.045);
@@ -17,6 +18,8 @@ const baseSpeed = () => Math.max(40, window.innerWidth * 0.045);
  * 3. Scroll – the hero is pinned while About slides over it (pinSpacing: false); the marquee
  *    slows to a stop and every letter flies off in its own direction with a random 3D spin.
  *    About's heading assembles from the same kind of scatter (AboutMotion).
+ * The WebGL reveal (components/webgl/HeroReveal) reads `heroState`: whether the letters stand in
+ * place and how far the scatter got – it draws the name only while the DOM letters are at rest.
  */
 export function HeroMotion() {
   const marker = useRef<HTMLSpanElement>(null);
@@ -42,6 +45,7 @@ export function HeroMotion() {
       let x = 0;
       let speed = -baseSpeed();
       const tick = (_time: number, deltaMs: number) => {
+        heroState.scatter = explode?.progress() ?? 0;
         if (window.scrollY > window.innerHeight * 2.2) return; // hero long gone – save the frames
         const velocity = getLenis()?.velocity ?? 0;
         const direction = velocity < -0.5 ? 1 : -1;
@@ -59,6 +63,10 @@ export function HeroMotion() {
       let lines: SplitText | null = null;
       let explode: gsap.core.Timeline | null = null;
       let reveal: (() => void) | null = null;
+      const settled = () => {
+        heroState.ready = true;
+        window.dispatchEvent(new Event(HERO_READY_EVENT));
+      };
 
       const cancelFonts = afterFonts(() => {
         chars = SplitText.create(section.querySelectorAll("[data-marquee-copy]"), {
@@ -84,7 +92,10 @@ export function HeroMotion() {
               duration: first ? 1.6 : 1.1,
               ease: EASE.mask,
               stagger: first ? 0.025 : 0.012,
-              onComplete: () => name.classList.remove("is-masked"),
+              onComplete: () => {
+                name.classList.remove("is-masked");
+                settled();
+              },
             });
             gsap.to(lines!.lines, { yPercent: 0, duration: 1, ease: EASE.mask, stagger: 0.08, delay: first ? 0.5 : 0.2 });
             gsap.to(pops, { autoAlpha: 1, y: 0, duration: 0.8, ease: EASE.reveal, stagger: 0.06, delay: first ? 0.8 : 0.35 });
@@ -126,9 +137,12 @@ export function HeroMotion() {
           .to(blocks, { y: () => -window.innerHeight * 0.12, autoAlpha: 0, ease: "power2.in", duration: 0.32, stagger: 0.06 }, 0);
 
         ScrollTrigger.refresh();
+        if (state === "skip") settled();
       });
 
       return () => {
+        heroState.ready = false;
+        heroState.scatter = 0;
         cancelFonts();
         gsap.ticker.remove(tick);
         if (reveal) window.removeEventListener(INTRO_REVEAL_EVENT, reveal);

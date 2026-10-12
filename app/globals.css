@@ -691,8 +691,18 @@ html.has-cursor * {
   mix-blend-mode: difference;
 }
 
-.cursor[data-surface="red"] .cursor-ring {
+.cursor[data-surface="red"] .cursor-ring,
+.cursor[data-surface="fluid"] .cursor-ring {
   mix-blend-mode: normal;
+}
+
+/* Over the hero liquid (WebGL, under the page) the ring takes the text colour with a hairline halo
+   in the background colour – readable on the page, on the red liquid and on the letters alike. */
+.cursor[data-surface="fluid"] .cursor-ring > span {
+  border-color: var(--fg);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--bg) 55%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--bg) 55%, transparent);
 }
 
 .cursor-ring > span {
@@ -858,4 +868,9 @@ html[data-webgl-layer="under"] .webgl-layer {
 /* Nothing to draw – the canvas leaves compositing. */
 html[data-webgl-idle] .webgl-layer {
   visibility: hidden;
+}
+
+/* WebGL draws the hero name itself (plain and revealed) – the DOM marquee steps back meanwhile. */
+html[data-hero-gl] [data-hero-name] {
+  opacity: 0;
 }
