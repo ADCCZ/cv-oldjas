@@ -278,7 +278,7 @@ class HeroRevealLayer {
     if (this.live) this.input();
 
     // Splat size in the simulation's units (uv of the hero height, squared), from the font size.
-    const sigma = Math.max(SPLAT_EM * this.em, 24) / Math.max(1, this.rect.height);
+    const sigma = Math.max(SPLAT_EM * this.em, this.fine ? 24 : 34) / Math.max(1, this.rect.height);
     this.sim.radius = sigma * sigma;
     if (this.time < this.awakeUntil) {
       this.sim.step(Math.max(dt, 1 / 240));
@@ -328,9 +328,10 @@ class HeroRevealLayer {
       if (!p.fresh) return;
       p.fresh = false;
     } else {
-      const t = this.time * 0.35;
-      x = r.left + r.width * (0.5 + 0.36 * Math.sin(t + 0.3));
-      y = r.top + r.height * (0.5 + 0.3 * Math.sin(t * 1.618));
+      // Touch screens: the blob wanders on its own, slowly, through the rows of the name.
+      const t = this.time * 0.3;
+      x = r.left + r.width * (0.5 + 0.38 * Math.sin(t + 0.3));
+      y = r.top + r.height * (0.64 + 0.2 * Math.sin(t * 1.618));
     }
     const inside = x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
     if (inside && p.inside) this.stroke(x, y);
