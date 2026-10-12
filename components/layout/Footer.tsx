@@ -14,8 +14,8 @@ type Props = { t: Dictionary; locale: Locale; projectCount: number };
 
 /**
  * Footer: three columns (contact / links / navigation), the giant surname across the full width
- * and a mono bottom bar. The giant letters are separate spans – the variable-width hover effect
- * (wdth 125 → 62) is added in the interactions phase.
+ * and a label bar. The giant letters are separate spans – they rise into view and shrink away
+ * under the pointer (FooterMotion).
  */
 export function Footer({ t, locale, projectCount }: Props) {
   const cv = links.cv[locale];
