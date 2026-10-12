@@ -10,16 +10,17 @@ type Props = {
 };
 
 /**
- * Square card (leome-and-partners.com style). On hover / focus / tap it fills with red from the
- * top-right corner, the arrow turns from ↗ to ↙ and the list appears line by line.
- * The list is always in the DOM, so screen readers read it without any interaction.
+ * Square card (leome-and-partners.com style). On hover / focus / tap a red square grows out of the
+ * top-right corner, the arrow drops its square and turns from ↗ to ↙, and the list rises line by
+ * line (closing is immediate, no stagger). The list is always in the DOM, so screen readers read
+ * it without any interaction.
  */
 export function SkillCard({ number, title, items, showDetailsLabel }: Props) {
   const [open, setOpen] = useState(false);
   const listId = `skill-${number}-list`;
 
   const revealed =
-    "group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100";
+    "group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100 group-data-[open=true]:[transition-delay:var(--d)] group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:[transition-delay:var(--d)] group-hover:translate-y-0 group-hover:opacity-100 group-hover:[transition-delay:var(--d)]";
   const onFill = "group-data-[open=true]:text-cream group-focus-within:text-cream group-hover:text-cream";
 
   return (
@@ -36,7 +37,7 @@ export function SkillCard({ number, title, items, showDetailsLabel }: Props) {
             aria-controls={listId}
             aria-label={`${showDetailsLabel}: ${title}`}
             onClick={() => setOpen((v) => !v)}
-            className="grid size-11 place-items-center bg-fg text-bg transition-colors duration-700 group-data-[open=true]:bg-cream group-data-[open=true]:text-red-600 group-hover:bg-cream group-hover:text-red-600"
+            className="grid size-11 place-items-center bg-fg text-bg transition-colors duration-700 group-data-[open=true]:bg-transparent group-data-[open=true]:text-cream group-focus-within:bg-transparent group-focus-within:text-cream group-hover:bg-transparent group-hover:text-cream"
           >
             <span
               className="text-xl leading-none transition-transform duration-700 ease-brand group-data-[open=true]:rotate-180 group-focus-within:rotate-180 group-hover:rotate-180"
@@ -51,8 +52,8 @@ export function SkillCard({ number, title, items, showDetailsLabel }: Props) {
           {items.map((item, i) => (
             <li
               key={item}
-              className={`translate-y-3 opacity-0 transition-[opacity,translate] duration-500 ease-reveal ${revealed}`}
-              style={{ transitionDelay: `${120 + i * 70}ms` }}
+              className={`translate-y-4 opacity-0 transition-[opacity,translate] duration-500 ease-reveal ${revealed}`}
+              style={{ "--d": `${200 + i * 70}ms` } as React.CSSProperties}
             >
               {item}
             </li>

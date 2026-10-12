@@ -433,20 +433,24 @@
     }
   }
 
-  /* Card that fills with red from the top-right corner (Skills). */
+  /*
+   * Card that fills with red from the top-right corner (Skills, leome-and-partners.com): a square
+   * grows out of the corner – square like the rest of the site, and scale stays on the compositor.
+   */
   .corner-fill {
-    clip-path: circle(0% at 100% 0%);
-    transition: clip-path 0.9s var(--ease-inout);
+    scale: 0;
+    transform-origin: 100% 0;
+    transition: scale 0.7s var(--ease-inout);
   }
 
   .reveal-card[data-open="true"] .corner-fill,
   .reveal-card:focus-within .corner-fill {
-    clip-path: circle(150% at 100% 0%);
+    scale: 1;
   }
 
   @media (hover: hover) {
     .reveal-card:hover .corner-fill {
-      clip-path: circle(150% at 100% 0%);
+      scale: 1;
     }
   }
 }
