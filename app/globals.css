@@ -840,3 +840,22 @@ html.has-cursor * {
 [data-stack-pile][data-dragging] [data-tech-panel] {
   display: none !important;
 }
+
+/* ==========================================================================
+   Phase 5 – the shared WebGL canvas (components/webgl)
+   ========================================================================== */
+
+/* Above the content (compass, project covers), below the header (z-50), menu, grain and cursor. */
+.webgl-layer {
+  z-index: 40;
+}
+
+/* Hero reveal: under the hero copy (z-[6]) and About (z-10), so both stay on top of the liquid. */
+html[data-webgl-layer="under"] .webgl-layer {
+  z-index: 5;
+}
+
+/* Nothing to draw – the canvas leaves compositing. */
+html[data-webgl-idle] .webgl-layer {
+  visibility: hidden;
+}

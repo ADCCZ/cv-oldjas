@@ -11,6 +11,7 @@ import { Projects } from "@/components/sections/Projects";
 import { Skills } from "@/components/sections/Skills";
 import { Stack } from "@/components/sections/Stack";
 import { Stats } from "@/components/sections/Stats";
+import { WebglRoot } from "@/components/webgl/WebglRoot";
 import { links } from "@/content/links.config";
 import { projects } from "@/content/projects.config";
 import { getDictionary } from "@/lib/dictionary";
@@ -59,6 +60,7 @@ export default async function HomePage({ params }: Props) {
       </main>
       <Footer t={t} locale={locale} projectCount={projects.length} />
       <MotionRoot />
+      <WebglRoot />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person) }} />
     </>
   );
