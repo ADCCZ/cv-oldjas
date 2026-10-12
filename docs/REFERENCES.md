@@ -94,3 +94,5 @@ Odsouhlaseno 12. 10. 2026 – v těchto bodech mají přednost před `docs/PROMP
 | Cesta | Výšky složek jako juncastudio: každá další o výšku lišty nižší, aby spodní hrana seděla na spodku viewportu; obsah zakrývané složky bledne. | 3 |
 | Odkrývání v hero | Jako noth.in: WebGL simulace tekutiny, barvivo jako maska odkrývá druhou vrstvu (červená plocha + písmo s kovovým shaderem). | 5 |
 | Vlnky na projektech | Jako juncastudio: výšková simulace hladiny + refrakce, disperze RGB, odlesk, kaustiky. | 5 |
+| Tlačítka | Žádné pilulky: ostré rohy, textový blok + samostatný čtvereček s ikonou (juncastudio „VIEW PROJECT ↗“), text se při hoveru přetočí. Ostré rohy i u štítků a dlaždic. | 3 |
+| Popisky a čísla | Žádné mono písmo (JetBrains Mono působilo „AI“): verzálky Archivo, osa wdth 112 %, tabulkové číslice. | 3 |

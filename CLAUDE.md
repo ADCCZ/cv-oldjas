@@ -21,11 +21,14 @@ The full brief is in `docs/PROMPT.md`; effect decisions from the reference resea
 - **60 / 30 / 10**: 60 % base (`--bg`, `--surface`), 30 % red (`--red-950 … --red-500`), 10 % gold (`--gold`, `--gold-soft`, `--gold-text`).
 - Red text only at >= 24 px on dark. In light mode red text is `#9E0F1C`, gold text `#8A6A12`.
 - Gold never as a large area – numbers, hairlines, active states, focus ring, underlines.
-- Corners are either 0 or fully round (pills). Nothing in between.
+- **Square corners** on buttons, tags, tiles and icon buttons. Round only for stickers, badges and status dots.
+- Buttons: `.btn` + `.btn-primary | .btn-outline | .btn-cream | .btn-on-red` (+ `.btn-sm`) with `<ButtonContent label=… />` –
+  label block + separate icon square, text rolls on hover (juncastudio.com style). Never pill buttons.
 - Hairlines: `--line` (fg at 12 %). Grain overlay 5 %.
 - Easing `cubic-bezier(0.65, 0, 0.35, 1)` (`--ease-inout`, GSAP `power2.inOut`), `expo.out` for reveals, 0.6–1.2 s.
-- Fonts (all with latin-ext, test "ŘŠČŽĚŮ"): Archivo variable (wght 100–900, wdth 62–125) for display + text,
-  Instrument Serif italic for accent words, JetBrains Mono for numbers/labels/clocks, Caveat only on stickers.
+- Fonts (all with latin-ext, test "ŘŠČŽĚŮ"): Archivo variable (wght 100–900, wdth 62–125) for display, text **and
+  labels** (`.eyebrow`, `font-label`: caps, wdth 112 %, tabular numbers), Instrument Serif italic for accent words,
+  Caveat only on stickers. **No monospace font** – the user rejected JetBrains Mono as "AI-looking".
 - Logo: placeholder text "OJŠ" (`components/ui/Logo.tsx`) until the SVG lands in `public/logo.svg` (`fill="currentColor"`).
 - **Anti-AI-look**: no purple/blue gradients, no glassmorphism, no emoji in headings, no icons in circles as decoration,
   no percentage skill bars, no stock phrases, no invented references or numbers – only facts from `docs/PROMPT.md`.
