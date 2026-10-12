@@ -67,6 +67,7 @@ export function Cursor({ viewLabel, dragLabel }: Props) {
     let state: CursorState = "default";
     let lastScroll = window.scrollY;
     let frame = 0;
+    let moved = false;
 
     const place = (el: HTMLElement, x: number, y: number) => {
       el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
@@ -84,6 +85,7 @@ export function Cursor({ viewLabel, dragLabel }: Props) {
       if (labelShown(next.state) && !labelShown(state)) {
         labelPos.x = pointer.x;
         labelPos.y = pointer.y;
+        moved = true; // write the new position even if the pointer itself rests
       }
       state = next.state;
       const surface = next.red ? "red" : "base";
@@ -99,6 +101,7 @@ export function Cursor({ viewLabel, dragLabel }: Props) {
       }
       pointer.x = event.clientX;
       pointer.y = event.clientY;
+      moved = true;
       if (!seen) {
         // First move: start everything at the pointer, nothing slides in from the corner.
         seen = true;
@@ -121,16 +124,22 @@ export function Cursor({ viewLabel, dragLabel }: Props) {
 
     const tick = (_time: number, deltaMs: number) => {
       if (!seen) return;
-      const steps = Math.min(deltaMs, 64) / (1000 / 60);
-      const follow = (base: number) => 1 - Math.pow(1 - base, steps);
-
-      ringPos.x += (pointer.x - ringPos.x) * follow(RING_LERP);
-      ringPos.y += (pointer.y - ringPos.y) * follow(RING_LERP);
-      labelPos.x += (pointer.x - labelPos.x) * follow(LABEL_LERP);
-      labelPos.y += (pointer.y - labelPos.y) * follow(LABEL_LERP);
-      place(dot, pointer.x, pointer.y);
-      place(ring, ringPos.x, ringPos.y);
-      place(label, labelPos.x, labelPos.y);
+      // Nothing left to catch up with – no style writes while the mouse rests.
+      const settled =
+        Math.abs(pointer.x - ringPos.x) + Math.abs(pointer.y - ringPos.y) + Math.abs(pointer.x - labelPos.x) + Math.abs(pointer.y - labelPos.y) <
+        0.1;
+      if (!settled || moved) {
+        const steps = Math.min(deltaMs, 64) / (1000 / 60);
+        const follow = (base: number) => 1 - Math.pow(1 - base, steps);
+        ringPos.x += (pointer.x - ringPos.x) * follow(RING_LERP);
+        ringPos.y += (pointer.y - ringPos.y) * follow(RING_LERP);
+        labelPos.x += (pointer.x - labelPos.x) * follow(LABEL_LERP);
+        labelPos.y += (pointer.y - labelPos.y) * follow(LABEL_LERP);
+        place(dot, pointer.x, pointer.y);
+        place(ring, ringPos.x, ringPos.y);
+        place(label, labelPos.x, labelPos.y);
+        moved = false;
+      }
 
       // The page moves under a resting pointer (smooth scroll, the pinned projects strip, drifting
       // strips) – re-test what is under it, browsers only fire pointerover on real movement.
