@@ -253,7 +253,8 @@ export class FluidSim {
   private readonly splats: Splat[] = [];
   private readonly splatValue = new Vector3();
   private readonly simTexel = new Vector2();
-  private readonly dyeTexel = new Vector2();
+  /** One cell of the dye grid in uv. */
+  readonly dyeTexel = new Vector2();
 
   private readonly passes = {
     splat: pass(SPLAT, {

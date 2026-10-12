@@ -14,6 +14,7 @@ import {
   PlaneGeometry,
   RawShaderMaterial,
   RepeatWrapping,
+  Vector2,
   Vector3,
   Vector4,
   type WebGLRenderer,
@@ -49,6 +50,7 @@ out vec4 outColor;
 
 uniform sampler2D uName;     // glyph coverage of one marquee copy: r = name, g = red dash
 uniform sampler2D uDye;
+uniform vec2 uDyeTexel;
 uniform sampler2D uVelocity;
 uniform vec4 uRect;          // hero section, viewport CSS px (left, top, width, height)
 uniform vec4 uCopy[3];       // glyph box of the first copy of every visible row, viewport CSS px
@@ -116,7 +118,12 @@ void main() {
   float glyph = min(cov.r + cov.g, 1.0);
 
   // noth.in mask: smoothstep(0.5, 0.51, dye * 3.9) – a sharp yet organic edge, antialiased.
-  float d = texture(uDye, vUv).r * 3.9;
+  // A slightly blurred read rounds off the small wobbles of the contour.
+  vec2 o = uDyeTexel * 1.5;
+  float dye = texture(uDye, vUv).r * 2.0
+    + texture(uDye, vUv + vec2(o.x, 0.0)).r + texture(uDye, vUv - vec2(o.x, 0.0)).r
+    + texture(uDye, vUv + vec2(0.0, o.y)).r + texture(uDye, vUv - vec2(0.0, o.y)).r;
+  float d = dye / 6.0 * 3.9;
   float w = max(fwidth(d), 0.01);
   float mask = smoothstep(0.5 - 0.5 * w, 0.5 + 0.5 * w, d) * uReveal;
 
@@ -143,7 +150,7 @@ void main() {
 /** The fluid falls asleep this long after the last splat – its dye is gone by then. */
 const SLEEP_AFTER = 4.5;
 /** Width of the splat (gaussian sigma) relative to the font size – the stroke scales with the letters. */
-const SPLAT_EM = 0.09;
+const SPLAT_EM = 0.075;
 /** Fade of the revealed layer when the letters start to scatter. */
 const FADE = 0.35;
 /** Scatter progress below which the letters still stand exactly where the texture has them. */
@@ -171,7 +178,7 @@ class HeroRevealLayer {
   private dt = 0;
   private awakeUntil = 0;
   private asleep = true;
-  private pointer = { x: 0, y: 0, lastX: 0, lastY: 0, inside: false, fresh: false };
+  private pointer = { x: 0, y: 0, lastX: 0, lastY: 0, prevX: 0, prevY: 0, inside: false, fresh: false };
 
   constructor(
     private readonly renderer: WebGLRenderer,
@@ -188,6 +195,7 @@ class HeroRevealLayer {
       uniforms: {
         uName: { value: null },
         uDye: { value: null },
+        uDyeTexel: { value: new Vector2() },
         uVelocity: { value: null },
         uRect: { value: new Vector4() },
         uCopy: { value: [new Vector4(), new Vector4(), new Vector4()] },
@@ -292,6 +300,7 @@ class HeroRevealLayer {
     u.uRows!.value = rows;
     u.uName!.value = this.texture;
     u.uDye!.value = this.sim.dye;
+    u.uDyeTexel!.value.copy(this.sim.dyeTexel);
     u.uVelocity!.value = this.sim.velocityTexture;
     u.uBase!.value = this.live ? 1 : 0;
     u.uReveal!.value = this.reveal;
@@ -324,32 +333,61 @@ class HeroRevealLayer {
       y = r.top + r.height * (0.5 + 0.3 * Math.sin(t * 1.618));
     }
     const inside = x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
-    if (inside && p.inside) this.splatPath(p.lastX, p.lastY, x, y);
+    if (inside && p.inside) this.stroke(x, y);
+    else {
+      p.prevX = p.lastX = x;
+      p.prevY = p.lastY = y;
+    }
     p.inside = inside;
-    p.lastX = x;
-    p.lastY = y;
   }
 
-  /** Several small splats along a fast stroke keep the trail continuous instead of dotted. */
-  private splatPath(x0: number, y0: number, x1: number, y1: number) {
-    const r = this.rect;
-    const distance = Math.hypot(x1 - x0, y1 - y0);
-    if (distance < 0.5) return;
-    const steps = Math.min(8, Math.ceil(distance / 16));
-    // The same amount of dye per px of path, however fast the pointer moves (a resting, jittering
-    // pointer must not pile up a puddle).
-    const dye = (FLUID.dye * Math.min(distance, 128)) / 16 / steps;
-    // Uv deltas → isotropic force on the square-celled grid (the hero is wider than tall, or not).
-    const aspect = r.width / Math.max(1, r.height);
-    const dx = (((x1 - x0) / r.width) * Math.min(1, aspect)) / steps;
-    const dy = (-(y1 - y0) / r.height / Math.max(1, aspect)) / steps;
+  /**
+   * Splats along a smooth curve through the pointer samples – a quadratic Bézier from the middle of
+   * the previous segment to the middle of the new one, bending around the previous sample (how
+   * drawing apps smooth a stroke). A polyline has a corner at every sample, and each corner flung
+   * the dye sideways into a lump; along the curve the force follows its tangent instead.
+   */
+  private stroke(x: number, y: number) {
+    const p = this.pointer;
+    const ax = (p.prevX + p.lastX) / 2;
+    const ay = (p.prevY + p.lastY) / 2;
+    const bx = (p.lastX + x) / 2;
+    const by = (p.lastY + y) / 2;
+    const cx = p.lastX;
+    const cy = p.lastY;
+    p.prevX = p.lastX;
+    p.prevY = p.lastY;
+    p.lastX = x;
+    p.lastY = y;
+    const length = Math.hypot(cx - ax, cy - ay) + Math.hypot(bx - cx, by - cy);
+    if (length < 0.5) return;
+
+    const steps = Math.min(12, Math.ceil(length / 10));
+    let qx = ax;
+    let qy = ay;
     for (let i = 1; i <= steps; i++) {
       const t = i / steps;
-      const u = (x0 + (x1 - x0) * t - r.left) / r.width;
-      const v = 1 - (y0 + (y1 - y0) * t - r.top) / r.height;
-      this.sim.splat(u, v, dx, dy, dye);
+      const s = 1 - t;
+      const nx = s * s * ax + 2 * s * t * cx + t * t * bx;
+      const ny = s * s * ay + 2 * s * t * cy + t * t * by;
+      this.splatAt(nx, ny, nx - qx, ny - qy);
+      qx = nx;
+      qy = ny;
     }
     this.awakeUntil = this.time + SLEEP_AFTER;
+  }
+
+  /** One splat at viewport point (x, y) moving by (dx, dy) px since the previous one. */
+  private splatAt(x: number, y: number, dx: number, dy: number) {
+    const r = this.rect;
+    // Uv deltas → isotropic force on the square-celled grid (the hero is wider than tall, or not).
+    const aspect = r.width / Math.max(1, r.height);
+    const fx = (dx / r.width) * Math.min(1, aspect);
+    const fy = -dy / r.height / Math.max(1, aspect);
+    // The same amount of dye per px of path, however fast the pointer moves (a resting, jittering
+    // pointer must not pile up a puddle).
+    const dye = (FLUID.dye * Math.min(Math.hypot(dx, dy), 24)) / 16;
+    this.sim.splat((x - r.left) / r.width, 1 - (y - r.top) / r.height, fx, fy, dye);
   }
 
   /** Rasterises the first marquee copy (glyph coverage only) – needs the letters at rest. */
