@@ -140,12 +140,6 @@
   padding-inline: var(--gutter);
 }
 
-/* Display sizes – tight tracking on everything big. */
-@utility text-hero {
-  font-size: clamp(6rem, 22vw, 26rem);
-  line-height: 0.86;
-  letter-spacing: -0.04em;
-}
 
 @utility text-h2 {
   font-size: clamp(2.5rem, 6vw, 6rem);
@@ -412,6 +406,10 @@
     to {
       transform: translate3d(-50%, 0, 0);
     }
+  }
+
+  .marquee-row[data-marquee-row="1"] .marquee-track {
+    animation-direction: reverse;
   }
 
   .status-dot {
@@ -873,4 +871,49 @@ html[data-webgl-idle] .webgl-layer {
 /* WebGL draws the hero name itself (plain and revealed) – the DOM marquee steps back meanwhile. */
 html[data-hero-gl] [data-hero-name] {
   opacity: 0;
+}
+
+/*
+ * The hero name fills the height the h1 gets (container query units): one row on wide screens,
+ * two on tall windows, three on portrait screens – each row as big as the height allows, but never
+ * more than 32vw, so a row always shows a readable part of the name. The negative margin stands
+ * the last row's baseline right on the status bar.
+ */
+.hero-name {
+  --rows: 1;
+  font-size: clamp(4.5rem, min(32vw, 100cqh / var(--rows) / 1.06), 40rem);
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+  margin-bottom: -0.1em;
+}
+
+.marquee-row + .marquee-row {
+  display: none;
+}
+
+@media (max-aspect-ratio: 5/4) {
+  .hero-name {
+    --rows: 2;
+  }
+
+  .marquee-row[data-marquee-row="1"] {
+    display: block;
+  }
+}
+
+@media (max-aspect-ratio: 3/4) {
+  .hero-name {
+    --rows: 3;
+  }
+
+  .marquee-row[data-marquee-row="2"] {
+    display: block;
+  }
+}
+
+/* Size containment: the h1's height comes from the hero, not from the name inside it. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-title {
+    container-type: size;
+  }
 }

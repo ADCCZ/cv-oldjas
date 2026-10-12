@@ -9,6 +9,23 @@ import { HERO_READY_EVENT, heroState } from "@/lib/webgl";
 /** Idle marquee speed in px/s – proportional to the viewport, so it feels the same everywhere. */
 const baseSpeed = () => Math.max(40, window.innerWidth * 0.045);
 
+/** Start of every word of the name as a fraction of the copy's width (layout scales with the font). */
+function measureWordStarts(copy: HTMLElement | null): number[] {
+  const text = copy?.firstChild;
+  if (!copy || !(text instanceof Text)) return [0];
+  const box = copy.getBoundingClientRect();
+  const range = document.createRange();
+  const starts = [0];
+  for (let i = 1; i < text.length; i++) {
+    if (text.data[i - 1] !== " " || text.data[i] === " ") continue;
+    range.setStart(text, i);
+    range.setEnd(text, i + 1);
+    const rect = range.getBoundingClientRect();
+    if (box.width > 0) starts.push((rect.left - box.left) / box.width);
+  }
+  return starts;
+}
+
 /**
  * Hero choreography (renders nothing, drives the server-rendered hero):
  * 1. Infinite name – speed and direction follow the scroll velocity
@@ -31,19 +48,26 @@ export function HeroMotion() {
     const mm = gsap.matchMedia();
     mm.add(MOTION_OK, () => {
       const name = section.querySelector<HTMLElement>("[data-hero-name]");
-      const track = section.querySelector<HTMLElement>("[data-marquee-track]");
-      if (!name || !track) return;
+      const tracks = gsap.utils.toArray<HTMLElement>("[data-marquee-track]", section);
+      if (!name || !tracks.length) return;
       const lineEls = section.querySelectorAll<HTMLElement>("[data-hero-line]");
       const pops = section.querySelectorAll<HTMLElement>("[data-hero-pop]");
       const blocks = section.querySelectorAll<HTMLElement>("[data-hero-intro], [data-hero-bar]");
       const state = introState();
 
       // ---- 1. Velocity-driven marquee ---------------------------------------------------------
-      track.classList.add("is-driven");
-      const setX = gsap.quickSetter(track, "x", "px");
+      // Every other row runs the other way. Rows hidden by CSS (wide screens) report no width.
+      const rows = tracks.map((track, index) => {
+        track.classList.add("is-driven");
+        return { track, x: 0, direction: index % 2 ? -1 : 1, setX: gsap.quickSetter(track, "x", "px") };
+      });
       const drive = { slow: 1 }; // the scroll timeline brings this to 0
-      let x = 0;
       let speed = -baseSpeed();
+      let explode: gsap.core.Timeline | null = null;
+      // Where each word starts, as a fraction of one copy – rows begin at different words, so a
+      // tall screen shows "OLDŘICH" above "ŠVEHLA" instead of the same letters twice.
+      let wordStarts: number[] = [0];
+      let placedRows = 0;
       const tick = (_time: number, deltaMs: number) => {
         heroState.scatter = explode?.progress() ?? 0;
         if (window.scrollY > window.innerHeight * 2.2) return; // hero long gone – save the frames
@@ -51,17 +75,26 @@ export function HeroMotion() {
         const direction = velocity < -0.5 ? 1 : -1;
         const target = direction * (baseSpeed() + Math.min(Math.abs(velocity) * 40, 1500));
         speed += (target - speed) * 0.06; // ease into the new speed instead of jumping
-        const copyWidth = track.scrollWidth / 2;
-        if (copyWidth > 0) {
-          x = gsap.utils.wrap(-copyWidth, 0, x + (speed * drive.slow * deltaMs) / 1000);
-          setX(x);
+        const widths = rows.map((row) => row.track.scrollWidth / 2);
+        const visible = widths.filter((w) => w > 0).length;
+        if (visible !== placedRows) {
+          placedRows = visible;
+          rows.forEach((row, i) => {
+            const word = wordStarts[Math.round((i * wordStarts.length) / Math.max(1, visible))] ?? 0;
+            row.x = -word * widths[i]!;
+          });
         }
+        rows.forEach((row, i) => {
+          const copyWidth = widths[i]!;
+          if (copyWidth <= 0) return;
+          row.x = gsap.utils.wrap(-copyWidth, 0, row.x + (row.direction * speed * drive.slow * deltaMs) / 1000);
+          row.setX(row.x);
+        });
       };
       gsap.ticker.add(tick);
 
       let chars: SplitText | null = null;
       let lines: SplitText | null = null;
-      let explode: gsap.core.Timeline | null = null;
       let reveal: (() => void) | null = null;
       const settled = () => {
         heroState.ready = true;
@@ -69,6 +102,8 @@ export function HeroMotion() {
       };
 
       const cancelFonts = afterFonts(() => {
+        wordStarts = measureWordStarts(section.querySelector<HTMLElement>("[data-marquee-copy]"));
+        placedRows = 0;
         chars = SplitText.create(section.querySelectorAll("[data-marquee-copy]"), {
           type: "chars",
           charsClass: "hero-char",
@@ -150,9 +185,9 @@ export function HeroMotion() {
         explode?.kill();
         chars?.revert();
         lines?.revert();
-        track.classList.remove("is-driven");
+        tracks.forEach((track) => track.classList.remove("is-driven"));
         name.classList.remove("is-masked");
-        gsap.set([track, name, pops, blocks], { clearProps: "all" });
+        gsap.set([...tracks, name, pops, blocks], { clearProps: "all" });
       };
     });
 

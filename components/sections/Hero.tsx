@@ -23,7 +23,11 @@ export function Hero({ t, locale }: Props) {
   const statusShort = `${t.hero.statusShort} · ${hoursPerWeek} ${t.availability.hoursUnit}`;
 
   return (
-    <section id="top" aria-labelledby="hero-title" className="relative z-[6] flex min-h-svh flex-col justify-between pt-24 md:pt-28">
+    <section
+      id="top"
+      aria-labelledby="hero-title"
+      className="relative z-[6] flex min-h-svh flex-col justify-between pt-24 md:pt-28"
+    >
       <div className="site-grid">
         <div data-hero-intro className="col-span-12 md:col-span-7 md:col-start-4 lg:col-span-5 lg:col-start-4">
           <p data-hero-line className="text-2xl leading-tight font-medium tracking-tight md:text-3xl">
@@ -43,11 +47,12 @@ export function Hero({ t, locale }: Props) {
         </div>
       </div>
 
-      <h1 id="hero-title" className="my-10 font-black uppercase text-hero md:my-6">
+      {/* The h1 takes all the height left between the intro and the bar; the name rows fill it. */}
+      <h1 id="hero-title" className="hero-title flex flex-1 flex-col justify-end pt-10 font-black uppercase md:pt-6">
         <span className="sr-only">{FULL_NAME}</span>
-        <Marquee text={FULL_NAME} className="motion-only py-[0.08em]" />
+        <Marquee text={FULL_NAME} className="motion-only" />
         {/* Reduced motion: the name stands still and wraps instead of looping. */}
-        <span aria-hidden="true" className="reduced-only px-gutter text-[clamp(3.5rem,15vw,12rem)] leading-[0.9]">
+        <span aria-hidden="true" className="reduced-only px-gutter text-[clamp(3.5rem,15vw,12rem)] leading-[0.98]">
           {FULL_NAME}
         </span>
       </h1>
