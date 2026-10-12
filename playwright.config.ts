@@ -9,6 +9,8 @@ const PORT = Number(process.env.PORT ?? 3000);
 export default defineConfig({
   testDir: "tests",
   fullyParallel: true,
+  // Every page runs rAF animations against one `next start` – more local workers only fight for the CPU.
+  workers: process.env.CI ? undefined : 4,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
