@@ -45,7 +45,7 @@
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   --gutter: 16px;
-  --header-h: 4.5rem;
+  --header-h: 4rem;
   --bar-h: 4rem;
 
   color-scheme: dark;

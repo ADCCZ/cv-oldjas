@@ -44,7 +44,7 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <>
-      <Nav locale={locale} projectCount={projects.length} labels={{ ...t.nav, ...t.a11y }} />
+      <Nav locale={locale} projectCount={projects.length} cvHref={links.cv[locale].design} labels={{ ...t.nav, ...t.a11y }} />
       <main id="main" tabIndex={-1}>
         <Hero t={t} locale={locale} />
         <About t={t} />
