@@ -239,10 +239,46 @@ test.describe("prefers-reduced-motion: reduce", () => {
       expect(await heading.evaluate((el) => getComputedStyle(el).opacity), `#${id} heading opacity`).toBe("1");
     }
     // The infinite marquee is replaced by the static name.
-    await expect(page.locator(".marquee-track")).toBeHidden();
+    await expect(page.locator("[data-hero-name]")).toBeHidden();
     // No drifting clones, no physics, no custom cursor.
     await expect(page.locator("#stats [data-strip-copy]").nth(0)).toBeHidden();
     await expect(page.locator("#stack-tiles")).not.toHaveAttribute("data-mode", /.*/);
     await expect(page.locator(".cursor")).toHaveCount(0);
+    // No WebGL at all – not even loaded.
+    await expect(page.locator(".webgl-layer")).toHaveCount(0);
+    await expect(page.locator("html")).not.toHaveAttribute("data-webgl", /.*/);
+  });
+});
+
+test.describe("WebGL layer", () => {
+  test("loads lazily after the hero has settled, without console errors", async ({ page }) => {
+    const errors = collectErrors(page);
+    await page.goto("/");
+    // Running or unavailable (no GPU in the test browser) – both are fine, errors are not.
+    const html = page.locator("html");
+    await expect(html).toHaveAttribute("data-webgl", /^(on|off)$/, { timeout: 30_000 });
+    if ((await html.getAttribute("data-webgl")) === "on") await expect(page.locator(".webgl-layer canvas")).toHaveCount(1);
+    await page.waitForTimeout(1500);
+    expect(errors).toEqual([]);
+  });
+
+  test("without WebGL the DOM versions stay and nothing breaks", async ({ page }) => {
+    await page.addInitScript(() => {
+      const original = HTMLCanvasElement.prototype.getContext;
+      Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
+        value: function (this: HTMLCanvasElement, type: string, ...args: unknown[]) {
+          return type.startsWith("webgl") ? null : original.apply(this, [type, ...args] as never);
+        },
+      });
+    });
+    const errors = collectErrors(page);
+    await page.goto("/");
+    await expect(page.locator("html")).toHaveAttribute("data-webgl", "off", { timeout: 15_000 });
+    await expect(page.locator(".webgl-layer")).toHaveCount(0);
+    // The DOM name, the flat compass and the covers are what the visitor sees.
+    await expect(page.locator("[data-hero-name]")).toHaveCSS("opacity", "1");
+    await expect(page.locator(".compass-svg")).toHaveCSS("opacity", "1");
+    await expect(page.locator("[data-cover]").first()).toBeVisible();
+    expect(errors).toEqual([]);
   });
 });
