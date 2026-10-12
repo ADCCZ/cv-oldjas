@@ -1,5 +1,6 @@
 import { DriftStrip } from "@/components/motion/DriftStrip";
 import { StatsMotion } from "@/components/motion/StatsMotion";
+import { StatsPills } from "@/components/motion/StatsPills";
 import { stats } from "@/content/stats.config";
 import type { Dictionary } from "@/lib/dictionary";
 
@@ -69,6 +70,7 @@ export function Stats({ t }: { t: Dictionary }) {
       </div>
       <StatsMotion />
       <DriftStrip speed={30} />
+      <StatsPills texts={Object.values(t.stats.stickers)} />
     </section>
   );
 }
