@@ -51,7 +51,7 @@ export function ThemeToggle({ toLight, toDark }: Props) {
         setTheme(isDark ? "light" : "dark");
       }}
       aria-label={isDark ? toLight : toDark}
-      className="grid size-10 place-items-center border border-line-strong text-fg transition-colors duration-500 hover:border-fg"
+      className="grid size-10 place-items-center border border-line-strong text-fg transition-colors duration-300 hover:border-fg"
     >
       {/* Attributes are the initial (moon) state; GSAP owns them afterwards. */}
       <svg ref={svgRef} viewBox="0 0 24 24" className="size-[18px]" aria-hidden="true" focusable="false">

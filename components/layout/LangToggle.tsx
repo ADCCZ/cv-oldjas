@@ -52,7 +52,7 @@ export function LangToggle({ locale, label, activeSection, tone = "default", cla
             lang={l}
             aria-current={l === locale ? "true" : undefined}
             onClick={switchTo(l)}
-            className={`px-1 py-2 transition-colors duration-300 ${l === locale ? activeColor : idleColor}`}
+            className={`px-1 py-2 transition-colors duration-200 ${l === locale ? activeColor : idleColor}`}
           >
             {l.toUpperCase()}
           </a>

@@ -125,7 +125,7 @@ export function Nav({ locale, projectCount, cvHref, labels }: Props) {
                     <a
                       href={`#${item}`}
                       aria-current={isActive ? "location" : undefined}
-                      className="flex items-center gap-2 py-0.5 transition-colors duration-300 hover:text-gold-text"
+                      className="flex items-center gap-2 py-0.5 transition-colors duration-200 hover:text-gold-text"
                     >
                       <span
                         className={`size-1.5 rounded-full bg-gold transition-transform duration-500 ${isActive ? "scale-100" : "scale-0"}`}
@@ -142,7 +142,7 @@ export function Nav({ locale, projectCount, cvHref, labels }: Props) {
           {/* … folds into MENU :: once the hero is gone. */}
           {menuButton(`hidden md:inline-flex ${compact ? "pointer-events-auto opacity-100" : "opacity-0"}`, !compact)}
 
-          <a href="#top" aria-label={labels.home} className="pointer-events-auto text-fg transition-colors duration-300 hover:text-gold-text md:hidden">
+          <a href="#top" aria-label={labels.home} className="pointer-events-auto text-fg transition-colors duration-200 hover:text-gold-text md:hidden">
             <Logo />
           </a>
         </div>
@@ -150,7 +150,7 @@ export function Nav({ locale, projectCount, cvHref, labels }: Props) {
         <a
           href="#top"
           aria-label={labels.home}
-          className="pointer-events-auto absolute left-1/2 hidden -translate-x-1/2 text-fg transition-colors duration-300 hover:text-gold-text md:block"
+          className="pointer-events-auto absolute left-1/2 hidden -translate-x-1/2 text-fg transition-colors duration-200 hover:text-gold-text md:block"
         >
           <Logo />
         </a>
