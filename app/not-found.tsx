@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-/** Global 404 – it sits outside the [locale] tree, so it speaks both languages. */
+/** Global 404 – it sits outside both language trees, so it speaks both languages. */
 export default function NotFound() {
   return (
     <html lang="en" className={fontVariables}>

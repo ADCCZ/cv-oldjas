@@ -86,7 +86,7 @@ export function shuffled<T>(items: readonly T[]): T[] {
 }
 
 /**
- * Intro state written by the inline script in app/[locale]/layout.tsx before first paint:
+ * Intro state written by the inline script in app/_site/SiteLayout.tsx before first paint:
  * "play" – first visit in this tab session, the loader runs;
  * "replay" – loader already seen, only the hero letters rise;
  * "skip" – deep link (#section) or reduced motion, no intro at all.

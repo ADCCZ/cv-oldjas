@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
 import { Nav } from "@/components/layout/Nav";
 import { MotionRoot } from "@/components/motion/MotionRoot";
@@ -16,14 +15,10 @@ import { links } from "@/content/links.config";
 import { projects } from "@/content/projects.config";
 import { getDictionary } from "@/lib/dictionary";
 import { getRepoMeta } from "@/lib/github";
-import { isLocale } from "@/lib/i18n";
+import type { Locale } from "@/content/types";
 
-type Props = { params: Promise<{ locale: string }> };
-
-export default async function HomePage({ params }: Props) {
-  const { locale } = await params;
-  if (!isLocale(locale)) notFound();
-
+/** The one page of the site, in either language – app/(en)/page.tsx and app/cs/page.tsx. */
+export async function HomePage({ locale }: { locale: Locale }) {
   const t = getDictionary(locale);
   const github = await getRepoMeta(projects.flatMap((p) => (p.repo ? [p.repo] : [])));
 

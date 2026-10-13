@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ButtonContent } from "@/components/ui/ButtonContent";
@@ -8,14 +7,10 @@ import { Intro } from "@/components/layout/Intro";
 import { MagneticButtons } from "@/components/motion/MagneticButtons";
 import { Providers } from "@/components/layout/Providers";
 import { links } from "@/content/links.config";
+import type { Locale } from "@/content/types";
 import { getDictionary } from "@/lib/dictionary";
 import { fontVariables } from "@/lib/fonts";
-import { isLocale, localePath, locales } from "@/lib/i18n";
-
-type Props = {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-};
+import { localePath } from "@/lib/i18n";
 
 /**
  * Runs before first paint and decides the intro (see lib/motion.ts – IntroState):
@@ -23,23 +18,14 @@ type Props = {
  */
 const INTRO_SCRIPT = `(function(){var s="skip";try{var rm=matchMedia("(prefers-reduced-motion: reduce)").matches;var deep=location.hash.length>1;var seen=sessionStorage.getItem("cv:intro")==="1";s=rm||deep?"skip":seen?"replay":"play"}catch(e){}document.documentElement.dataset.intro=s})();`;
 
-// Only /en (served as /) and /cs exist – everything else is a 404.
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
-
-export const viewport: Viewport = {
+export const siteViewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: dark)", color: "#0A0A0A" },
     { media: "(prefers-color-scheme: light)", color: "#F6F3EE" },
   ],
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params;
-  if (!isLocale(locale)) return {};
+export function siteMetadata(locale: Locale): Metadata {
   // Meta tags get the plain text – no invisible joiners in titles and descriptions.
   const t = getDictionary(locale, "plain");
 
@@ -71,9 +57,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function LocaleLayout({ children, params }: Props) {
-  const { locale } = await params;
-  if (!isLocale(locale)) notFound();
+/** The root markup of both language versions – app/(en)/layout.tsx and app/cs/layout.tsx. */
+export function SiteLayout({ locale, children }: { locale: Locale; children: React.ReactNode }) {
   const t = getDictionary(locale);
 
   return (
