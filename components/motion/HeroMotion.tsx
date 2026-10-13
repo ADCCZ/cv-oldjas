@@ -61,8 +61,28 @@ export function HeroMotion() {
       });
       rows.forEach((row) => resizeObserver.observe(row.track));
       const loopMs = (loop: CSSAnimation) => Number(loop.effect?.getTiming().duration) || 60_000;
+      // Until the first input – wheel, touch, key, click or a scroll away from the top – the hero is
+      // left alone: the loop keeps its CSS speed and the pin waits. Changing a running compositor
+      // animation or pinning repaints the name, and before the first input Chrome counts every
+      // repaint as a new Largest Contentful Paint. (Refreshes and the intro's scroll lock fire scroll
+      // events at the top too, so those do not count.)
+      let engaged = false;
+      let onEngage: (() => void) | null = null;
+      const ENGAGE = ["wheel", "touchstart", "keydown", "pointerdown"] as const;
+      const onScroll = () => {
+        if (window.scrollY > 0) engage();
+      };
+      const engage = () => {
+        engaged = true;
+        ENGAGE.forEach((type) => window.removeEventListener(type, engage));
+        window.removeEventListener("scroll", onScroll);
+        onEngage?.();
+      };
+      ENGAGE.forEach((type) => window.addEventListener(type, engage, { passive: true }));
+      window.addEventListener("scroll", onScroll, { passive: true });
       const tick = () => {
         heroState.scatter = explode?.progress() ?? 0;
+        if (!engaged) return;
         const gone = window.scrollY > window.innerHeight * 2.2; // hero long gone – stop the rows
         const velocity = getLenis()?.velocity ?? 0;
         const direction = velocity < -0.5 ? 1 : -1;
@@ -117,38 +137,42 @@ export function HeroMotion() {
           else reveal();
         }
 
-        // ---- 3. Scroll: pin + letters scatter in 3D -------------------------------------------
-        explode = gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            end: "+=100%",
-            pin: true,
-            pinSpacing: false, // About slides over the pinned hero
-            pinSpacer: section.parentElement, // [data-hero-spacer] from the server – no DOM move
-            scrub: 0.6,
-            invalidateOnRefresh: true,
-          },
-        });
-        explode
-          .to(drive, { slow: 0, duration: 0.3, ease: "power1.out" }, 0)
-          .to(
-            letters,
-            {
-              x: () => rand(-0.55, 0.55) * window.innerWidth,
-              y: () => rand(-0.65, 0.4) * window.innerHeight,
-              z: () => rand(-600, 300),
-              rotation: () => rand(-120, 120),
-              rotationX: () => rand(-80, 80),
-              transformPerspective: 900,
-              opacity: 0,
-              ease: "power2.in",
-              duration: 0.7,
-              stagger: { each: 0.005, from: "random" },
+        // ---- 3. Scroll: pin + letters scatter in 3D (built on the first input, see above) --------
+        const buildExplode = () => {
+          explode = gsap.timeline({
+            scrollTrigger: {
+              trigger: section,
+              start: "top top",
+              end: "+=100%",
+              pin: true,
+              pinSpacing: false, // About slides over the pinned hero
+              pinSpacer: section.parentElement, // [data-hero-spacer] from the server – no DOM move
+              scrub: 0.6,
+              invalidateOnRefresh: true,
             },
-            0.05,
-          )
-          .to(blocks, { y: () => -window.innerHeight * 0.12, autoAlpha: 0, ease: "power2.in", duration: 0.32, stagger: 0.06 }, 0);
+          });
+          explode
+            .to(drive, { slow: 0, duration: 0.3, ease: "power1.out" }, 0)
+            .to(
+              letters,
+              {
+                x: () => rand(-0.55, 0.55) * window.innerWidth,
+                y: () => rand(-0.65, 0.4) * window.innerHeight,
+                z: () => rand(-600, 300),
+                rotation: () => rand(-120, 120),
+                rotationX: () => rand(-80, 80),
+                transformPerspective: 900,
+                opacity: 0,
+                ease: "power2.in",
+                duration: 0.7,
+                stagger: { each: 0.005, from: "random" },
+              },
+              0.05,
+            )
+            .to(blocks, { y: () => -window.innerHeight * 0.12, autoAlpha: 0, ease: "power2.in", duration: 0.32, stagger: 0.06 }, 0);
+        };
+        if (engaged) buildExplode();
+        else onEngage = buildExplode;
 
         requestRefresh();
         if (state === "skip") settled();
@@ -159,6 +183,9 @@ export function HeroMotion() {
         heroState.scatter = 0;
         cancelFonts();
         resizeObserver.disconnect();
+        ENGAGE.forEach((type) => window.removeEventListener(type, engage));
+        window.removeEventListener("scroll", onScroll);
+        onEngage = null;
         gsap.ticker.remove(tick);
         if (reveal) window.removeEventListener(INTRO_REVEAL_EVENT, reveal);
         explode?.scrollTrigger?.kill();

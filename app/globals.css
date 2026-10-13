@@ -421,7 +421,8 @@
   .marquee-track {
     display: flex;
     width: max-content;
-    animation: marquee 60s linear infinite;
+    /* ≈ the idle speed HeroMotion uses later (4.5 % of the viewport width per second). */
+    animation: marquee 40s linear infinite;
   }
 
   @keyframes marquee {
@@ -957,9 +958,9 @@ html[data-hero-gl] [data-hero-name] {
   }
 
   /* Rows start at different words: "OLDŘICH" over "ŠVEHLA" (word starts as fractions of a copy –
-     JAN 0.379, ŠVEHLA 0.557 in Archivo; row 1 runs in reverse, so 1 − 0.557 of the 60 s loop). */
+     JAN 0.379, ŠVEHLA 0.557 in Archivo; row 1 runs in reverse, so 1 − 0.557 of the 40 s loop). */
   .marquee-row[data-marquee-row="1"] .marquee-track {
-    animation-delay: -26.6s;
+    animation-delay: -17.7s;
   }
 }
 
@@ -974,11 +975,11 @@ html[data-hero-gl] [data-hero-name] {
 
   /* Three rows: OLDŘICH / JAN / ŠVEHLA. */
   .marquee-row[data-marquee-row="1"] .marquee-track {
-    animation-delay: -37.3s;
+    animation-delay: -24.8s;
   }
 
   .marquee-row[data-marquee-row="2"] .marquee-track {
-    animation-delay: -33.4s;
+    animation-delay: -22.3s;
   }
 }
 
