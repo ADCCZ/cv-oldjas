@@ -824,6 +824,25 @@ html.has-cursor * {
   }
 }
 
+/* The "+" of an archive row turns into a "×" while the row is open. With motion, ArchiveMotion sets
+   data-expanded to the state the row is heading to – the icon follows the pointer, not the collapse. */
+.archive-plus {
+  display: inline-block;
+  width: 0.6em;
+  height: 0.6em;
+}
+
+details[open]:not([data-expanded]) .archive-plus,
+details[data-expanded="true"] .archive-plus {
+  rotate: 45deg;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .archive-plus {
+    transition: rotate 0.4s var(--ease-inout);
+  }
+}
+
 /* Falling stickers on the stats strip (StatsPills) – positioned by the physics, round like every sticker. */
 .stat-pill {
   position: absolute;

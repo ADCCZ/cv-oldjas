@@ -37,11 +37,10 @@ export function ProjectArchive({ t, locale }: { t: Dictionary; locale: Locale })
                     {tx(project.title, locale)}
                   </span>
                   <span className={`eyebrow hidden text-right text-fg-muted md:col-span-4 md:block ${ON_FILL}`}>{stack}</span>
-                  <span
-                    className={`col-span-1 text-right text-2xl leading-none transition-[rotate,color] duration-500 group-open:rotate-45 ${ON_FILL}`}
-                    aria-hidden="true"
-                  >
-                    +
+                  <span className={`col-span-1 text-right text-2xl leading-none ${ON_FILL}`} aria-hidden="true">
+                    <svg className="archive-plus" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M6 0v12M0 6h12" />
+                    </svg>
                   </span>
                 </summary>
                 <div data-archive-body className="overflow-hidden">

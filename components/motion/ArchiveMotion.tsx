@@ -11,7 +11,9 @@ const HOVER_INTENT_MS = 90;
  * Archive rows (<details>):
  * - open and close with an animated height instead of the native jump (click, Enter, Space);
  * - with a mouse they also expand while hovered and collapse when the pointer leaves, unless the
- *   row was opened by a click – then it stays open until clicked again.
+ *   row was opened by a click – then it stays open until clicked again;
+ * - keep `data-expanded` on the <details> at the state the row is heading to: the "+" turns into a
+ *   "×" by it (globals.css) and back as soon as the pointer leaves, not only once the row collapsed.
  * The red fill and text colours are CSS (globals.css, ProjectArchive). Reduced motion keeps the
  * native, instant <details>.
  */
@@ -35,10 +37,12 @@ export function ArchiveMotion() {
         let pinned = details.open; // opened by a click – leaving with the pointer does not close it
         let hoverBlocked = false; // closed by a click while hovered – no reopening until the pointer leaves
         let intent = 0;
+        details.dataset.expanded = String(wanted);
 
         const setOpen = (open: boolean) => {
           if (open === wanted) return;
           wanted = open;
+          details.dataset.expanded = String(open);
           gsap.killTweensOf(body);
           if (open) {
             const from = details.open ? body.offsetHeight : 0;
@@ -69,7 +73,10 @@ export function ArchiveMotion() {
         };
         // Opened by the browser itself (find in page) – treat it like a click.
         const onToggle = () => {
-          if (details.open && !wanted) wanted = pinned = true;
+          if (details.open && !wanted) {
+            wanted = pinned = true;
+            details.dataset.expanded = "true";
+          }
         };
         const onEnter = (event: PointerEvent) => {
           if (!hover || event.pointerType === "touch") return;
@@ -96,6 +103,7 @@ export function ArchiveMotion() {
           gsap.killTweensOf(body);
           gsap.set(body, { clearProps: "height" });
           details.open = wanted;
+          delete details.dataset.expanded;
         };
       });
 
