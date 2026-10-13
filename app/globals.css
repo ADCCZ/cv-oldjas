@@ -859,9 +859,11 @@ html.has-cursor * {
   will-change: transform;
 }
 
-/* Waiting above the box until its turn to fall. */
+/* Waiting above the box until its turn to fall – transparent, not hidden, so Tab still reaches it
+   (keyboard focus drops the whole pile at once, StackPhysics). */
 [data-mode="pile"] [data-tile]:not([data-live]) {
-  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
 
 [data-mode="pile"] [data-tile]:is(:hover, :focus-within, [data-open="true"]) {

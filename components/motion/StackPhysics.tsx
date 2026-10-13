@@ -292,6 +292,16 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
   enterPile();
   running = true;
   const trigger = ScrollTrigger.create({ trigger: container, start: "top 75%", once: true, onEnter: dropIn });
+  // Keyboard focus anywhere in the section (a waiting tile included) drops every tile at once.
+  const section = container.closest("section") ?? container;
+  const dropAll = () => {
+    if (!drop) {
+      trigger.kill();
+      dropIn();
+    }
+    drop?.progress(1);
+  };
+  section.addEventListener("focusin", dropAll);
 
   /** Removes every tile body and the lid; floor and walls stay for the next scatter. */
   const clearBodies = () => {
@@ -373,6 +383,7 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
     window.removeEventListener("pointermove", onMove);
     window.removeEventListener("pointerup", release);
     window.removeEventListener("pointercancel", release);
+    section.removeEventListener("focusin", dropAll);
     clearBodies();
     Composite.clear(world, false);
     Engine.clear(engine);
