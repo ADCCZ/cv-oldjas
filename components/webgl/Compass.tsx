@@ -14,14 +14,18 @@ import {
   MeshBasicMaterial,
   MeshStandardMaterial,
   Object3D,
+  PerspectiveCamera as CubeFaceCamera,
   PMREMGenerator,
   TorusGeometry,
   type BufferGeometry,
   type Material,
+  type Texture,
+  type WebGLRenderer,
+  type WebGLRenderTarget,
 } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { aboutState, bearing } from "@/lib/webgl";
-import { precompile } from "./precompile";
+import { passJob, precompile } from "./precompile";
 import { addStage, layer, ORDER } from "./stage";
 
 /*
@@ -137,6 +141,60 @@ function buildModel(): Model {
   };
 }
 
+/**
+ * Studio reflections for the metal, filtered on the GPU – no HDR file to download. PMREMGenerator
+ * compiles its filter shaders synchronously on first use, and its GGX filter (256 samples that
+ * Direct3D unrolls) blocks an integrated GPU for about a second. So the generator's materials are
+ * compiled in the background first – into one of its own render targets, as it renders them – and
+ * the room is filtered once they are ready. Reaches into three r186 internals; without them it
+ * simply filters at once. Returns a cancel function.
+ */
+function studioEnvironment(gl: WebGLRenderer, done: (environment: Texture) => void): () => void {
+  const pmrem = new PMREMGenerator(gl);
+  const room = new RoomEnvironment();
+  const inner = pmrem as unknown as {
+    _setSize?: (size: number) => void;
+    _allocateTargets?: () => WebGLRenderTarget;
+    _blurMaterial?: Material | null;
+    _ggxMaterial?: Material | null;
+  };
+  let result: WebGLRenderTarget | null = null;
+  let cancelled = false;
+  const filter = () => {
+    if (cancelled) return;
+    result = pmrem.fromScene(room, 0.04);
+    done(result.texture);
+  };
+
+  let cancelCompile = () => {};
+  if (inner._setSize && inner._allocateTargets) {
+    inner._setSize(256);
+    const target = inner._allocateTargets();
+    const passes = [inner._blurMaterial, inner._ggxMaterial].filter((material): material is Material => !!material);
+    cancelCompile = precompile(
+      gl,
+      [
+        { object: room, camera: new CubeFaceCamera(90, 1, 0.1, 100), target },
+        { ...passJob(passes, { normals: false }), target },
+      ],
+      () => {
+        target.dispose();
+        filter();
+      },
+    );
+  } else {
+    filter();
+  }
+
+  return () => {
+    cancelled = true;
+    cancelCompile();
+    result?.dispose();
+    pmrem.dispose();
+    room.dispose();
+  };
+}
+
 /** Shortest signed difference between two angles (radians). */
 function angleDelta(from: number, to: number): number {
   const d = (to - from) % (Math.PI * 2);
@@ -158,16 +216,19 @@ function CompassScene({ box }: { box: HTMLElement }) {
     tiltY: 0,
     pointer: { x: 0, y: 0 },
     time: 0,
+    /** Environment filtered and PBR programs compiled – until then the SVG compass stays. */
+    ready: false,
   }));
 
   useEffect(() => {
-    // Studio reflections for the metal, generated on the GPU – no HDR file to download.
-    const pmrem = new PMREMGenerator(gl);
-    const environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-    scene.environment = environment;
-    scene.environmentIntensity = 0.55;
-    // Compile the PBR programs while the page is idle, not on the first scroll into About.
-    const cancelCompile = precompile(gl, [{ object: model.root, camera, scene }]);
+    // The PBR programs depend on the environment: compile them once it exists, while the page is
+    // idle – not on the first scroll into About.
+    let cancelCompile = () => {};
+    const cancelEnvironment = studioEnvironment(gl, (environment) => {
+      scene.environment = environment;
+      scene.environmentIntensity = 0.55;
+      cancelCompile = precompile(gl, [{ object: model.root, camera, scene }], () => (motion.ready = true));
+    });
 
     const io = new IntersectionObserver(([entry]) => (motion.visible = !!entry?.isIntersecting));
     io.observe(box);
@@ -178,19 +239,18 @@ function CompassScene({ box }: { box: HTMLElement }) {
     window.addEventListener("pointermove", onMove, { passive: true });
     const remove = addStage(() => {
       // Under the hero layer the compass would be hidden behind About's background anyway.
-      const draw = motion.visible && !layer.under;
+      const draw = motion.ready && motion.visible && !layer.under;
       model.root.visible = draw;
       return draw;
     }, ORDER.compass);
 
     return () => {
       cancelCompile();
+      cancelEnvironment();
       remove();
       io.disconnect();
       window.removeEventListener("pointermove", onMove);
       scene.environment = null;
-      environment.dispose();
-      pmrem.dispose();
       model.dispose();
       delete document.documentElement.dataset.compassGl;
     };

@@ -1,13 +1,31 @@
-import { Mesh, OrthographicCamera, PlaneGeometry, Scene, type Camera, type Material, type Object3D, type WebGLRenderer } from "three";
+import {
+  Mesh,
+  OrthographicCamera,
+  PlaneGeometry,
+  Scene,
+  type Camera,
+  type Material,
+  type Object3D,
+  type WebGLRenderer,
+  type WebGLRenderTarget,
+} from "three";
 
-type Job = { object: Object3D; camera: Camera; scene?: Scene };
+/**
+ * What to compile. `target`: the render target the objects will be drawn into – part of the program
+ * key for three's own materials (tone mapping, output colour space), so it has to match.
+ */
+export type Job = { object: Object3D; camera: Camera; scene?: Scene; target?: WebGLRenderTarget };
 
 const camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-/** A job compiling full-screen pass materials (simulation passes). */
-export function passJob(materials: Material[]): Job {
+/**
+ * A job compiling full-screen pass materials (simulation passes). `normals: false` for three's own
+ * materials drawn on geometry without normals – the normal attribute is part of their program key.
+ */
+export function passJob(materials: Material[], { normals = true } = {}): Job {
   const scene = new Scene();
   const geometry = new PlaneGeometry(2, 2);
+  if (!normals) geometry.deleteAttribute("normal");
   for (const material of materials) {
     const mesh = new Mesh(geometry, material);
     mesh.frustumCulled = false;
@@ -55,7 +73,10 @@ export function precompile(renderer: WebGLRenderer, jobs: Job[], done?: () => vo
       else done?.();
       return;
     }
+    const previous = renderer.getRenderTarget();
+    if (job.target) renderer.setRenderTarget(job.target);
     const materials = renderer.compile(job.object, job.camera, job.scene);
+    if (job.target) renderer.setRenderTarget(previous);
     materials.forEach((material) => pending.add(material));
     if (parallel) next(i + 1);
     else idleHandle = schedule(() => next(i + 1));
