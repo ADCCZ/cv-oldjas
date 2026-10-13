@@ -94,9 +94,9 @@ function PageOne(props: CvProps) {
         {/* The cut-out sits right of the surname; its faded bottom ends on the contact line. */}
         <Image
           className="cv-photo"
-          src={links.photo.src}
-          width={links.photo.width}
-          height={links.photo.height}
+          src={links.photoPrint.src}
+          width={links.photoPrint.width}
+          height={links.photoPrint.height}
           alt={t.about.photoAlt}
           unoptimized
           priority

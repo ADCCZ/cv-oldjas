@@ -8,12 +8,23 @@
  * Run by hand and commit the PDFs: Chromium does not belong in the Vercel build. The design CV must
  * come out at exactly two pages, the plain one at most two – otherwise the script fails.
  * BASE_URL=http://localhost:3000 renders from a server that is already running (scripts/serve.ts).
+ *
+ * First it refreshes links.photoPrint from the site's portrait: flattened onto the paper colour as a
+ * JPEG – Chromium keeps an image with transparency lossless in a PDF (about 200 kB more per CV).
  */
 import { writeFileSync } from "node:fs";
 import path from "node:path";
 import { chromium } from "@playwright/test";
+import sharp from "sharp";
 import { links } from "../content/links.config.ts";
 import { withProductionServer } from "./serve.ts";
+
+/** --bg of the light theme (app/globals.css) – the colour of the CV sheets. */
+const PAPER = "#f6f3ee";
+await sharp(path.join("public", links.photo.src))
+  .flatten({ background: PAPER })
+  .jpeg({ quality: 88, mozjpeg: true })
+  .toFile(path.join("public", links.photoPrint.src));
 
 type Variant = "design" | "plain";
 
