@@ -25,6 +25,10 @@ type Props = {
  */
 export function ProjectCover({ project, index, total, locale }: Props) {
   const image = project.image && publicFileExists(project.image) ? project.image : null;
+  const title = tx(project.title, locale);
+  // A long word ("SAMOOBSLUŽNÝ") shrinks the type until it fits the 82cqw text box (≈ 0.92 em a letter).
+  const longest = Math.max(...title.split(" ").map((word) => word.length));
+  const titleSize = `min(8.4cqw, ${(82 / (longest * 0.92)).toFixed(2)}cqw)`;
 
   return (
     <div
@@ -45,8 +49,11 @@ export function ProjectCover({ project, index, total, locale }: Props) {
             <span className="text-[max(3.4cqw,0.875rem)] text-gold-soft">{pad(index + 1)}</span>
             <Segments className="max-w-[60%] text-right" items={project.stack.map((s) => tx(s, locale))} />
           </div>
-          <p className="mt-auto mb-[9cqw] font-wide text-[8.4cqw] leading-[0.86] font-black tracking-[-0.03em] text-balance uppercase">
-            {tx(project.title, locale)}
+          <p
+            className="mt-auto mb-[9cqw] font-wide leading-[0.86] font-black tracking-[-0.03em] text-balance uppercase"
+            style={{ fontSize: titleSize }}
+          >
+            {title}
           </p>
         </div>
       )}
