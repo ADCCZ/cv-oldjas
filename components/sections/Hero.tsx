@@ -32,7 +32,9 @@ export function Hero({ t, locale }: Props) {
         // A definite height (min-content only as a floor): with just a min-height, Chrome sizes the
         // h1 container for the name's cqh units at 0 when it lays the hero out while the HTML is
         // still streaming in, and the name stays at its smallest size until a script touches it.
-        className="relative z-[6] flex h-svh min-h-min flex-col justify-between pt-24 select-none md:pt-28"
+        // w-full: ScrollTrigger gives the spacer the hero's display (flex) when it pins, and as an
+        // item of that row the hero would shrink to its content – and be pinned at that width.
+        className="relative z-[6] flex h-svh min-h-min w-full flex-col justify-between pt-24 select-none md:pt-28"
       >
         <div className="site-grid">
           <div data-hero-intro className="col-span-12 md:col-span-7 md:col-start-4 lg:col-span-5 lg:col-start-4">
