@@ -31,7 +31,7 @@ The full brief is in `docs/PROMPT.md`; effect decisions from the reference resea
   label block + separate icon square, text rolls on hover (juncastudio.com style). Never pill buttons.
 - Hairlines: `--line` (fg at 12 %). Grain overlay 5 %.
 - Easing `cubic-bezier(0.65, 0, 0.35, 1)` (`--ease-inout`, GSAP `power2.inOut`), `expo.out` for reveals, 0.6–1.2 s.
-- Fonts (all with latin-ext, test "ŘŠČŽĚŮ"): Archivo variable (wght 100–900, wdth 62–125) for display, text **and
+- Fonts (Czech included, test "ŘŠČŽĚŮ"): Archivo variable (subset keeps wght 400–900, wdth 100–125) for display, text **and
   labels** (`.eyebrow`, `font-label`: caps, wdth 112 %, tabular numbers), Instrument Serif italic for accent words,
   Caveat only on stickers. **No monospace font** – the user rejected JetBrains Mono as "AI-looking".
 - Logo: placeholder text "OJŠ" (`components/ui/Logo.tsx`) until the SVG lands in `public/logo.svg` (`fill="currentColor"`).
@@ -106,8 +106,8 @@ The full brief is in `docs/PROMPT.md`; effect decisions from the reference resea
 - Print pages `app/cv/print/[locale]/[variant]` (design | plain) have their own root layout (`<html lang>`, light theme,
   fonts) and `app/cv/print/print.css` in mm/pt. They carry the phone number, so on Vercel they are static 404s.
 - `npm run cv` (after `npm run build`) first flattens `public/photo.webp` onto the paper colour as `public/photo-cv.jpg`
-  (the design CV uses it – a transparent image stays lossless in a PDF), then renders the 4 PDFs into `public/` and fails unless the design CV has exactly 2
-  pages and the plain one at most 2 – commit the PDFs. CV-only texts are in the `cv` block of `content/en.ts`/`cs.ts`,
+  (the design CV uses it – a transparent image stays lossless in a PDF), then renders the 4 PDFs into `public/` and
+  fails unless the design CV has exactly 2 pages and the plain one at most 2 – commit the PDFs. CV-only texts are in the `cv` block of `content/en.ts`/`cs.ts`,
   the picks in `content/cv.config.ts`, one-sentence project `summary` in `projects.config.ts`.
 - Czech print text goes through `typeset()` (no-break space after v, k, s, z, a, i, o, u). Section numbers are a CSS
   counter and the visible name is not a heading: Chromium builds the PDF bookmarks from painted heading text without
