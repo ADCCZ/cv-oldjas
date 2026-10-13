@@ -96,4 +96,6 @@ Odsouhlaseno 12. 10. 2026 – v těchto bodech mají přednost před `docs/PROMP
 | Vlnky na projektech | Jako juncastudio: výšková simulace hladiny + refrakce, disperze RGB, odlesk, kaustiky. | 5 |
 | Tlačítka | Žádné pilulky: ostré rohy, textový blok + samostatný čtvereček s ikonou (juncastudio „VIEW PROJECT ↗“), text se při hoveru přetočí. Ostré rohy i u štítků a dlaždic. | 3 |
 | Popisky a čísla | Žádné mono písmo (JetBrains Mono působilo „AI“): verzálky Archivo, osa wdth 112 %, tabulkové číslice. | 3 |
+| Obálky projektů bez dema | Zůstává typografický DOM cover (`ProjectCover`), žádné SVG: názvy jsou přeložené (SVG by byla dvě na projekt s textem převedeným na křivky), DOM má skutečné webfonty a vlnky ho rasterizují. Screenshot `public/projects/<id>.webp` ho nahradí automaticky. Odsouhlaseno 13. 10. 2026. | 6 |
+| Fotka | Portrét (výřez s průhledností) v sekci O mně (dlaždice vedle textu) a v barevném CV vpravo vedle „ŠVEHLA“ – proti zadání „žádné fotky“ v PDF, na přání. Strohé CV pro ATS zůstává bez fotky. 13. 10. 2026. | 6 |
 | Jméno v hero | Větší než v zadání a vyplňuje výšku hero: na širokých obrazovkách 1 řada, na vysokých oknech 2, na výšku (mobil) 3 řady, sudé jedou opačně; velikost podle volné výšky (container query), max. 32vw a 40rem. Stojí těsně na spodní liště. Celé hero nejde vybírat (`select-none`). Odsouhlaseno 13. 10. 2026. | 5 |

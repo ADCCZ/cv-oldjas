@@ -69,6 +69,25 @@ The full brief is in `docs/PROMPT.md`; effect decisions from the reference resea
   (`--force_low_power_gpu` = the Intel iGPU, the "ordinary laptop"). After a lost context Chrome blocks WebGL for the rest
   of that browser – one fresh browser per case.
 
+## Images and PDF CVs (phase 6)
+
+- Project images: `npm run screenshots` shoots every project with a `demo` (1600 × 1000 @2x → WebP via sharp) into
+  `public/projects/<id>.webp`; per-project steps before the shot live in `PREPARE` (scripts/screenshots.ts). This site
+  is shot from the local build with reduced motion (the hero name stands still). Projects without a screenshot keep the
+  typographic DOM cover (`ProjectCover`) – no SVG covers (decision in docs/REFERENCES.md).
+- Portrait: `public/photo.webp` (a trimmed cut-out with transparency, `links.photo`) in About and in the design CV.
+  The source `photo.webp` in the repo root stays untracked, like `logo.jpg`. The plain CV has no photo.
+- Print pages `app/cv/print/[locale]/[variant]` (design | plain) have their own root layout (`<html lang>`, light theme,
+  fonts) and `app/cv/print/print.css` in mm/pt. They carry the phone number, so on Vercel they are static 404s.
+- `npm run cv` (after `npm run build`) renders the 4 PDFs into `public/` and fails unless the design CV has exactly 2
+  pages and the plain one at most 2 – commit the PDFs. CV-only texts are in the `cv` block of `content/en.ts`/`cs.ts`,
+  the picks in `content/cv.config.ts`, one-sentence project `summary` in `projects.config.ts`.
+- Czech print text goes through `typeset()` (no-break space after v, k, s, z, a, i, o, u). Section numbers are a CSS
+  counter and the visible name is not a heading: Chromium builds the PDF bookmarks from painted heading text without
+  the spaces between nodes or lines ("01PROFILE", "JANŠVEHLA").
+- `scripts/*.ts` run on Node's type stripping (`.ts` import extensions, `allowImportingTsExtensions`); `scripts/serve.ts`
+  starts `next start` on a free port (or uses `BASE_URL`) and kills the whole process tree afterwards.
+
 ## Language
 
 - English is the main language on `/`, Czech on `/cs`. No redirect by browser language; the toggle stores `lang` cookie.
@@ -87,14 +106,17 @@ Old PDF paths `/cv.pdf` and `/cv-plain.pdf` must keep working.
 ```
 app/[locale]/        layout (html lang, metadata) + the single page
 app/not-found.tsx    global 404 (both languages)
+app/cv/print/        print pages of the PDF CVs (own root layout, print.css)
+components/cv/       DesignCv, PlainCv, shared helpers of the print pages
 components/layout/   Nav, MenuOverlay, Footer, Cursor, Intro, Clock, ThemeToggle, LangToggle, Providers, SmoothScroll
 components/motion/   client "controllers" that animate server-rendered markup (GSAP, physics, strips)
 components/sections/ Hero, About, Stats, Projects, ProjectArchive, Stack, Skills, Journey, OffCode, Contact
 components/ui/       small building blocks (SectionHeading, Marquee, ButtonContent, TechPill, SkillCard, …)
 components/webgl/    WebglRoot (lazy loader), Scene (shared Canvas + Driver), HeroReveal, Compass, Ripples, simulations, shaders
-content/             en.ts, cs.ts, projects.config.ts, stack.config.ts, stats.config.ts, links.config.ts, github-snapshot.json
+content/             en.ts, cs.ts, projects.config.ts, stack.config.ts, stats.config.ts, links.config.ts, cv.config.ts, github-snapshot.json
+public/              projects/<id>.webp screenshots, photo.webp, the 4 PDF CVs (generated, committed)
 lib/                 gsap, lenis, github, i18n, sections, fonts, analytics, hooks
-scripts/             next.mjs + exfat-readlink.cjs (see below), later generate-cv.ts, screenshots.ts
+scripts/             next.mjs + exfat-readlink.cjs (see below), generate-cv.ts, screenshots.ts, serve.ts
 tests/               Playwright smoke tests
 docs/PROMPT.md       the brief
 ```
@@ -109,8 +131,8 @@ docs/PROMPT.md       the brief
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run test` | Playwright smoke tests against `next start` (build first) |
-| `npm run cv` | (phase 6) render the 4 PDF CVs into `public/` – commit them |
-| `npm run screenshots` | (phase 6) screenshots of projects with a live demo |
+| `npm run cv` | render the 4 PDF CVs into `public/` from the production build – commit them |
+| `npm run screenshots` | screenshots of projects with a live demo into `public/projects/` (`-- <id>` for one) |
 
 The repo lives on an exFAT drive locally (D:). There `fs.readlink()` throws EISDIR instead of EINVAL and breaks
 webpack/Next.js – `scripts/next.mjs` preloads `scripts/exfat-readlink.cjs` on Windows. Keep using the npm scripts.
