@@ -6,13 +6,15 @@ import { ScrambleText } from "./ScrambleText";
 
 type Props = {
   email: string;
+  /** Decode time of the entrance (ScrambleText). */
+  duration?: number;
   copyLabel: string;
   copiedLabel: string;
   writeLabel: string;
 };
 
 /** E-mail that copies itself on click (with a "Copied" toast) plus a separate mailto icon. */
-export function CopyEmail({ email, copyLabel, copiedLabel, writeLabel }: Props) {
+export function CopyEmail({ email, duration, copyLabel, copiedLabel, writeLabel }: Props) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -34,8 +36,8 @@ export function CopyEmail({ email, copyLabel, copiedLabel, writeLabel }: Props) 
 
   return (
     <span className="relative inline-flex items-center gap-3">
-      <button type="button" onClick={copy} title={copyLabel} className="link-draw text-left">
-        <ScrambleText text={email} />
+      <button type="button" onClick={copy} title={copyLabel} className="link-draw link-anim text-left">
+        <ScrambleText text={email} duration={duration} hover />
         <span className="sr-only"> – {copyLabel}</span>
       </button>
       <a
