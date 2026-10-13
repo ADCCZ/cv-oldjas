@@ -1,30 +1,14 @@
 "use client";
 
 import { useRef } from "react";
-import { EASE, gsap, ScrollTrigger, SplitText, useGSAP } from "@/lib/gsap";
+import { EASE, gsap, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
-import { afterFonts, INTRO_REVEAL_EVENT, introState, MOTION_OK, rand, shuffled } from "@/lib/motion";
+import { afterFonts, INTRO_REVEAL_EVENT, introState, MOTION_OK, rand, requestRefresh, shuffled } from "@/lib/motion";
 import { HERO_READY_EVENT, heroState } from "@/lib/webgl";
 
 /** Idle marquee speed in px/s – proportional to the viewport, so it feels the same everywhere. */
 const baseSpeed = () => Math.max(40, window.innerWidth * 0.045);
 
-/** Start of every word of the name as a fraction of the copy's width (layout scales with the font). */
-function measureWordStarts(copy: HTMLElement | null): number[] {
-  const text = copy?.firstChild;
-  if (!copy || !(text instanceof Text)) return [0];
-  const box = copy.getBoundingClientRect();
-  const range = document.createRange();
-  const starts = [0];
-  for (let i = 1; i < text.length; i++) {
-    if (text.data[i - 1] !== " " || text.data[i] === " ") continue;
-    range.setStart(text, i);
-    range.setEnd(text, i + 1);
-    const rect = range.getBoundingClientRect();
-    if (box.width > 0) starts.push((rect.left - box.left) / box.width);
-  }
-  return starts;
-}
 
 /**
  * Hero choreography (renders nothing, drives the server-rendered hero):
@@ -49,52 +33,56 @@ export function HeroMotion() {
     mm.add(MOTION_OK, () => {
       const name = section.querySelector<HTMLElement>("[data-hero-name]");
       const tracks = gsap.utils.toArray<HTMLElement>("[data-marquee-track]", section);
+      const letters = gsap.utils.toArray<HTMLElement>(".hero-char", section);
       if (!name || !tracks.length) return;
-      const lineEls = section.querySelectorAll<HTMLElement>("[data-hero-line]");
+      const lineEls = gsap.utils.toArray<HTMLElement>("[data-hero-line]", section);
       const pops = section.querySelectorAll<HTMLElement>("[data-hero-pop]");
       const blocks = section.querySelectorAll<HTMLElement>("[data-hero-intro], [data-hero-bar]");
       const state = introState();
 
       // ---- 1. Velocity-driven marquee ---------------------------------------------------------
-      // Every other row runs the other way. Rows hidden by CSS (wide screens) report no width.
-      const rows = tracks.map((track, index) => {
-        track.classList.add("is-driven");
-        return { track, x: 0, direction: index % 2 ? -1 : 1, setX: gsap.quickSetter(track, "x", "px") };
-      });
+      // The CSS loop keeps running on the compositor – moving the rows from script would repaint
+      // the name every frame, and Chrome counts each repaint as a new Largest Contentful Paint.
+      // The ticker only sets the loop's playback rate (speed and direction). Every other row runs
+      // the other way (animation-direction: reverse); rows hidden by CSS have no width and no loop.
+      const rows = tracks.map((track) => ({ track, width: 0, loop: null as CSSAnimation | null, rate: 1 }));
       const drive = { slow: 1 }; // the scroll timeline brings this to 0
       let speed = -baseSpeed();
       let explode: gsap.core.Timeline | null = null;
-      // Where each word starts, as a fraction of one copy – rows begin at different words, so a
-      // tall screen shows "OLDŘICH" above "ŠVEHLA" instead of the same letters twice.
-      let wordStarts: number[] = [0];
-      let placedRows = 0;
-      const tick = (_time: number, deltaMs: number) => {
+      // Copy widths change only with the font size, the font itself and the visible rows – a
+      // ResizeObserver keeps them, so the ticker never forces a layout to read them. A row that
+      // reappears starts a new CSS loop, so the loops are looked up here as well.
+      const resizeObserver = new ResizeObserver(() => {
+        rows.forEach((row) => {
+          row.width = row.track.scrollWidth / 2;
+          row.loop = row.track.getAnimations().find((a): a is CSSAnimation => a instanceof CSSAnimation) ?? null;
+          row.rate = 1;
+        });
+      });
+      rows.forEach((row) => resizeObserver.observe(row.track));
+      const loopMs = (loop: CSSAnimation) => Number(loop.effect?.getTiming().duration) || 60_000;
+      const tick = () => {
         heroState.scatter = explode?.progress() ?? 0;
-        if (window.scrollY > window.innerHeight * 2.2) return; // hero long gone – save the frames
+        const gone = window.scrollY > window.innerHeight * 2.2; // hero long gone – stop the rows
         const velocity = getLenis()?.velocity ?? 0;
         const direction = velocity < -0.5 ? 1 : -1;
         const target = direction * (baseSpeed() + Math.min(Math.abs(velocity) * 40, 1500));
         speed += (target - speed) * 0.06; // ease into the new speed instead of jumping
-        const widths = rows.map((row) => row.track.scrollWidth / 2);
-        const visible = widths.filter((w) => w > 0).length;
-        if (visible !== placedRows) {
-          placedRows = visible;
-          rows.forEach((row, i) => {
-            const word = wordStarts[Math.round((i * wordStarts.length) / Math.max(1, visible))] ?? 0;
-            row.x = -word * widths[i]!;
-          });
-        }
-        rows.forEach((row, i) => {
-          const copyWidth = widths[i]!;
-          if (copyWidth <= 0) return;
-          row.x = gsap.utils.wrap(-copyWidth, 0, row.x + (row.direction * speed * drive.slow * deltaMs) / 1000);
-          row.setX(row.x);
+        rows.forEach((row) => {
+          if (!row.loop || row.width <= 0) return;
+          // px/s → rate of the CSS loop (one copy width per loop); a positive rate runs it forwards (left).
+          const rate = gone ? 0 : (-speed * drive.slow * loopMs(row.loop)) / 1000 / row.width;
+          if (Math.abs(rate - row.rate) < 0.01) return;
+          // Running backwards, a loop would stop at its very start – whole loops later it looks the same.
+          const time = Number(row.loop.currentTime ?? 0);
+          if (rate < 0 && time < 2 * loopMs(row.loop)) row.loop.currentTime = time + 1000 * loopMs(row.loop);
+          row.rate = rate;
+          row.loop.updatePlaybackRate(rate);
         });
       };
       gsap.ticker.add(tick);
 
-      let chars: SplitText | null = null;
-      let lines: SplitText | null = null;
+
       let reveal: (() => void) | null = null;
       const settled = () => {
         heroState.ready = true;
@@ -102,22 +90,12 @@ export function HeroMotion() {
       };
 
       const cancelFonts = afterFonts(() => {
-        wordStarts = measureWordStarts(section.querySelector<HTMLElement>("[data-marquee-copy]"));
-        placedRows = 0;
-        chars = SplitText.create(section.querySelectorAll("[data-marquee-copy]"), {
-          type: "chars",
-          charsClass: "hero-char",
-          aria: "none",
-        });
-        lines = SplitText.create(lineEls, { type: "lines", mask: "lines", linesClass: "split-line", aria: "none" });
-        const letters = chars.chars;
-
         // ---- 2. Intro -------------------------------------------------------------------------
         if (state !== "skip") {
           const first = state === "play";
           name.classList.add("is-masked");
           gsap.set(letters, { yPercent: 120 });
-          gsap.set(lines.lines, { yPercent: 105 });
+          gsap.set(lineEls, { yPercent: 105 });
           gsap.set(pops, { autoAlpha: 0, y: 24 });
           gsap.set(name, { visibility: "visible" });
 
@@ -132,7 +110,7 @@ export function HeroMotion() {
                 settled();
               },
             });
-            gsap.to(lines!.lines, { yPercent: 0, duration: 1, ease: EASE.mask, stagger: 0.08, delay: first ? 0.5 : 0.2 });
+            gsap.to(lineEls, { yPercent: 0, duration: 1, ease: EASE.mask, stagger: 0.08, delay: first ? 0.5 : 0.2 });
             gsap.to(pops, { autoAlpha: 1, y: 0, duration: 0.8, ease: EASE.reveal, stagger: 0.06, delay: first ? 0.8 : 0.35 });
           };
           if (first) window.addEventListener(INTRO_REVEAL_EVENT, reveal, { once: true });
@@ -147,6 +125,7 @@ export function HeroMotion() {
             end: "+=100%",
             pin: true,
             pinSpacing: false, // About slides over the pinned hero
+            pinSpacer: section.parentElement, // [data-hero-spacer] from the server – no DOM move
             scrub: 0.6,
             invalidateOnRefresh: true,
           },
@@ -171,7 +150,7 @@ export function HeroMotion() {
           )
           .to(blocks, { y: () => -window.innerHeight * 0.12, autoAlpha: 0, ease: "power2.in", duration: 0.32, stagger: 0.06 }, 0);
 
-        ScrollTrigger.refresh();
+        requestRefresh();
         if (state === "skip") settled();
       });
 
@@ -179,15 +158,15 @@ export function HeroMotion() {
         heroState.ready = false;
         heroState.scatter = 0;
         cancelFonts();
+        resizeObserver.disconnect();
         gsap.ticker.remove(tick);
         if (reveal) window.removeEventListener(INTRO_REVEAL_EVENT, reveal);
         explode?.scrollTrigger?.kill();
         explode?.kill();
-        chars?.revert();
-        lines?.revert();
-        tracks.forEach((track) => track.classList.remove("is-driven"));
+
+        rows.forEach((row) => row.loop?.updatePlaybackRate(1));
         name.classList.remove("is-masked");
-        gsap.set([...tracks, name, pops, blocks], { clearProps: "all" });
+        gsap.set([...letters, ...lineEls, name, pops, blocks], { clearProps: "all" });
       };
     });
 

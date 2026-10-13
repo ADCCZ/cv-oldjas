@@ -577,11 +577,6 @@ html[data-intro="replay"] [data-hero-name] {
   }
 }
 
-/* The JS marquee drives the track itself – switch the CSS fallback loop off. */
-.marquee-track.is-driven {
-  animation: none;
-}
-
 /* Masks for letter rises (hero, footer); removed afterwards so letters may leave the line again. */
 .is-masked {
   overflow: clip;
@@ -916,6 +911,11 @@ html[data-hero-gl] [data-hero-name] {
   display: none;
 }
 
+/* Letters of the name (components/ui/Marquee) – boxes, so they can rise, spin and fly apart. */
+.hero-char {
+  display: inline-block;
+}
+
 @media (max-aspect-ratio: 5/4) {
   .hero-name {
     --rows: 2;
@@ -923,6 +923,12 @@ html[data-hero-gl] [data-hero-name] {
 
   .marquee-row[data-marquee-row="1"] {
     display: block;
+  }
+
+  /* Rows start at different words: "OLDŘICH" over "ŠVEHLA" (word starts as fractions of a copy –
+     JAN 0.379, ŠVEHLA 0.557 in Archivo; row 1 runs in reverse, so 1 − 0.557 of the 60 s loop). */
+  .marquee-row[data-marquee-row="1"] .marquee-track {
+    animation-delay: -26.6s;
   }
 }
 
@@ -933,6 +939,15 @@ html[data-hero-gl] [data-hero-name] {
 
   .marquee-row[data-marquee-row="2"] {
     display: block;
+  }
+
+  /* Three rows: OLDŘICH / JAN / ŠVEHLA. */
+  .marquee-row[data-marquee-row="1"] .marquee-track {
+    animation-delay: -37.3s;
+  }
+
+  .marquee-row[data-marquee-row="2"] .marquee-track {
+    animation-delay: -33.4s;
   }
 }
 
