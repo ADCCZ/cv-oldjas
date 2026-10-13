@@ -41,24 +41,24 @@ export function Intro() {
       const FLIP_MS = 2000;
 
       // Flipbook: slow → fast → slow, like a reel spinning up and settling. Frames change faster
-      // than one fades in, so hiding a frame has to kill its fade (overwrite) – or it stays lit.
+      // than one fades in, so hiding a frame first stops its fade – or it lights up again. (Only that
+      // tween: the timeline's own "out" step still has to shrink the last frame.)
       let flipping = true;
+      let fadeIn: gsap.core.Tween | null = null;
       const flip = () => {
         if (!flipping) return;
         const t = Math.min((performance.now() - flipStart) / FLIP_MS, 1);
-        gsap.set(frames[current]!, { opacity: 0, overwrite: true });
+        fadeIn?.kill();
+        gsap.set(frames[current]!, { opacity: 0 });
         current = (current + 1) % frames.length;
-        gsap.fromTo(
-          frames[current]!,
-          { opacity: 0, scale: 0.8 },
-          { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(1.2)", overwrite: true },
-        );
+        fadeIn = gsap.fromTo(frames[current]!, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(1.2)" });
         if (t < 1) flipTimer = window.setTimeout(flip, 80 + 300 * (1 - Math.sin(t * Math.PI)));
       };
       // The timer runs in real time – a hurried (3×) intro reaches the end of the reel first.
       const stopFlipping = () => {
         flipping = false;
         window.clearTimeout(flipTimer);
+        fadeIn?.kill();
       };
 
       const counter = { v: 100 };
@@ -105,11 +105,12 @@ export function Intro() {
         )
         .addLabel("out", ">-0.1")
         .add(stopFlipping, "out")
-        .to(frames, { scale: 0, duration: 0.45, overwrite: "auto" }, "out")
+        .to(frames, { scale: 0, duration: 0.45 }, "out")
         .to(win, { width: "0.12em", duration: 0.7 }, "out")
         .to(oj, { yPercent: 110, duration: 0.8 }, "out+=0.15")
         .to(s, { scale: 0, duration: 0.8 }, "<")
-        .to(count, { autoAlpha: 0, duration: 0.4 }, "<")
+        // Slides out of its mask instead of fading – half-transparent text would fail contrast checks.
+        .to(count, { yPercent: 110, duration: 0.4 }, "<")
         .to(el, { clipPath: "inset(0% 0% 100% 0%)", duration: 1.25 }, "-=0.35")
         .add(() => {
           unlockScroll();
@@ -164,8 +165,10 @@ export function Intro() {
           Š
         </span>
       </div>
-      <span data-intro-count className="absolute bottom-8 left-1/2 -translate-x-1/2 font-label text-sm tabular-nums">
-        100
+      <span className="absolute bottom-8 left-1/2 -translate-x-1/2 overflow-clip">
+        <span data-intro-count className="block font-label text-sm tabular-nums">
+          100
+        </span>
       </span>
     </div>
   );
