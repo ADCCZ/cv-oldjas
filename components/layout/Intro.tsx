@@ -40,13 +40,25 @@ export function Intro() {
       let flipStart = 0;
       const FLIP_MS = 2000;
 
-      // Flipbook: slow → fast → slow, like a reel spinning up and settling.
+      // Flipbook: slow → fast → slow, like a reel spinning up and settling. Frames change faster
+      // than one fades in, so hiding a frame has to kill its fade (overwrite) – or it stays lit.
+      let flipping = true;
       const flip = () => {
+        if (!flipping) return;
         const t = Math.min((performance.now() - flipStart) / FLIP_MS, 1);
-        gsap.set(frames[current]!, { opacity: 0 });
+        gsap.set(frames[current]!, { opacity: 0, overwrite: true });
         current = (current + 1) % frames.length;
-        gsap.fromTo(frames[current]!, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(1.2)" });
+        gsap.fromTo(
+          frames[current]!,
+          { opacity: 0, scale: 0.8 },
+          { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(1.2)", overwrite: true },
+        );
         if (t < 1) flipTimer = window.setTimeout(flip, 80 + 300 * (1 - Math.sin(t * Math.PI)));
+      };
+      // The timer runs in real time – a hurried (3×) intro reaches the end of the reel first.
+      const stopFlipping = () => {
+        flipping = false;
+        window.clearTimeout(flipTimer);
       };
 
       const counter = { v: 100 };
@@ -92,7 +104,8 @@ export function Intro() {
           "<",
         )
         .addLabel("out", ">-0.1")
-        .to(frames, { scale: 0, duration: 0.45 }, "out")
+        .add(stopFlipping, "out")
+        .to(frames, { scale: 0, duration: 0.45, overwrite: "auto" }, "out")
         .to(win, { width: "0.12em", duration: 0.7 }, "out")
         .to(oj, { yPercent: 110, duration: 0.8 }, "out+=0.15")
         .to(s, { scale: 0, duration: 0.8 }, "<")
