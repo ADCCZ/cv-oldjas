@@ -14,7 +14,8 @@ export function Skills({ t }: { t: Dictionary }) {
         {t.skills.title}
       </SectionHeading>
 
-      <ul className="col-span-12 grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+      {/* Four in a row only from xl – narrower square cards cannot hold the list and the title. */}
+      <ul className="col-span-12 grid gap-px border border-line bg-line sm:grid-cols-2 xl:grid-cols-4">
         {t.skills.cards.map((card, i) => (
           <SkillCard
             key={card.title}
@@ -27,8 +28,8 @@ export function Skills({ t }: { t: Dictionary }) {
       </ul>
 
       <div className="col-span-12 grid gap-x-(--gutter) gap-y-8 md:grid-cols-12">
-        <h3 className="eyebrow text-fg-muted md:col-span-3">{t.skills.softTitle}</h3>
-        <div className="grid gap-8 md:col-span-9 md:grid-cols-3">
+        <h3 className="eyebrow text-fg-muted md:col-span-12 lg:col-span-3">{t.skills.softTitle}</h3>
+        <div className="grid gap-8 md:col-span-12 md:grid-cols-3 lg:col-span-9">
           {t.skills.soft.map((item) => (
             <div key={item.title} className="border-t border-line pt-5">
               <h4 className="text-lg font-semibold tracking-tight">{item.title}</h4>
