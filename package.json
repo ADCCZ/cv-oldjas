@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
-    "screenshots": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/screenshots.ts"
+    "screenshots": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/screenshots.ts",
+    "cv": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/generate-cv.ts"
   },
   "dependencies": {
     "@gsap/react": "2.1.2",
