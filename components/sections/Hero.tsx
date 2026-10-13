@@ -34,7 +34,9 @@ export function Hero({ t, locale }: Props) {
         // still streaming in, and the name stays at its smallest size until a script touches it.
         // w-full: ScrollTrigger gives the spacer the hero's display (flex) when it pins, and as an
         // item of that row the hero would shrink to its content – and be pinned at that width.
-        className="relative z-[6] flex h-svh min-h-min w-full flex-col justify-between pt-24 select-none md:pt-28"
+        // Only its links take the pointer: after the pin (pinSpacing: false) the empty hero stays one
+        // viewport lower, above whatever follows a short About – the stats strip could not be dragged.
+        className="pointer-events-none relative z-[6] flex h-svh min-h-min w-full flex-col [&_:is(a,button)]:pointer-events-auto justify-between pt-24 select-none md:pt-28"
       >
         <div className="site-grid">
           <div data-hero-intro className="col-span-12 md:col-span-7 md:col-start-4 lg:col-span-5 lg:col-start-4">
