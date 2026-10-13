@@ -1,6 +1,7 @@
 import { Clock } from "@/components/layout/Clock";
 import { FooterMotion } from "@/components/motion/FooterMotion";
 import { CopyEmail } from "@/components/ui/CopyEmail";
+import { LetterRoll } from "@/components/ui/LetterRoll";
 import { ScrambleText } from "@/components/ui/ScrambleText";
 import { Segments } from "@/components/ui/Segments";
 import { TrackedLink } from "@/components/ui/TrackedLink";
@@ -10,6 +11,8 @@ import type { Dictionary } from "@/lib/dictionary";
 import { NAV_ITEMS } from "@/lib/sections";
 
 const GIANT = "ŠVEHLA";
+/** The contact details decode slowly enough to be noticed – the footer is the last thing on the page. */
+const DECODE_SECONDS = 1.4;
 
 type Props = { t: Dictionary; locale: Locale; projectCount: number };
 
@@ -31,13 +34,13 @@ export function Footer({ t, locale, projectCount }: Props) {
             <div>
               <dt className="eyebrow mb-1 text-gold-text">{t.contact.location}</dt>
               <dd>
-                <ScrambleText text={links.location[locale]} />
+                <ScrambleText text={links.location[locale]} duration={DECODE_SECONDS} />
               </dd>
             </div>
             <div>
               <dt className="eyebrow mb-1 text-gold-text">{t.contact.email}</dt>
               <dd>
-                <CopyEmail email={links.email} copyLabel={t.contact.copy} copiedLabel={t.contact.copied} writeLabel={t.contact.writeEmail} />
+                <CopyEmail email={links.email} duration={DECODE_SECONDS} copyLabel={t.contact.copy} copiedLabel={t.contact.copied} writeLabel={t.contact.writeEmail} />
               </dd>
             </div>
             <div>
@@ -49,9 +52,9 @@ export function Footer({ t, locale, projectCount }: Props) {
                   rel="noopener noreferrer"
                   event="github_click"
                   data={{ place: "footer-details" }}
-                  className="link-draw"
+                  className="link-draw link-anim"
                 >
-                  <ScrambleText text={links.githubLabel} />
+                  <ScrambleText text={links.githubLabel} duration={DECODE_SECONDS} hover />
                   {newTab}
                 </TrackedLink>
               </dd>
@@ -60,8 +63,8 @@ export function Footer({ t, locale, projectCount }: Props) {
               <div>
                 <dt className="eyebrow mb-1 text-gold-text">{t.contact.linkedin}</dt>
                 <dd>
-                  <a href={links.linkedin} target="_blank" rel="noopener noreferrer" className="link-draw">
-                    {links.linkedin.replace(/^https?:\/\/(www\.)?/, "")}
+                  <a href={links.linkedin} target="_blank" rel="noopener noreferrer" className="link-draw link-anim">
+                    <ScrambleText text={links.linkedin.replace(/^https?:\/\/(www\.)?/, "")} duration={DECODE_SECONDS} hover />
                     {newTab}
                   </a>
                 </dd>
@@ -80,19 +83,31 @@ export function Footer({ t, locale, projectCount }: Props) {
                 rel="noopener noreferrer"
                 event="github_click"
                 data={{ place: "footer-links" }}
-                className="link-draw"
+                className="roll-link link-draw link-anim"
               >
-                GitHub&nbsp;↗{newTab}
+                <LetterRoll text="GitHub" arrow="out" />
+                {newTab}
               </TrackedLink>
             </li>
             <li>
-              <TrackedLink href={`mailto:${links.email}`} event="email_click" data={{ place: "footer-links" }} className="link-draw">
-                {t.contact.email}
+              <TrackedLink
+                href={`mailto:${links.email}`}
+                event="email_click"
+                data={{ place: "footer-links" }}
+                className="roll-link link-draw link-anim"
+              >
+                <LetterRoll text={t.contact.email} />
               </TrackedLink>
             </li>
             <li>
-              <TrackedLink href={cv.design} event="cv_download" data={{ lang: locale, version: "design" }} className="link-draw" download>
-                {t.contact.linkCv}&nbsp;↓
+              <TrackedLink
+                href={cv.design}
+                event="cv_download"
+                data={{ lang: locale, version: "design" }}
+                className="roll-link link-draw link-anim"
+                download
+              >
+                <LetterRoll text={t.contact.linkCv} arrow="down" />
               </TrackedLink>
             </li>
           </ul>
@@ -103,8 +118,8 @@ export function Footer({ t, locale, projectCount }: Props) {
           <ul className="space-y-1 text-lg">
             {NAV_ITEMS.map((item) => (
               <li key={item}>
-                <a href={`#${item}`} className="link-draw">
-                  {t.nav[item]}
+                <a href={`#${item}`} className="link-draw link-anim">
+                  <ScrambleText text={t.nav[item]} appear={false} hover />
                 </a>
                 {item === "projects" ? <span className="ml-1 font-label text-xs text-fg-muted">({projectCount})</span> : null}
               </li>
@@ -136,15 +151,15 @@ export function Footer({ t, locale, projectCount }: Props) {
               t.footer.place,
               <Clock key="clock" label={t.hero.clockLabel} showOffset className="text-fg" />,
               t.footer.built,
-              <a key="source" href={links.sourceRepo} target="_blank" rel="noopener noreferrer" className="link-draw text-fg">
-                {t.footer.source}
+              <a key="source" href={links.sourceRepo} target="_blank" rel="noopener noreferrer" className="link-draw link-anim text-fg">
+                <ScrambleText text={t.footer.source} appear={false} hover />
                 {newTab}
               </a>,
             ]}
           />
         </p>
-        <a href="#top" className="link-draw col-span-12 justify-self-start text-fg lg:col-span-2 lg:justify-self-end">
-          {t.footer.top}
+        <a href="#top" className="link-draw link-anim col-span-12 justify-self-start text-fg lg:col-span-2 lg:justify-self-end">
+          <ScrambleText text={t.footer.top} appear={false} hover />
         </a>
       </div>
       <FooterMotion />

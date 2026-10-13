@@ -872,6 +872,69 @@ details[data-expanded="true"] .archive-plus {
   }
 }
 
+/* Footer links: with motion and a mouse the letters roll (LetterRoll) or decode (ScrambleText) on
+   hover instead of the gold underline of .link-draw, which stays for reduced motion. */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  .link-anim.link-draw {
+    background-image: none;
+  }
+}
+
+/* Big footer links (LetterRoll): each letter clips its own copy, which waits just outside – above or
+   below (--dir) – and rolls in after the letter's delay. The clip (overflow – clip-path let the
+   copies through while they moved on the compositor) reaches past the letter box by padding that
+   negative margins take back, so accents and the negative tracking are never cut. */
+.roll-char {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.08em 0.25em;
+  margin: -0.08em -0.25em;
+}
+
+.roll-track {
+  display: block;
+  position: relative;
+}
+
+.roll-copy {
+  position: absolute;
+  inset: 0;
+  translate: 0 calc(var(--dir) * (100% + 0.12em));
+}
+
+/* "→" turned to where the link leads. */
+.roll-arrow {
+  display: inline-block;
+  rotate: var(--turn);
+}
+
+.roll-arrow-out {
+  --turn: -45deg;
+}
+
+.roll-arrow-down {
+  --turn: 90deg;
+}
+
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  .roll-track {
+    transition: translate 0.45s var(--ease-inout) var(--delay);
+  }
+
+  .roll-arrow {
+    rotate: 0deg;
+    transition: rotate 0.45s var(--ease-inout);
+  }
+
+  .roll-link:is(:hover, :focus-visible) .roll-track {
+    translate: 0 calc(var(--dir) * -1 * (100% + 0.12em));
+  }
+
+  .roll-link:is(:hover, :focus-visible) .roll-arrow {
+    rotate: var(--turn);
+  }
+}
+
 /* Falling stickers on the stats strip (StatsPills) – positioned by the physics, round like every sticker. */
 .stat-pill {
   position: absolute;
