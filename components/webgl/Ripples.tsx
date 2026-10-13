@@ -121,6 +121,12 @@ const DROP_SPACING = 0.02;
 
 type Textures = { layer: CanvasTexture; tags: CanvasTexture };
 
+/** Runs `fn` when the browser is idle (or soon, where requestIdleCallback is missing). */
+function whenIdle(fn: () => void) {
+  if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(fn, { timeout: 3000 });
+  else window.setTimeout(fn, 200);
+}
+
 function canvasTexture(canvas: HTMLCanvasElement): CanvasTexture {
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = NoColorSpace; // page colours straight through, like the DOM
@@ -145,6 +151,7 @@ class RippleLayer {
   private time = 0;
   private dt = 0;
   private calmAt = 0;
+  private disposed = false;
 
   constructor(
     private readonly renderer: WebGLRenderer,
@@ -187,11 +194,19 @@ class RippleLayer {
     };
     // Covers are rasterised at their current size – a resize makes every cached texture stale.
     const onResize = () => this.dropCache();
+    // Screenshots are lazy images: a cover rasterised before its image arrived would ripple without
+    // it. `load` does not bubble, so it is caught on the way down (capture).
+    const onLoad = (event: Event) => {
+      const cover = (event.target as Element | null)?.closest?.<HTMLElement>("[data-cover]");
+      if (cover && this.evict(cover)) whenIdle(() => this.warm(cover));
+    };
     window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("resize", onResize);
+    covers.forEach((cover) => cover.addEventListener("load", onLoad, true));
     this.cleanups.push(
       () => window.removeEventListener("pointermove", onMove),
       () => window.removeEventListener("resize", onResize),
+      () => covers.forEach((cover) => cover.removeEventListener("load", onLoad, true)),
     );
   }
 
@@ -244,6 +259,7 @@ class RippleLayer {
   }
 
   dispose() {
+    this.disposed = true;
     this.cleanups.forEach((fn) => fn());
     this.dropCache();
     this.sim.dispose();
@@ -257,24 +273,34 @@ class RippleLayer {
    */
   private warmUp(covers: HTMLElement[]) {
     this.cleanups.push(this.sim.warmUp(), precompile(this.renderer, [{ object: this.mesh, camera: this.camera }]));
-    const idle = (fn: () => void) =>
-      typeof window.requestIdleCallback === "function" ? window.requestIdleCallback(fn, { timeout: 3000 }) : window.setTimeout(fn, 200);
-    let disposed = false;
     const next = (i: number) => {
       const cover = covers[i];
-      if (disposed || !cover) return;
-      if (!this.cache.has(cover)) {
-        const textures = this.rasterise(cover);
-        if (textures) {
-          this.cache.set(cover, textures);
-          this.renderer.initTexture(textures.layer);
-          this.renderer.initTexture(textures.tags);
-        }
-      }
-      idle(() => next(i + 1));
+      if (this.disposed || !cover) return;
+      this.warm(cover);
+      whenIdle(() => next(i + 1));
     };
-    idle(() => next(0));
-    this.cleanups.push(() => (disposed = true));
+    whenIdle(() => next(0));
+  }
+
+  /** Rasterises and uploads one cover ahead of its hover. */
+  private warm(cover: HTMLElement) {
+    if (this.disposed || this.cache.has(cover)) return;
+    const textures = this.rasterise(cover);
+    if (!textures) return;
+    this.cache.set(cover, textures);
+    this.renderer.initTexture(textures.layer);
+    this.renderer.initTexture(textures.tags);
+  }
+
+  /** Forgets one cover's textures (its image has just loaded); true when there were some. */
+  private evict(cover: HTMLElement): boolean {
+    const textures = this.cache.get(cover);
+    if (!textures) return false;
+    textures.layer.dispose();
+    textures.tags.dispose();
+    this.cache.delete(cover);
+    if (this.active === cover) this.activate(cover);
+    return true;
   }
 
   private activate(cover: HTMLElement) {
