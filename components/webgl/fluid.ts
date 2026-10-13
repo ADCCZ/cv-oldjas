@@ -333,8 +333,11 @@ export class FluidSim {
    * (precompile.ts), then each pass runs once into the real targets. Without this the first pointer
    * move over the hero froze the page for a moment on integrated GPUs. Returns a cancel function.
    */
-  warmUp(): () => void {
-    return precompile(this.renderer, [passJob(Object.values(this.passes))], () => this.prime());
+  warmUp(done?: () => void): () => void {
+    return precompile(this.renderer, [passJob(Object.values(this.passes))], () => {
+      this.prime();
+      done?.();
+    });
   }
 
   /** One empty step through every pass – nothing is left to set up on the first real one. */

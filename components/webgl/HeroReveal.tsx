@@ -173,6 +173,8 @@ class HeroRevealLayer {
   private stale = true;
   private resizedAt = 0;
   private live = false;
+  /** The composite and the fluid passes are compiled – drawing earlier would wait for them. */
+  private compiled = false;
   private reveal = 0;
   private time = 0;
   private dt = 0;
@@ -217,8 +219,14 @@ class HeroRevealLayer {
     this.mesh.frustumCulled = false;
     this.mesh.visible = false;
     this.readColors();
-    // Compile the composite and the fluid passes while the page is idle, not on the first frame.
-    this.cleanups.push(precompile(renderer, [{ object: this.mesh, camera: QUAD_CAMERA }]), this.sim.warmUp());
+    // Compile the composite and the fluid passes while the page is idle; the DOM name stays until
+    // both are ready – a frame that used them earlier would wait for the compiler (half a second on
+    // integrated GPUs).
+    let pending = 2;
+    const compiled = () => {
+      if (--pending === 0) this.compiled = true;
+    };
+    this.cleanups.push(precompile(renderer, [{ object: this.mesh, camera: QUAD_CAMERA }], compiled), this.sim.warmUp(compiled));
 
     const onMove = (event: PointerEvent) => {
       if (event.pointerType === "touch") return;
@@ -254,7 +262,7 @@ class HeroRevealLayer {
     const atRest = heroState.ready && heroState.scatter < AT_REST;
     if (this.stale && atRest && this.visible && performance.now() - this.resizedAt > 250) this.rebuild();
 
-    const live = this.visible && atRest && !this.stale && !!this.texture;
+    const live = this.compiled && this.visible && atRest && !this.stale && !!this.texture;
     if (live !== this.live) {
       this.live = live;
       // The DOM name hides in the same frame in which WebGL first draws it (and vice versa).
