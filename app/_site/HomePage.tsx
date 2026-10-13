@@ -29,6 +29,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
     alternateName: "Olda",
     jobTitle: getDictionary(locale, "plain").meta.jobTitle,
     url: links.site,
+    image: `${links.site}${links.photo.src}`,
     email: `mailto:${links.email}`,
     address: { "@type": "PostalAddress", addressLocality: "Plzeň", addressCountry: "CZ" },
     alumniOf: {
