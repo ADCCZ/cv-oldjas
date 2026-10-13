@@ -42,11 +42,12 @@ export function ScrambleText({ text, className = "", duration = 0.7 }: Props) {
           split = SplitText.create(el, { type: "chars", charsClass: "scr-char", aria: "none" });
           const glyphs = text === text.toUpperCase() ? UPPER : MIXED;
           const n = Math.max(1, split.chars.length - 1);
-          const chars: Char[] = split.chars.map((node, i) => {
-            const charEl = node as HTMLElement;
-            // Freeze the real glyph width before any random glyph replaces it.
-            const width = charEl.getBoundingClientRect().width;
-            Object.assign(charEl.style, { display: "inline-block", width: `${width}px`, textAlign: "center" });
+          const nodes = split.chars as HTMLElement[];
+          // Freeze the real glyph widths before any random glyph replaces them – all reads first,
+          // then all writes, so the page is laid out once and not once per letter.
+          const widths = nodes.map((charEl) => charEl.getBoundingClientRect().width);
+          const chars: Char[] = nodes.map((charEl, i) => {
+            Object.assign(charEl.style, { display: "inline-block", width: `${widths[i]}px`, textAlign: "center" });
             // Left-to-right wave with jitter; each letter flickers for 15–30 % of the run.
             const start = (i / n) * 0.55 + Math.random() * 0.25;
             return { el: charEl, final: charEl.textContent ?? "", start, lock: Math.min(1, start + 0.15 + Math.random() * 0.15) };
