@@ -40,10 +40,12 @@ developer. Fáze 1–6 jsou hotové, teď je **fáze 7 – doladění: výkon, p
 2. `/og.png` 1200×630 v designu webu a ověřit zbytek §7 (JSON-LD Person, hreflang, sitemap, robots, theme-color).
 3. A11y audit: kontrast 4,5 : 1 v obou tématech, focus, klávesnice, čitelné kopie animovaného textu, jeden `h1`.
 4. Mobil a breakpointy podle §6, reduced motion.
-5. Známé věci: neexistující URL logují `NoFallbackError` (routa `[locale]` s `dynamicParams = false`); tekutina v hero
-   má na dotykovém zařízení bez GPU ~19 fps (pod otevřeným menu se už WebGL uspí); výkon WebGL v Chromu na mém
-   notebooku ještě není ověřený.
-6. Volitelně (zeptej se): barevná PDF mají 733/818 kB, fotka s průhledností je v nich bezeztrátově – JPG verze
+5. WebGL na mém notebooku (13. 10., headless na skutečné GPU, 1440×900): po načtení všechny efekty 60 fps na RTX 4060
+   i Intel UHD. **Opravit:** na Intel při startu dlouhé snímky 0,4–1,1 s (WebGL zapnuté po 5,9 s) a jeden ~0,9s záškub
+   při prvním pohybu myši nad jménem v hero (první použití shaderů tekutiny / rasterizace?). Měř Long Animation Frames.
+6. Známé věci: neexistující URL logují `NoFallbackError` (routa `[locale]` s `dynamicParams = false`); tekutina v hero
+   má na dotykovém zařízení bez GPU ~19 fps (pod otevřeným menu se už WebGL uspí).
+7. Volitelně (zeptej se): barevná PDF mají 733/818 kB, fotka s průhledností je v nich bezeztrátově – JPG verze
    podložená krémovou by ušetřila ~200 kB.
 
 Konec fáze: lint, typecheck, build, `npm run test`, malé commity, push, CI zelené, krátké shrnutí, otázka na fázi 8.
