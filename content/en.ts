@@ -267,6 +267,50 @@ export const en = {
     linkCv: "CV PDF",
   },
 
+  /** The PDF CVs (app/cv/print, rendered by `npm run cv`). Condensed from the sections above – no new facts. */
+  cv: {
+    documentTitle: "Oldřich Jan Švehla – CV",
+    label: "CV",
+    status: "Open to internships",
+    profile:
+      "Junior full-stack developer who sees things through to the last detail. Bachelor’s in Computer Science from FAV ZČU (2026), now in the first year of the master’s in Software and Information Systems. I enjoy the whole journey from the architecture through the backend and databases to the last detail of the interface – mostly in PHP (Nette), JavaScript (React, Vue) and Python, with MySQL, Git and Linux around it. I only call something done once it’s tested and actually works.",
+    sections: {
+      profile: "Profile",
+      experience: "Experience",
+      technologies: "Technologies",
+      planned: "Planned",
+      languages: "Languages",
+      languageSkills: "Language skills",
+      education: "Education",
+      projects: "Selected projects",
+      projectsPlain: "Projects",
+      softSkills: "Soft skills",
+      courses: "Courses",
+      offCode: "Beyond code",
+      availability: "Availability",
+    },
+    contact: { email: "E-mail", phone: "Phone", github: "GitHub", web: "Web" },
+    scale: "Scale",
+    also: "Also",
+    otherProjects: "Other semester projects",
+    languages: [
+      { name: "Czech", level: "native" },
+      { name: "English", level: "B2" },
+      { name: "German", level: "basics" },
+      { name: "Spanish", level: "beginner" },
+    ],
+    courses: [
+      { name: "Patrol Leader Course", period: "2020" },
+      { name: "Unit Leader Course", period: "2024" },
+      { name: "Master Guide – the highest level of training in Pathfinder", period: "in progress, until early 2027" },
+    ],
+    offCode: [
+      "Guitar – acoustic, since 2011, mostly by the campfire",
+      "Climbing and via ferratas – the hardest grade so far is\u00a0D",
+      "Video games since 2012 · Marvel films, favourite series Loki",
+    ],
+  },
+
   footer: {
     place: "Pilsen, CZ",
     built: "Built with Next.js, GSAP and Three.js together with Claude Code",

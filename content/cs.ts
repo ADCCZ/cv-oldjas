@@ -262,6 +262,49 @@ export const cs: Dictionary = {
     linkCv: "CV PDF",
   },
 
+  cv: {
+    documentTitle: "Oldřich Jan Švehla – životopis",
+    label: "Životopis",
+    status: "Hledám stáž",
+    profile:
+      "Junior full-stack vývojář, který věci dotahuje do posledního puntíku. Bakaláře z počítačových věd jsem dokončil na FAV ZČU (2026), teď jsem v 1. ročníku navazujícího studia Softwarové a informační systémy. Baví mě celá cesta od návrhu architektury přes backend a databáze až po poslední detail v rozhraní – nejčastěji v PHP (Nette), JavaScriptu (React, Vue) a Pythonu, k tomu MySQL, Git a Linux. Za hotové považuju až to, co je otestované a opravdu funguje.",
+    sections: {
+      profile: "Profil",
+      experience: "Praxe",
+      technologies: "Technologie",
+      planned: "V plánu",
+      languages: "Jazyky",
+      languageSkills: "Jazykové znalosti",
+      education: "Vzdělání",
+      projects: "Vybrané projekty",
+      projectsPlain: "Projekty",
+      softSkills: "Měkké dovednosti",
+      courses: "Kurzy",
+      offCode: "Mimo kód",
+      availability: "Dostupnost",
+    },
+    contact: { email: "E-mail", phone: "Telefon", github: "GitHub", web: "Web" },
+    scale: "Stupnice",
+    also: "Dále",
+    otherProjects: "Další semestrální práce",
+    languages: [
+      { name: "Čeština", level: "rodilý mluvčí" },
+      { name: "Angličtina", level: "B2" },
+      { name: "Němčina", level: "základy" },
+      { name: "Španělština", level: "začínám" },
+    ],
+    courses: [
+      { name: "Rádcovský kurz", period: "2020" },
+      { name: "Vůdcovský kurz", period: "2024" },
+      { name: "MasterGuide – nejvyšší stupeň vzdělání v Pathfinderu", period: "probíhá, do začátku 2027" },
+    ],
+    offCode: [
+      "Kytara – akustická, od roku 2011, hlavně u ohně",
+      "Lezení a ferraty – zatím nejtěžší obtížnost\u00a0D",
+      "Videohry od roku 2012 · marvelovky, nejradši seriál Loki",
+    ],
+  },
+
   footer: {
     place: "Plzeň, CZ",
     built: "Postaveno s Next.js, GSAP a Three.js ve spolupráci s Claude Code",

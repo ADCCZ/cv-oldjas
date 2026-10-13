@@ -13,6 +13,8 @@ export type Project = {
   demo?: string;
   title: Text;
   description: Localized;
+  /** One sentence for the PDF CVs (two lines in the design grid, one line in the plain list). */
+  summary?: Localized;
   stack: Text[];
   /** Labels on the bottom-left of the cover (featured projects only). */
   tags?: Text[];
@@ -32,6 +34,10 @@ export const projects: Project[] = [
       cs: "Interaktivní dashboard pro řízení táborové hry: editace tras na mapě, správa týmů, pravidla a bodování v reálném čase. Semestrální projekt KIV/UUR.",
       en: "Interactive dashboard for running a camp game: route editing on a map, team management, rules and real-time scoring. Semester project for KIV/UUR.",
     },
+    summary: {
+      cs: "Interaktivní dashboard pro řízení táborové hry – editace tras na mapě, správa týmů a bodování v reálném čase.",
+      en: "Interactive dashboard for running a camp game – route editing on a map, team management and real-time scoring.",
+    },
     stack: ["React", "Tailwind CSS", "Recharts", "Leaflet"],
     tags: ["WEBAPP", "KIV/UUR"],
     image: "/projects/campmaster.webp",
@@ -46,6 +52,10 @@ export const projects: Project[] = [
       cs: "Kiosek pro firemní akce na zakázku Eurosoftware (dnes GK Software Czech Republic): přihlášení NFC kartou, výběr produktů s hlídáním limitů, administrace a statistiky. Moje část: frontend ve Vue.js, NFC, design a UX/UI. Týmový projekt KIV/ZSW-E, LS 2025.",
       en: "Self-service kiosk for company events, built for Eurosoftware (now GK Software Czech Republic): NFC card login, product selection with limits, admin and statistics. My part: Vue.js frontend, NFC, design and UX/UI. Team project, KIV/ZSW-E, spring 2025.",
     },
+    summary: {
+      cs: "Kiosek pro firemní akce na zakázku Eurosoftware – moje část: frontend ve Vue.js, přihlášení NFC kartou a UX/UI.",
+      en: "Kiosk for company events built for Eurosoftware – my part: the Vue.js frontend, NFC card login and UX/UI.",
+    },
     stack: ["Vue.js", "JavaScript", "NFC", "UX/UI"],
     tags: [{ cs: "ZAKÁZKA FIRMY", en: "CLIENT PROJECT" }, { cs: "TÝM", en: "TEAM" }],
     image: "/projects/kiosek.webp",
@@ -58,6 +68,10 @@ export const projects: Project[] = [
     description: {
       cs: "Web pro oblast Jižní kříž Klubu Pathfinder, momentálně ve vývoji. Full-stack řešení na míru: autentizace uživatelů, registrace na akce, správa multimediálního obsahu.",
       en: "Website for the Jižní kříž region of Klub Pathfinder, currently in development. Custom full-stack solution: user authentication, event registration, media management.",
+    },
+    summary: {
+      cs: "Full-stack web na míru pro oblast Jižní kříž Klubu Pathfinder: přihlašování, registrace na akce, správa médií.",
+      en: "Custom full-stack website for the Jižní kříž region of Klub Pathfinder: user login, event registration, media.",
     },
     stack: ["PHP", "Nette", "Latte", "Tailwind CSS", "MySQL"],
     tags: ["FULL-STACK", { cs: "VE VÝVOJI", en: "IN PROGRESS" }],
@@ -72,6 +86,10 @@ export const projects: Project[] = [
       cs: "Bakalářský projekt: devět lázeňských a dvě turistická města. Pipeline v Pythonu stahuje data z ČSÚ, MŠMT, MF, MPSV a registru lázní, čistí je, počítá metriky a kreslí 15 grafů s animací a report v Power BI. 24 testů v pytest.",
       en: "Bachelor’s project: nine spa towns and two tourist towns. A Python pipeline downloads data from the Czech Statistical Office, ministries and the spa registry, cleans it, computes metrics and renders 15 animated charts plus a Power BI report. 24 pytest tests.",
     },
+    summary: {
+      cs: "Pipeline v Pythonu nad otevřenými daty devíti lázeňských měst: čištění, metriky, 15 animovaných grafů, 24 testů.",
+      en: "Python pipeline over open data of nine spa towns: cleaning, metrics, 15 animated charts and 24 pytest tests.",
+    },
     stack: ["Python", "pandas", "matplotlib", "Power BI", "pytest", { cs: "Otevřená data", en: "Open data" }],
     tags: [{ cs: "BAKALÁŘKA", en: "BACHELOR’S PROJECT" }, "OPEN DATA"],
     image: "/projects/bakalarka.webp",
@@ -84,6 +102,10 @@ export const projects: Project[] = [
     description: {
       cs: "Server v čistém C s TCP a select() multiplexingem, klient v JavaFX, vlastní textový protokol. Semestrální projekt KIV/UPS pro 2–4 hráče.",
       en: "Pure C server with TCP and select() multiplexing, JavaFX client, custom text protocol. Semester project for KIV/UPS, 2–4 players.",
+    },
+    summary: {
+      cs: "Hra pro 2–4 hráče: server v čistém C (TCP, select()), klient v JavaFX a vlastní textový protokol.",
+      en: "Game for 2–4 players: a pure C server (TCP, select()), a JavaFX client and a custom text protocol.",
     },
     stack: ["C", "TCP/IP", "JavaFX", "Maven", { cs: "Síťové protokoly", en: "Network protocols" }],
     tags: [{ cs: "SÍŤOVÁ HRA", en: "NETWORK GAME" }, "KIV/UPS"],
@@ -98,6 +120,10 @@ export const projects: Project[] = [
       cs: "Objednávkový systém rozvozu jídla: košík přes AJAX, správa produktů dodavatelů, schvalování a administrace. Vlastní MVC v PHP 8 bez frameworku, Twig, MySQL přes PDO, Bcrypt, ochrana proti SQL injection a XSS. Semestrální práce KIV/WEB.",
       en: "Food delivery ordering system: AJAX cart, supplier product management, approval and admin. Custom MVC in PHP 8 without a framework, Twig, MySQL via PDO, Bcrypt, SQL injection and XSS protection. Semester project for KIV/WEB.",
     },
+    summary: {
+      cs: "Objednávky jídla na vlastním MVC v PHP 8 bez frameworku – košík přes AJAX, administrace, ochrana proti SQLi a XSS.",
+      en: "Food ordering on a custom PHP 8 MVC without a framework – AJAX cart, admin, SQL injection and XSS protection.",
+    },
     stack: ["PHP", "Twig", "MySQL", "JavaScript (AJAX)", "Bootstrap 5"],
     tags: ["WEBAPP", "KIV/WEB"],
     image: "/projects/foodapp.webp",
@@ -111,6 +137,10 @@ export const projects: Project[] = [
     description: {
       cs: "Portfolio, na které se právě díváš – Next.js, GSAP a WebGL shadery. Vzniká ve spolupráci s Claude Code.",
       en: "The portfolio you’re looking at – Next.js, GSAP and WebGL shaders. Built together with Claude Code.",
+    },
+    summary: {
+      cs: "Tohle portfolio – Next.js, GSAP a WebGL shadery, vzniká ve spolupráci s Claude Code.",
+      en: "This portfolio – Next.js, GSAP and WebGL shaders, built together with Claude Code.",
     },
     stack: ["Next.js", "TypeScript", "GSAP", "Three.js", "Tailwind CSS"],
     tags: ["PORTFOLIO"],
