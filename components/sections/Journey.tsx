@@ -155,7 +155,7 @@ export function Journey({ t }: { t: Dictionary }) {
           head={
             <div className="site-grid gap-y-3 pb-8 md:pt-8">
               <h3 className="eyebrow col-span-12 text-fg-muted md:col-span-3">{t.journey.experience.title}</h3>
-              <p className="col-span-12 max-w-[42ch] text-xl leading-snug tracking-tight md:col-span-9 md:text-2xl">
+              <p className="col-span-12 max-w-[42ch] text-xl leading-snug tracking-tight md:col-span-9 md:text-2xl lg:max-w-none">
                 {t.journey.experience.lead}
               </p>
             </div>
