@@ -776,19 +776,28 @@ html.has-cursor * {
   scale: var(--press);
 }
 
-/* Archive rows: the red fill wipes in from the left under the pointer or keyboard focus (ProjectArchive). */
+/* Archive rows: the red fill wipes in from the left under the pointer or keyboard focus (ProjectArchive).
+   At rest it is also hidden once the wipe-out is over – contrast checkers ignore clip-path and would
+   measure the row text against the red. */
 .archive-fill {
   clip-path: inset(0 100% 0 0);
-  transition: clip-path 0.6s var(--ease-inout);
+  visibility: hidden;
+  transition:
+    clip-path 0.6s var(--ease-inout),
+    visibility 0s 0.6s;
 }
 
 .group\/row:has(summary:focus-visible) .archive-fill {
   clip-path: inset(0);
+  visibility: visible;
+  transition: clip-path 0.6s var(--ease-inout);
 }
 
 @media (hover: hover) {
   .group\/row:hover .archive-fill {
     clip-path: inset(0);
+    visibility: visible;
+    transition: clip-path 0.6s var(--ease-inout);
   }
 }
 

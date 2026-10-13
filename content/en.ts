@@ -18,7 +18,7 @@ export const en = {
     language: "Language",
     themeToLight: "Switch to light theme",
     themeToDark: "Switch to dark theme",
-    home: "Oldřich Jan Švehla – back to top",
+    home: "OJŠ – Oldřich Jan Švehla, back to top",
     openInNewTab: "opens in a new tab",
     siteMenu: "Site menu",
   },

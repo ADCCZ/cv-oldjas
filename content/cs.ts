@@ -16,7 +16,7 @@ export const cs: Dictionary = {
     language: "Jazyk",
     themeToLight: "Přepnout na světlé téma",
     themeToDark: "Přepnout na tmavé téma",
-    home: "Oldřich Jan Švehla – zpět nahoru",
+    home: "OJŠ – Oldřich Jan Švehla, zpět nahoru",
     openInNewTab: "otevře se v nové záložce",
     siteMenu: "Menu webu",
   },
