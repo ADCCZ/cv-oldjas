@@ -6,6 +6,7 @@ import {
   siDotnet,
   siGit,
   siGithubactions,
+  siGsap,
   siHtml5,
   siJavascript,
   siJest,
@@ -27,7 +28,9 @@ import {
   siSocketdotio,
   siSpringboot,
   siTailwindcss,
+  siThreedotjs,
   siTypescript,
+  siVercel,
   siVite,
   siVuedotjs,
   type SimpleIcon,
@@ -35,7 +38,7 @@ import {
 
 /**
  * Monochrome technology logos from simple-icons, keyed by slug (`icon` in stack.config.ts).
- * Named imports keep the bundle to the ~30 icons in use instead of the whole set.
+ * Named imports keep the bundle to the ~35 icons in use instead of the whole set.
  * Some brands (C#, Power BI, AWS, Latte, Twig…) are not in simple-icons – those tiles are text-only.
  */
 const ICONS: Record<string, SimpleIcon> = Object.fromEntries(
@@ -47,6 +50,7 @@ const ICONS: Record<string, SimpleIcon> = Object.fromEntries(
     siDotnet,
     siGit,
     siGithubactions,
+    siGsap,
     siHtml5,
     siJavascript,
     siJest,
@@ -68,7 +72,9 @@ const ICONS: Record<string, SimpleIcon> = Object.fromEntries(
     siSocketdotio,
     siSpringboot,
     siTailwindcss,
+    siThreedotjs,
     siTypescript,
+    siVercel,
     siVite,
     siVuedotjs,
   ].map((icon) => [icon.slug, icon]),
