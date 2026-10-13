@@ -4,7 +4,14 @@ const NAME = "Oldřich Jan Švehla";
 const SECTIONS = ["top", "about", "stats", "projects", "stack", "skills", "journey", "off-code", "contact"];
 /** Anchors from the old website – links to them are in sent internship applications. */
 const LEGACY_ANCHORS = ["education", "experience", "leadership"];
-const PDFS = ["/cv.pdf", "/cv-plain.pdf", "/cv-cs.pdf", "/cv-plain-cs.pdf"];
+/** Committed by `npm run cv` – the design CV has exactly two pages, the plain one at most two. */
+const PDFS = [
+  { file: "/cv.pdf", pages: [2, 2] },
+  { file: "/cv-plain.pdf", pages: [1, 2] },
+  { file: "/cv-cs.pdf", pages: [2, 2] },
+  { file: "/cv-plain-cs.pdf", pages: [1, 2] },
+] as const;
+const PHONE = "730 961 437";
 
 /** Mark the intro as already seen, so the tests do not wait for the loader (it has its own test). */
 const SKIP_INTRO = () => sessionStorage.setItem("cv:intro", "1");
@@ -212,16 +219,41 @@ test("unknown pages return 404", async ({ page }) => {
 });
 
 test.describe("PDF CVs", () => {
-  // TODO(phase 6): remove once `npm run cv` has generated and committed the PDFs.
-  test.fixme(true, "The PDFs are generated in phase 6 (npm run cv).");
-
-  for (const file of PDFS) {
-    test(`${file} is served as a PDF`, async ({ request }) => {
+  for (const { file, pages } of PDFS) {
+    test(`${file} is served as a PDF with ${pages[0] === pages[1] ? pages[0] : `${pages[0]}–${pages[1]}`} pages`, async ({ request }) => {
       const response = await request.get(file);
       expect(response.status()).toBe(200);
       expect(response.headers()["content-type"]).toContain("application/pdf");
+      // Chromium writes the page objects uncompressed.
+      const count = (await response.body()).toString("latin1").match(/\/Type\s*\/Page(?![a-z])/g)?.length ?? 0;
+      expect(count).toBeGreaterThanOrEqual(pages[0]);
+      expect(count).toBeLessThanOrEqual(pages[1]);
     });
   }
+
+  test("the print pages render all four CVs from the content, hidden from search engines", async ({ page }) => {
+    const errors = collectErrors(page);
+    for (const locale of ["en", "cs"] as const) {
+      for (const variant of ["design", "plain"] as const) {
+        const response = await page.goto(`/cv/print/${locale}/${variant}`);
+        expect(response?.status(), `${locale}/${variant}`).toBe(200);
+        await expect(page.locator("html")).toHaveAttribute("lang", locale);
+        await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+        await expect(page.locator("h1")).toHaveText(NAME);
+        // The phone number lives in the CVs only.
+        await expect(page.getByText(PHONE).first()).toBeAttached();
+        if (variant === "design") await expect(page.locator(".cv-sheet")).toHaveCount(2);
+      }
+    }
+    expect(errors).toEqual([]);
+  });
+
+  test("the phone number never appears on the website", async ({ page }) => {
+    for (const path of ["/", "/cs"]) {
+      await page.goto(path);
+      expect(await page.content(), path).not.toContain(PHONE);
+    }
+  });
 });
 
 test.describe("prefers-reduced-motion: reduce", () => {
