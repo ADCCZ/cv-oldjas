@@ -147,6 +147,24 @@ export const projects: Project[] = [
     image: "/projects/cv-oldjas.webp",
   },
 
+  {
+    id: "olda-web",
+    featured: true,
+    repo: "ADCCZ/olda-web",
+    title: { cs: "Předchozí web s CV", en: "Previous CV website" },
+    description: {
+      cs: "Můj předchozí web s CV, stylizovaný jako úřad ze 70. let, který spravuje čas: spisy s razítky, větvící se časová osa, fosforové obrazovky a průvodkyně Složka. Data z GitHubu přes Vercel funkci, kytara syntetizovaná algoritmem Karplus–Strong, pexeso a terminál. Vznikl ve spolupráci s Claude Code.",
+      en: "My previous CV website, styled as a 1970s office that manages time: case files with stamps, a branching timeline, phosphor screens and Složka, the archive guide. GitHub data through a Vercel function, a guitar synthesised with the Karplus–Strong algorithm, a memory game and a terminal. Built together with Claude Code.",
+    },
+    summary: {
+      cs: "Můj předchozí web s CV – hravý úřad ze 70. let v Reactu a TypeScriptu, vznikl ve spolupráci s Claude Code.",
+      en: "My previous CV website – a playful 1970s office in React and TypeScript, built together with Claude Code.",
+    },
+    stack: ["React", "TypeScript", "Vite", "Tailwind CSS", "Motion"],
+    tags: ["PORTFOLIO", { cs: "PŘEDCHOZÍ VERZE", en: "PREVIOUS VERSION" }],
+    image: "/projects/olda-web.webp",
+  },
+
   // ---- Semester project archive (private repos, access on request) ----
   {
     id: "kmx",
