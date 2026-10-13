@@ -64,6 +64,35 @@
   }
 }
 
+/*
+ * Journey stacks (Journey.tsx), md and up. Every folder ends at the bottom of the stack, --stack-span
+ * below the heading (the whole viewport, at most 34rem for the last folder – our rows hold text), so
+ * the folders leave together. Once JourneyMotion has measured the heading into --stack-head, it sets
+ * data-pinned and the heading sticks above the folders: its box reaches down to the bottom of the
+ * stack – transparent, under the folders – so the same end of the stack pushes it out with them.
+ */
+@media (min-width: 768px) {
+  [data-journey-stack] {
+    --stack-head: 0px;
+    --stack-span: min(
+      calc(100svh - var(--header-h) - var(--stack-head)),
+      calc(34rem + (var(--n) - 1) * var(--bar-h))
+    );
+  }
+
+  [data-journey-stack][data-pinned] > [data-stack-head] {
+    position: sticky;
+    top: var(--header-h);
+    height: calc(var(--stack-head) + var(--stack-span));
+  }
+
+  /* The list moves up instead of the heading: a negative margin on a sticky box would shrink the
+     margin box that its containing block holds, and the heading would stay behind. */
+  [data-journey-stack][data-pinned] > ol {
+    margin-top: calc(-1 * var(--stack-span));
+  }
+}
+
 [data-theme="light"] {
   --bg: #f6f3ee;
   --surface: #ece7df;

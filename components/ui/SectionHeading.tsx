@@ -9,13 +9,15 @@ type Props = {
   headingClassName?: string;
   /** Line-by-line reveal on scroll (MotionRoot). Off where a section animates its heading itself. */
   reveal?: boolean;
+  /** Lean with the scroll velocity (MotionRoot). Off for a heading that sticks while the page scrolls. */
+  skew?: boolean;
 };
 
 /**
  * Section head on the ruled grid (griflan.com style): a hairline with the gold section number,
  * then the big H2. The id is referenced by the section's aria-labelledby.
  */
-export function SectionHeading({ id, number, children, aside, className = "", headingClassName = "text-h2", reveal = true }: Props) {
+export function SectionHeading({ id, number, children, aside, className = "", headingClassName = "text-h2", reveal = true, skew = true }: Props) {
   return (
     <div className={className}>
       <div className="eyebrow flex items-center justify-between gap-4 border-t border-line pt-3">
@@ -27,7 +29,7 @@ export function SectionHeading({ id, number, children, aside, className = "", he
       <h2
         id={id}
         data-reveal={reveal ? "lines" : undefined}
-        data-skew
+        data-skew={skew ? "" : undefined}
         className={`mt-10 font-bold md:mt-16 ${headingClassName}`}
       >
         {children}

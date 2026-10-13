@@ -24,11 +24,11 @@ type FolderProps = {
 /**
  * One "folder" of a stack.
  *
- * md and up: every row is sticky, offset by one bar height per index, so the next row slides over
- * the previous one and leaves only its ~64 px bar (number, title, period) visible – a card index
- * (juncastudio.com style) in pure CSS. Each row is one bar shorter than the previous one (so it ends at
- * the bottom of the viewport), capped at 34rem because our rows hold text, not big images. Either way
- * no row is pushed out of the stack early. Tablets get a taller bar (two title lines, see --bar-h).
+ * md and up: every row is sticky below the stack's heading, offset by one bar height per index, so
+ * the next row slides over the previous one and leaves only its ~64 px bar (number, title, period)
+ * visible – a card index (juncastudio.com style) in pure CSS. Each row is one bar shorter than the
+ * previous one, so all of them end at the bottom of the stack (--stack-span, see Stack) and leave it
+ * together. Tablets get a taller bar (two title lines, see --bar-h).
  * JourneyMotion fades the rows that are being covered.
  *
  * Phones: a plain vertical list; the number sticks below the header while its row scrolls by.
@@ -38,11 +38,11 @@ function Folder({ index, total, title, aside, rows, children }: FolderProps) {
   return (
     <li
       data-surface="red"
-      className="border-t border-cream/15 text-cream md:sticky md:flex md:min-h-[min(calc(100svh-var(--header-h)-var(--i)*var(--bar-h)),34rem)] md:flex-col"
+      className="border-t border-cream/15 text-cream md:sticky md:flex md:min-h-[calc(var(--stack-span)-var(--i)*var(--bar-h))] md:flex-col"
       style={{
         "--i": index,
         background: shadeFor(index, total),
-        top: `calc(var(--header-h) + ${index} * var(--bar-h))`,
+        top: `calc(var(--header-h) + var(--stack-head, 0px) + ${index} * var(--bar-h))`,
         zIndex: index + 1,
       } as React.CSSProperties}
     >
@@ -85,6 +85,36 @@ function FolderBody({ row }: { row: Row }) {
   );
 }
 
+type StackProps = {
+  /** Number of folders – the first one is (count − 1) bars taller than the last. */
+  count: number;
+  /** Hidden anchor of the old website at the start of the stack. */
+  alias: string;
+  head: React.ReactNode;
+  /** Height of the empty space below the folders from md up (`md:after:h-*`). */
+  gapClassName: string;
+  children: React.ReactNode;
+};
+
+/**
+ * One stack of folders with its heading. From md up the folders start stacking while the heading is
+ * still in view: once JourneyMotion has measured it (--stack-head, data-pinned), the heading sticks
+ * under the header and the folders below it (globals.css). The empty space below the folders is part
+ * of the list (::after), so the stack stays in place until that space has scrolled under it and then
+ * leaves as one block – the next heading follows right behind it.
+ */
+function Stack({ count, alias, head, gapClassName, children }: StackProps) {
+  return (
+    <div data-journey-stack style={{ "--n": count } as React.CSSProperties}>
+      <span id={alias} className="anchor-alias" aria-hidden="true" />
+      <div data-stack-head>
+        <div data-stack-head-content>{head}</div>
+      </div>
+      <ol className={`md:after:block md:after:content-[''] ${gapClassName}`}>{children}</ol>
+    </div>
+  );
+}
+
 /** Journey – two stacks (Education, Experience) so the collapsed bars never exceed the viewport. */
 export function Journey({ t }: { t: Dictionary }) {
   const education = t.journey.education.items;
@@ -92,36 +122,45 @@ export function Journey({ t }: { t: Dictionary }) {
   const experienceTotal = experience.length + 1; // + the "next step" row
 
   return (
-    <section id="journey" aria-labelledby="journey-title" className="py-28 md:py-40">
-      <div className="site-grid">
-        <SectionHeading id="journey-title" number="05" className="col-span-12">
-          {t.journey.title}
-        </SectionHeading>
-      </div>
+    <section id="journey" aria-labelledby="journey-title" className="pt-28 pb-28 md:pt-40 md:pb-0">
+      {/* Old website: #education */}
+      <Stack
+        count={education.length}
+        alias="education"
+        gapClassName="md:after:h-24"
+        head={
+          <>
+            <div className="site-grid">
+              <SectionHeading id="journey-title" number="05" className="col-span-12" skew={false}>
+                {t.journey.title}
+              </SectionHeading>
+            </div>
+            <h3 className="eyebrow mt-16 px-gutter pb-5 text-fg-muted md:mt-24">{t.journey.education.title}</h3>
+          </>
+        }
+      >
+        {education.map((row, i) => (
+          <Folder key={row.title} index={i} total={education.length} title={row.title} aside={row.period} rows={row.text.length ? 4 : 3}>
+            <FolderBody row={row} />
+          </Folder>
+        ))}
+      </Stack>
 
-      <div className="mt-16 md:mt-24">
-        {/* Old website: #education */}
-        <span id="education" className="anchor-alias" aria-hidden="true" />
-        <h3 className="eyebrow mb-5 px-gutter text-fg-muted">{t.journey.education.title}</h3>
-        <ol>
-          {education.map((row, i) => (
-            <Folder key={row.title} index={i} total={education.length} title={row.title} aside={row.period} rows={row.text.length ? 4 : 3}>
-              <FolderBody row={row} />
-            </Folder>
-          ))}
-        </ol>
-      </div>
-
-      <div className="mt-24 md:mt-32">
+      <div className="mt-24 md:mt-0">
         {/* Old website: #experience */}
-        <span id="experience" className="anchor-alias" aria-hidden="true" />
-        <div className="site-grid mb-8 gap-y-3">
-          <h3 className="eyebrow col-span-12 text-fg-muted md:col-span-3">{t.journey.experience.title}</h3>
-          <p className="col-span-12 max-w-[42ch] text-xl leading-snug tracking-tight md:col-span-9 md:text-2xl">
-            {t.journey.experience.lead}
-          </p>
-        </div>
-        <ol>
+        <Stack
+          count={experienceTotal}
+          alias="experience"
+          gapClassName="md:after:h-40"
+          head={
+            <div className="site-grid gap-y-3 pb-8 md:pt-8">
+              <h3 className="eyebrow col-span-12 text-fg-muted md:col-span-3">{t.journey.experience.title}</h3>
+              <p className="col-span-12 max-w-[42ch] text-xl leading-snug tracking-tight md:col-span-9 md:text-2xl">
+                {t.journey.experience.lead}
+              </p>
+            </div>
+          }
+        >
           {experience.map((row, i) => (
             <Folder key={row.title} index={i} total={experienceTotal} title={row.title} aside={row.period} rows={4}>
               <FolderBody row={row} />
@@ -138,7 +177,7 @@ export function Journey({ t }: { t: Dictionary }) {
               </a>
             }
           />
-        </ol>
+        </Stack>
       </div>
       <JourneyMotion />
     </section>
