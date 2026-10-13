@@ -9,10 +9,15 @@ import { HERO_READY_EVENT, heroState } from "@/lib/webgl";
 // three.js, R3F and the shaders live in this chunk only – never in the first load.
 const Scene = dynamic(() => import("./Scene"), { ssr: false });
 
-/** The layer renders into half-float targets (fluid and water simulations): WebGL2 + float colour buffers. */
+/**
+ * The layer renders into half-float targets (fluid and water simulations): WebGL2 + float colour
+ * buffers, on a real GPU – a software renderer (SwiftShader, llvmpipe: no GPU, blocklisted driver)
+ * runs the simulations at a few frames per second and blocks the main thread, so it gets the DOM
+ * versions instead.
+ */
 function supportsWebgl(): boolean {
   try {
-    const gl = document.createElement("canvas").getContext("webgl2");
+    const gl = document.createElement("canvas").getContext("webgl2", { failIfMajorPerformanceCaveat: true });
     if (!gl) return false;
     const ok = !!(gl.getExtension("EXT_color_buffer_float") || gl.getExtension("EXT_color_buffer_half_float"));
     gl.getExtension("WEBGL_lose_context")?.loseContext();
