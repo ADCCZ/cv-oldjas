@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 
 const NAME = "Oldřich Jan Švehla";
@@ -216,6 +217,17 @@ test("archive rows open with the keyboard", async ({ page }) => {
 test("unknown pages return 404", async ({ page }) => {
   const response = await page.goto("/this-page-does-not-exist");
   expect(response?.status()).toBe(404);
+});
+
+test("every character the pages show is in the font subset (npm run fonts)", async ({ page }) => {
+  const charset = new Set(readFileSync("fonts/charset.txt", "utf8"));
+  for (const path of ["/", "/cs", "/cv/print/en/design", "/cv/print/cs/design", "/no-such-page"]) {
+    await page.goto(path);
+    // innerText applies text-transform, so uppercase labels are checked as shown.
+    const text = await page.evaluate(() => document.body.innerText + document.title);
+    const missing = [...new Set(text)].filter((char) => char.trim() && !charset.has(char));
+    expect(missing, path).toEqual([]);
+  }
 });
 
 test.describe("PDF CVs", () => {
