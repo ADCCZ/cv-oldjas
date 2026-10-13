@@ -365,6 +365,7 @@ html.cv-doc body {
   font-size: 7.2pt;
   line-height: 1.35;
   opacity: 0.82;
+  text-wrap: pretty;
 }
 
 .cv-also .cv-label {

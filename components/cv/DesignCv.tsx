@@ -14,6 +14,9 @@ import {
   type CvProps,
 } from "./shared";
 
+/** Technology lists break after the dot, never before it – a line never starts with "· ". */
+const ALSO_SEP = "\u00a0· ";
+
 /*
  * The design CV (cv.pdf, cv-cs.pdf): two A4 sheets in the colours of the light theme –
  * cream base (60 %), red blocks (30 %), gold numbers and hairlines (10 %). Styles: app/cv/print/print.css.
@@ -165,7 +168,7 @@ function PageOne(props: CvProps) {
                 </ul>
                 {rest.length ? (
                   <p className="cv-also">
-                    <span className="cv-label">{t.cv.also}</span> {rest.map((tech) => tx(tech.name, locale)).join(" · ")}
+                    <span className="cv-label">{t.cv.also}</span> {rest.map((tech) => tx(tech.name, locale)).join(ALSO_SEP)}
                   </p>
                 ) : null}
               </section>
@@ -175,7 +178,7 @@ function PageOne(props: CvProps) {
           {planned ? (
             <section className="cv-cat">
               <h3 className="cv-label">{t.cv.sections.planned}</h3>
-              <p className="cv-also">{planned.items.map((tech) => tx(tech.name, locale)).join(" · ")}</p>
+              <p className="cv-also">{planned.items.map((tech) => tx(tech.name, locale)).join(ALSO_SEP)}</p>
             </section>
           ) : null}
 
