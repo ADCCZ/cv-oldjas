@@ -17,7 +17,8 @@
     "screenshots": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/screenshots.ts",
     "cv": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/generate-cv.ts",
     "lighthouse": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/lighthouse.ts",
-    "fonts": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/fonts.ts"
+    "fonts": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/fonts.ts",
+    "og": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/og.ts"
   },
   "dependencies": {
     "@gsap/react": "2.1.2",

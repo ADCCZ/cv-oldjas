@@ -28,6 +28,8 @@ export const siteViewport: Viewport = {
 export function siteMetadata(locale: Locale): Metadata {
   // Meta tags get the plain text – no invisible joiners in titles and descriptions.
   const t = getDictionary(locale, "plain");
+  // Share images made by `npm run og` (app/og).
+  const image = { url: locale === "cs" ? "/og-cs.png" : "/og.png", width: 1200, height: 630, alt: t.meta.title };
 
   return {
     metadataBase: new URL(links.site),
@@ -48,11 +50,13 @@ export function siteMetadata(locale: Locale): Metadata {
       siteName: "Oldřich Jan Švehla",
       title: t.meta.title,
       description: t.meta.description,
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title: t.meta.title,
       description: t.meta.description,
+      images: [image],
     },
   };
 }
