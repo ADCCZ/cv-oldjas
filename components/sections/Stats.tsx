@@ -41,6 +41,7 @@ export function Stats({ t }: { t: Dictionary }) {
                 {stats.map((stat, i) => (
                   <li
                     key={stat.id}
+                    data-stat={stat.id}
                     className="flex min-h-[19rem] w-[78vw] shrink-0 flex-col justify-between border-r border-line p-6 motion-reduce:snap-start sm:w-[42vw] md:p-8 md:pb-16 lg:w-[24vw]"
                   >
                     <p className="font-serif text-[clamp(4.5rem,9vw,8.5rem)] leading-[0.85] tracking-tight">
@@ -70,7 +71,7 @@ export function Stats({ t }: { t: Dictionary }) {
       </div>
       <StatsMotion />
       <DriftStrip speed={30} />
-      <StatsPills texts={Object.values(t.stats.stickers)} />
+      <StatsPills stickers={t.stats.stickers} />
     </section>
   );
 }

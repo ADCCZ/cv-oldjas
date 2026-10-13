@@ -90,10 +90,16 @@ export const en = {
       ferrata: "the hardest via ferrata grade I’ve climbed so far",
       guitar: "playing guitar since",
     },
+    /** Stickers thrown out by the mouse over each number (StatsPills). */
     stickers: {
-      shipIt: "Ship it!",
-      merged: "Merged!",
-      done: "Done!",
+      projects: ["Shipped!", "Merged!"],
+      technologies: ["New tool!", "Learned!"],
+      camps: ["Campfire!", "Lights out!"],
+      pathfinder: ["Expedition!", "On the trail!"],
+      tests: ["All green!", "Passed!"],
+      charts: ["Plotted!", "Animated!"],
+      ferrata: ["Summit!", "Clipped in!"],
+      guitar: ["Encore!", "One more song!"],
     },
   },
 

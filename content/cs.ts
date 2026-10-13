@@ -86,9 +86,14 @@ export const cs: Dictionary = {
       guitar: "od kdy hraju na kytaru",
     },
     stickers: {
-      shipIt: "Ship it!",
-      merged: "Merged!",
-      done: "Hotovo!",
+      projects: ["Hotovo!", "Mergnuto!"],
+      technologies: ["Nový nástroj!", "Naučeno!"],
+      camps: ["Táborák!", "Večerka!"],
+      pathfinder: ["Výprava!", "Na stezce!"],
+      tests: ["Všechno zelené!", "Prošlo!"],
+      charts: ["Vykresleno!", "Graf hotov!"],
+      ferrata: ["Vrchol!", "Zacvaknuto!"],
+      guitar: ["Přídavek!", "Ještě jednu!"],
     },
   },
 

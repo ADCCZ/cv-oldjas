@@ -945,13 +945,13 @@ details[data-expanded="true"] .archive-plus {
   position: absolute;
   top: 0;
   left: 0;
-  padding: 0.2em 0.75em 0.25em;
-  border: 2px solid var(--red-text);
+  padding: 0.2em 0.7em 0.25em;
+  border: 1.5px solid var(--red-text);
   border-radius: 9999px;
   background: var(--bg);
   color: var(--red-text);
   font-family: var(--font-hand);
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   line-height: 1;
   white-space: nowrap;
   will-change: transform;
