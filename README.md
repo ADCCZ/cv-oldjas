@@ -3,7 +3,9 @@
 [![CI](https://github.com/ADCCZ/cv-oldjas/actions/workflows/ci.yml/badge.svg)](https://github.com/ADCCZ/cv-oldjas/actions/workflows/ci.yml)
 
 Personal CV and portfolio of **Oldřich Jan Švehla** – junior full-stack developer, Pilsen.
-Live at **https://cv-oldjas-tan.vercel.app/** (English) and **[/cs](https://cv-oldjas-tan.vercel.app/cs)** (Czech).
+Live at **https://cv-oldrich-jan-svehla.vercel.app/** (English) and
+**[/cs](https://cv-oldrich-jan-svehla.vercel.app/cs)** (Czech). The previous website
+([ADCCZ/olda-web](https://github.com/ADCCZ/olda-web)) stays at https://cv-oldjas-tan.vercel.app/.
 
 Built with Next.js 15 (App Router, static pages with hourly revalidation), React 19, TypeScript, Tailwind CSS v4,
 GSAP + Lenis, matter-js and React Three Fiber (WebGL shaders). Developed together with

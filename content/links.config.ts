@@ -4,8 +4,8 @@ import type { Localized } from "./types";
  * Every contact link and file path in one place – the web and both PDF CVs read it from here.
  */
 export const links = {
-  site: "https://cv-oldjas-tan.vercel.app",
-  siteLabel: "cv-oldjas-tan.vercel.app",
+  site: "https://cv-oldrich-jan-svehla.vercel.app",
+  siteLabel: "cv-oldrich-jan-svehla.vercel.app",
 
   email: "oldasvehla@seznam.cz",
   /** Only in the PDF CV – never rendered on the website. */

@@ -132,7 +132,7 @@ export const projects: Project[] = [
     id: "cv-oldjas",
     featured: true,
     repo: "ADCCZ/cv-oldjas",
-    demo: "https://cv-oldjas-tan.vercel.app/",
+    demo: "https://cv-oldrich-jan-svehla.vercel.app/",
     title: { cs: "Tenhle web", en: "This website" },
     description: {
       cs: "Portfolio, na které se právě díváš – Next.js, GSAP a WebGL shadery. Vzniká ve spolupráci s Claude Code.",
@@ -151,6 +151,8 @@ export const projects: Project[] = [
     id: "olda-web",
     featured: true,
     repo: "ADCCZ/olda-web",
+    // Still live on its own Vercel project – the address in the applications sent before this website.
+    demo: "https://cv-oldjas-tan.vercel.app/",
     title: { cs: "Předchozí web s CV", en: "Previous CV website" },
     description: {
       cs: "Můj předchozí web s CV, stylizovaný jako úřad ze 70. let, který spravuje čas: spisy s razítky, větvící se časová osa, fosforové obrazovky a průvodkyně Složka. Data z GitHubu přes Vercel funkci, kytara syntetizovaná algoritmem Karplus–Strong, pexeso a terminál. Vznikl ve spolupráci s Claude Code.",

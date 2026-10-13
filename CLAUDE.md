@@ -1,7 +1,8 @@
 # CLAUDE.md – cv-oldjas
 
 Personal CV / portfolio of Oldřich Jan Švehla (junior full-stack developer, Pilsen).
-Live: https://cv-oldjas-tan.vercel.app/ – that URL is already in sent internship applications.
+Live: https://cv-oldrich-jan-svehla.vercel.app/ (own Vercel project, `links.site`). The previous website (repo
+ADCCZ/olda-web, never edit it) stays at https://cv-oldjas-tan.vercel.app/ – that URL is in sent internship applications.
 The full brief is in `docs/PROMPT.md`; effect decisions from the reference research in `docs/REFERENCES.md`
 (they override the brief where they differ). These are the rules that must hold in every session.
 

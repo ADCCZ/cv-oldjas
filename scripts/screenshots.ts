@@ -29,6 +29,17 @@ const PREPARE: Partial<Record<string, (page: Page) => Promise<void>>> = {
     await page.getByRole("button", { name: /Otevřít|Open/ }).last().click();
     await page.waitForLoadState("networkidle");
   },
+  // The previous website in its default dark theme, without the archive guide and her folder.
+  "olda-web": async (page) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.reload({ waitUntil: "networkidle" });
+    await page.waitForTimeout(2000);
+    await page.getByText("Schovat", { exact: true }).click();
+    await page.waitForTimeout(800);
+    const hideFolder = page.getByLabel("Schovat", { exact: true });
+    if (await hideFolder.count()) await hideFolder.first().click();
+    await page.waitForTimeout(1500);
+  },
 };
 
 const isOwnSite = (url: string) => new URL(url).origin === new URL(links.site).origin;
