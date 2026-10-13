@@ -47,7 +47,7 @@ export function Stack({ t, locale }: { t: Dictionary; locale: Locale }) {
         {stack.map((category) => (
           <div key={category.id}>
             <h3 data-stack-heading className="eyebrow mb-5 text-fg-muted">
-              {category.name[locale]}
+              {tx(category.name, locale)}
             </h3>
             <ul className="flex flex-wrap items-center gap-2">
               {category.items.map((tech) => (

@@ -130,7 +130,7 @@ export function MenuOverlay({ open, onClose, locale, activeItem, activeSection, 
 
       <div className="eyebrow flex shrink-0 items-center justify-between gap-4 border-t border-cream/15 px-gutter py-5">
         <TrackedLink href={cvHref} download event="cv_download" data={{ lang: locale, version: "design" }} className="link-draw">
-          {labels.downloadCv} ↓
+          {labels.downloadCv}&nbsp;↓
         </TrackedLink>
         <span className="text-cream/60">OJŠ</span>
       </div>

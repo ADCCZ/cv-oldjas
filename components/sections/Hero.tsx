@@ -2,11 +2,11 @@ import { Clock } from "@/components/layout/Clock";
 import { HeroMotion } from "@/components/motion/HeroMotion";
 import { ButtonContent } from "@/components/ui/ButtonContent";
 import { Marquee } from "@/components/ui/Marquee";
+import { Segments } from "@/components/ui/Segments";
 import { TrackedLink } from "@/components/ui/TrackedLink";
 import { links } from "@/content/links.config";
 import type { Locale } from "@/content/types";
 import type { Dictionary } from "@/lib/dictionary";
-import { availabilityLine } from "@/lib/i18n";
 
 export const FULL_NAME = "Oldřich Jan Švehla";
 
@@ -19,8 +19,7 @@ type Props = { t: Dictionary; locale: Locale };
  */
 export function Hero({ t, locale }: Props) {
   const { hoursPerWeek, location } = links.availability;
-  const status = `${t.hero.status} · ${availabilityLine(hoursPerWeek, t.availability.hoursUnit, location[locale])}`;
-  const statusShort = `${t.hero.statusShort} · ${hoursPerWeek} ${t.availability.hoursUnit}`;
+  const hours = `${hoursPerWeek} ${t.availability.hoursUnit}`;
 
   return (
     // The pin spacer of HeroMotion's ScrollTrigger, rendered here: if ScrollTrigger created it, it
@@ -76,12 +75,16 @@ export function Hero({ t, locale }: Props) {
 
         <div data-hero-bar className="site-grid eyebrow items-center gap-y-3 border-t border-line py-4">
           <p data-hero-pop className="col-span-12 text-fg-muted md:col-span-4">
-            {t.hero.degree}
+            <Segments items={t.hero.degree} />
           </p>
           <p data-hero-pop className="col-span-12 flex items-center gap-2 md:col-span-5 md:justify-center">
             <span className="status-dot" aria-hidden="true" />
-            <span className="hidden sm:inline">{status}</span>
-            <span className="sm:hidden">{statusShort}</span>
+            <span className="hidden sm:block">
+              <Segments nowrap items={[t.hero.status, hours, location[locale]]} />
+            </span>
+            <span className="sm:hidden">
+              <Segments items={[t.hero.statusShort, hours]} />
+            </span>
           </p>
           <div data-hero-pop className="col-span-12 flex items-center gap-5 md:col-span-3 md:justify-end">
             <TrackedLink
@@ -92,7 +95,7 @@ export function Hero({ t, locale }: Props) {
               data={{ place: "hero" }}
               className="link-draw"
             >
-              {t.hero.github} ↗
+              {t.hero.github}&nbsp;↗
             </TrackedLink>
             <Clock label={t.hero.clockLabel} />
           </div>

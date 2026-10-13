@@ -1,6 +1,7 @@
 import { DriftStrip } from "@/components/motion/DriftStrip";
 import { Icon } from "@/components/ui/Icon";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Segments } from "@/components/ui/Segments";
 import type { Dictionary } from "@/lib/dictionary";
 
 /** Clone, original, clone – DriftStrip loops inside the middle copy. */
@@ -70,7 +71,9 @@ export function OffCode({ t }: { t: Dictionary }) {
                             <Icon name={card.icon} className="size-6" />
                           </span>
                         </div>
-                        <p className="mt-auto pt-10 text-lg leading-snug">{card.text}</p>
+                        <p className="mt-auto pt-10 text-lg leading-snug">
+                          <Segments items={card.text} />
+                        </p>
                         {card.link ? (
                           <a
                             href={card.link.href}

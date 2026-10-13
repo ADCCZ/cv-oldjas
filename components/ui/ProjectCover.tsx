@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import Image from "next/image";
+import { Segments } from "@/components/ui/Segments";
 import type { Project } from "@/content/projects.config";
 import type { Locale } from "@/content/types";
 import { pad, tx } from "@/lib/i18n";
@@ -42,7 +43,7 @@ export function ProjectCover({ project, index, total, locale }: Props) {
           {/* Never below 11 / 14 px – on a phone the cover is only ~350 px wide. */}
           <div className="flex items-start justify-between gap-[4cqw] font-label text-[max(2.4cqw,0.6875rem)] leading-tight">
             <span className="text-[max(3.4cqw,0.875rem)] text-gold-soft">{pad(index + 1)}</span>
-            <span className="max-w-[60%] text-right">{project.stack.map((s) => tx(s, locale)).join(" · ")}</span>
+            <Segments className="max-w-[60%] text-right" items={project.stack.map((s) => tx(s, locale))} />
           </div>
           <p className="mt-auto mb-[9cqw] font-wide text-[8.4cqw] leading-[0.86] font-black tracking-[-0.03em] text-balance uppercase">
             {tx(project.title, locale)}

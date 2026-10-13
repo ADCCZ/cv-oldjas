@@ -1,4 +1,5 @@
 import type { Locale, Text } from "@/content/types";
+import { prose } from "@/lib/typography";
 
 /** English is the main language (served on `/`), Czech lives on `/cs`. */
 export const locales = ["en", "cs"] as const satisfies readonly Locale[];
@@ -8,9 +9,9 @@ export function isLocale(value: string): value is Locale {
   return (locales as readonly string[]).includes(value);
 }
 
-/** Resolves config text that is either shared by both languages or translated. */
+/** Resolves config text that is either shared by both languages or translated, typeset (lib/typography). */
 export function tx(text: Text, locale: Locale): string {
-  return typeof text === "string" ? text : text[locale];
+  return prose(typeof text === "string" ? text : text[locale], locale);
 }
 
 /** Public path of the home page in the given language. */

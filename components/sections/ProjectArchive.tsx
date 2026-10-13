@@ -1,4 +1,5 @@
 import { ArchiveMotion } from "@/components/motion/ArchiveMotion";
+import { Segments } from "@/components/ui/Segments";
 import { archiveProjects, featuredProjects } from "@/content/projects.config";
 import type { Locale } from "@/content/types";
 import type { Dictionary } from "@/lib/dictionary";
@@ -23,7 +24,7 @@ export function ProjectArchive({ t, locale }: { t: Dictionary; locale: Locale })
 
       <ol className="col-span-12 -mx-(--gutter)">
         {archiveProjects.map((project, i) => {
-          const stack = project.stack.map((s) => tx(s, locale)).join(" · ");
+          const stack = <Segments items={project.stack.map((s) => tx(s, locale))} />;
           return (
             <li key={project.id} id={`project-${project.id}`} data-surface="red" className="group/row relative after:absolute after:inset-x-(--gutter) after:bottom-0 after:h-px after:bg-line">
               <div className="archive-fill absolute inset-0 bg-red-500" aria-hidden="true" />
@@ -46,7 +47,7 @@ export function ProjectArchive({ t, locale }: { t: Dictionary; locale: Locale })
                 <div data-archive-body className="overflow-hidden">
                   <div className="grid grid-cols-12 gap-x-(--gutter) px-gutter pb-8">
                     <p className={`col-span-12 max-w-[65ch] text-fg-muted md:col-span-7 md:col-start-2 ${ON_FILL}`}>
-                      {project.description[locale]}
+                      {tx(project.description, locale)}
                     </p>
                     <p className={`eyebrow col-span-12 mt-4 text-fg-muted md:hidden ${ON_FILL}`}>{stack}</p>
                   </div>

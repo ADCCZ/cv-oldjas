@@ -4,6 +4,7 @@ import { AboutMotion } from "@/components/motion/AboutMotion";
 import { CompassSvg } from "@/components/ui/CompassSvg";
 import { Icon } from "@/components/ui/Icon";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Segments } from "@/components/ui/Segments";
 import { links } from "@/content/links.config";
 import type { Dictionary } from "@/lib/dictionary";
 
@@ -51,7 +52,7 @@ export function About({ t }: { t: Dictionary }) {
               <span data-fact-icon className="fact-icon text-gold-text">
                 <Icon name={fact.icon} />
               </span>
-              <span>{fact.text}</span>
+              <Segments items={fact.text} />
             </li>
           ))}
         </ul>

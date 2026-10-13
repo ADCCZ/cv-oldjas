@@ -2,6 +2,7 @@ import { Clock } from "@/components/layout/Clock";
 import { FooterMotion } from "@/components/motion/FooterMotion";
 import { CopyEmail } from "@/components/ui/CopyEmail";
 import { ScrambleText } from "@/components/ui/ScrambleText";
+import { Segments } from "@/components/ui/Segments";
 import { TrackedLink } from "@/components/ui/TrackedLink";
 import { links } from "@/content/links.config";
 import type { Locale } from "@/content/types";
@@ -81,7 +82,7 @@ export function Footer({ t, locale, projectCount }: Props) {
                 data={{ place: "footer-links" }}
                 className="link-draw"
               >
-                GitHub ↗{newTab}
+                GitHub&nbsp;↗{newTab}
               </TrackedLink>
             </li>
             <li>
@@ -91,7 +92,7 @@ export function Footer({ t, locale, projectCount }: Props) {
             </li>
             <li>
               <TrackedLink href={cv.design} event="cv_download" data={{ lang: locale, version: "design" }} className="link-draw" download>
-                {t.contact.linkCv} ↓
+                {t.contact.linkCv}&nbsp;↓
               </TrackedLink>
             </li>
           </ul>
@@ -126,19 +127,21 @@ export function Footer({ t, locale, projectCount }: Props) {
       </p>
 
       <div className="site-grid eyebrow items-center gap-y-3 border-t border-line py-5 text-fg-muted">
-        <p className="col-span-12 flex flex-wrap items-center gap-x-3 gap-y-1 lg:col-span-10">
-          <span>© {new Date().getFullYear()} Oldřich Jan Švehla</span>
-          <span aria-hidden="true">·</span>
-          <span>{t.footer.place}</span>
-          <span aria-hidden="true">·</span>
-          <Clock label={t.hero.clockLabel} showOffset className="text-fg" />
-          <span aria-hidden="true">·</span>
-          <span>{t.footer.built}</span>
-          <span aria-hidden="true">·</span>
-          <a href={links.sourceRepo} target="_blank" rel="noopener noreferrer" className="link-draw text-fg">
-            {t.footer.source}
-            {newTab}
-          </a>
+        <p className="col-span-12 lg:col-span-10">
+          <Segments
+            stack
+            nowrap
+            items={[
+              `© ${new Date().getFullYear()} Oldřich Jan Švehla`,
+              t.footer.place,
+              <Clock key="clock" label={t.hero.clockLabel} showOffset className="text-fg" />,
+              t.footer.built,
+              <a key="source" href={links.sourceRepo} target="_blank" rel="noopener noreferrer" className="link-draw text-fg">
+                {t.footer.source}
+                {newTab}
+              </a>,
+            ]}
+          />
         </p>
         <a href="#top" className="link-draw col-span-12 justify-self-start text-fg lg:col-span-2 lg:justify-self-end">
           {t.footer.top}

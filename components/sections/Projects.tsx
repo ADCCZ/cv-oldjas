@@ -1,6 +1,7 @@
 import { ProjectsMotion } from "@/components/motion/ProjectsMotion";
 import { ProjectCover } from "@/components/ui/ProjectCover";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Segments } from "@/components/ui/Segments";
 import { TrackedLink } from "@/components/ui/TrackedLink";
 import { links } from "@/content/links.config";
 import { featuredProjects, type Project } from "@/content/projects.config";
@@ -19,16 +20,24 @@ function RepoMetaLine({ meta, t }: { meta: RepoMeta; t: Dictionary }) {
     new Date(meta.pushedAt),
   );
   return (
-    <span className="text-fg-muted">
-      {meta.language ? (
+    <Segments
+      className="text-fg-muted"
+      items={[
+        ...(meta.language
+          ? [
+              <>
+                <span className="sr-only">{t.projects.language}: </span>
+                {meta.language}
+              </>,
+            ]
+          : []),
         <>
-          <span className="sr-only">{t.projects.language}: </span>
-          {meta.language} ·{" "}
-        </>
-      ) : null}
-      <span aria-hidden="true">★</span> {meta.stars}
-      <span className="sr-only"> {t.projects.stars}</span> · {t.projects.updated} {date}
-    </span>
+          <span aria-hidden="true">★</span> {meta.stars}
+          <span className="sr-only"> {t.projects.stars}</span>
+        </>,
+        `${t.projects.updated} ${date}`,
+      ]}
+    />
   );
 }
 
@@ -92,7 +101,7 @@ function ProjectCard({ project, index, total, t, locale, meta }: CardProps) {
           {pad(index + 1)}
         </span>
       </div>
-      <p className="mt-3 max-w-[62ch] text-fg-muted">{project.description[locale]}</p>
+      <p className="mt-3 max-w-[62ch] text-fg-muted">{tx(project.description, locale)}</p>
       <ul className="mt-4 flex flex-wrap gap-1.5">
         {project.stack.map((s) => (
           <li key={tx(s, "en")} className="tag text-fg-muted">
@@ -114,7 +123,7 @@ function ProjectCard({ project, index, total, t, locale, meta }: CardProps) {
             <NewTab label={t.a11y.openInNewTab} />
           </TrackedLink>
         ) : (
-          <span className="text-fg-muted">{project.privateNote?.[locale] ?? t.projects.privateOwn}</span>
+          <span className="text-fg-muted">{project.privateNote ? tx(project.privateNote, locale) : t.projects.privateOwn}</span>
         )}
         {project.demo ? (
           <TrackedLink

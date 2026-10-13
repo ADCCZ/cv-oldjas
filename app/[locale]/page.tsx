@@ -32,7 +32,7 @@ export default async function HomePage({ params }: Props) {
     "@type": "Person",
     name: FULL_NAME,
     alternateName: "Olda",
-    jobTitle: t.meta.jobTitle,
+    jobTitle: getDictionary(locale, "plain").meta.jobTitle,
     url: links.site,
     email: `mailto:${links.email}`,
     address: { "@type": "PostalAddress", addressLocality: "Plzeň", addressCountry: "CZ" },

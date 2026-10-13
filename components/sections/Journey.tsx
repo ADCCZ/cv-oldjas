@@ -2,6 +2,7 @@ import { JourneyMotion } from "@/components/motion/JourneyMotion";
 import { ButtonContent } from "@/components/ui/ButtonContent";
 import { ScrambleText } from "@/components/ui/ScrambleText";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Segments } from "@/components/ui/Segments";
 import type { Dictionary } from "@/lib/dictionary";
 import { pad } from "@/lib/i18n";
 import { shadeFor } from "@/lib/shade";
@@ -68,7 +69,7 @@ function FolderBody({ row }: { row: Row }) {
   return (
     <>
       <p data-folder-body className="col-span-10 mt-3 font-serif text-xl italic md:col-span-4 md:col-start-2 md:mt-4 md:text-2xl">
-        {row.place}
+        <Segments items={row.place} />
       </p>
       {row.text.length > 0 ? (
         <ul data-folder-body className="col-span-10 mt-2 space-y-3 md:col-span-6 md:col-start-7 md:mt-5">

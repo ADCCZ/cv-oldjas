@@ -40,7 +40,8 @@ export const viewport: Viewport = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
-  const t = getDictionary(locale);
+  // Meta tags get the plain text – no invisible joiners in titles and descriptions.
+  const t = getDictionary(locale, "plain");
 
   return {
     metadataBase: new URL(links.site),

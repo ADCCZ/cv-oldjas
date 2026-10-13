@@ -189,6 +189,27 @@
     }
   }
 
+  /* No lone word on a last line, at any width: running text evens out its last lines, headings
+     balance all of theirs. */
+  p,
+  blockquote {
+    text-wrap: pretty;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  li,
+  dt,
+  dd,
+  figcaption,
+  summary {
+    text-wrap: balance;
+  }
+
   ::selection {
     background: var(--red-500);
     color: var(--cream);
@@ -382,6 +403,7 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
     font-variant-numeric: tabular-nums;
+    text-wrap: balance;
   }
 
   /* Gold underline that draws from left to right on hover. */

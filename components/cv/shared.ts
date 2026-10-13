@@ -4,6 +4,7 @@ import { getProject, type Project } from "@/content/projects.config";
 import type { Locale } from "@/content/types";
 import type { Dictionary } from "@/lib/dictionary";
 import { availabilityLine } from "@/lib/i18n";
+import { nbsp } from "@/lib/typography";
 
 export type CvProps = { t: Dictionary; locale: Locale };
 
@@ -38,21 +39,6 @@ export function projectLink(project: Project, { t, locale }: CvProps): ProjectLi
   const href = project.demo ?? (project.repo ? `https://github.com/${project.repo}` : null);
   if (href) return { href, label: bare(href) };
   return { note: project.privateNote?.[locale] ?? t.projects.privateOwn };
-}
-
-/** Czech typography: a one-letter preposition or conjunction (v, k, s, z, a, i, o, u) never ends a line. */
-export function nbsp(text: string, locale: Locale): string {
-  return locale === "cs" ? text.replace(/(?<=^|[\s(„])([AIKOSUVZaikosuvz]) +/g, "$1\u00a0") : text;
-}
-
-/** The dictionary with nbsp() applied to every string – the print pages read it instead of the raw one. */
-export function typeset<T>(value: T, locale: Locale): T {
-  if (typeof value === "string") return nbsp(value, locale) as T;
-  if (Array.isArray(value)) return value.map((item: unknown) => typeset(item, locale)) as T;
-  if (value && typeof value === "object") {
-    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, typeset(item, locale)])) as T;
-  }
-  return value;
 }
 
 /** The one-sentence summary, or the full description where a project has none. */
