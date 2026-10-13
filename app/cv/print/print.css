@@ -230,7 +230,8 @@ html.cv-doc body {
 
 .cv-contacts {
   display: grid;
-  grid-auto-columns: 1fr;
+  /* Sized by content, the rest shared out – the web address is the longest value and stays on one line. */
+  grid-auto-columns: auto;
   grid-auto-flow: column;
   margin-top: 4.5mm;
   border-block: 0.5pt solid var(--line-strong);
