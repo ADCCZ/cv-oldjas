@@ -1,12 +1,14 @@
+import Image from "next/image";
 import { AboutFacts } from "@/components/motion/AboutFacts";
 import { AboutMotion } from "@/components/motion/AboutMotion";
 import { CompassSvg } from "@/components/ui/CompassSvg";
 import { Icon } from "@/components/ui/Icon";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { links } from "@/content/links.config";
 import type { Dictionary } from "@/lib/dictionary";
 
 /**
- * About – text on the left, sticky compass with quick facts on the right.
+ * About – text with the portrait on the left, sticky compass with quick facts on the right.
  * Opaque and above the hero: it slides over the pinned hero while the name scatters.
  */
 export function About({ t }: { t: Dictionary }) {
@@ -16,6 +18,19 @@ export function About({ t }: { t: Dictionary }) {
         <SectionHeading id="about-title" number="01" reveal={false}>
           {t.about.title}
         </SectionHeading>
+        {/* A cut-out with a transparent background: the fade at its bottom rests on the tile's edge. */}
+        <figure className="mt-10 w-40 md:float-right md:mb-4 md:ml-8 md:w-44">
+          <div className="relative aspect-[4/5] border border-line bg-surface">
+            <Image
+              src={links.photo.src}
+              width={links.photo.width}
+              height={links.photo.height}
+              alt={t.about.photoAlt}
+              sizes="(min-width: 768px) 11rem, 10rem"
+              className="absolute inset-0 size-full object-contain object-bottom"
+            />
+          </div>
+        </figure>
         <div data-about-text className="mt-10 space-y-6 text-xl leading-snug tracking-tight md:text-[1.75rem] md:leading-[1.3]">
           {t.about.paragraphs.map((p) => (
             <p key={p.slice(0, 24)}>{p}</p>

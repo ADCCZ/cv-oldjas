@@ -62,6 +62,7 @@ export const cs: Dictionary = {
       "Baví mě celá cesta od návrhu architektury přes backend a databáze až po poslední detail v rozhraní. Nejčastěji píšu v PHP (Nette), JavaScriptu (React, Vue) a Pythonu, k tomu MySQL, Git a Linux. Za hotové považuju až to, co je otestované a opravdu funguje.",
       "Nové věci se učím rád – díky školním projektům jsem si vyzkoušel NFC, paralelní výpočty v OpenMP i 3D grafiku v OpenGL, teď se pouštím do TypeScriptu. Při vývoji pracuju s AI asistentem Claude (Claude Code), se kterým vznikl i tenhle web.",
     ],
+    photoAlt: "Portrét Oldřicha Jana Švehly",
     factsLabel: "Ve zkratce",
     facts: [
       { icon: "degree", text: "Bc. Počítačové vědy – FAV ZČU (2026)" },

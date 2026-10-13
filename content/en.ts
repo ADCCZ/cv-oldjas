@@ -67,6 +67,7 @@ export const en = {
       "I enjoy the whole journey, from designing the architecture through the backend and databases to the last detail of the interface. I mostly write PHP (Nette), JavaScript (React, Vue) and Python, with MySQL, Git and Linux around it. I only call something done once it’s tested and actually works.",
       "I like learning new things – school projects got me to try NFC, parallel computing with OpenMP and 3D graphics in OpenGL, and now I’m getting into TypeScript. I work with the AI assistant Claude (Claude Code), which I also built this website with.",
     ],
+    photoAlt: "Portrait of Oldřich Jan Švehla",
     factsLabel: "Quick facts",
     facts: [
       { icon: "degree", text: "Bc. in Computer Science – FAV ZČU (2026)" },
