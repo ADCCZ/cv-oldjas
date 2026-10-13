@@ -18,18 +18,17 @@ export function About({ t }: { t: Dictionary }) {
         <SectionHeading id="about-title" number="01" reveal={false}>
           {t.about.title}
         </SectionHeading>
-        {/* A cut-out with a transparent background: the fade at its bottom rests on the tile's edge. */}
+        {/* A cut-out with a transparent background, cropped so the head sits in the middle – no tile
+            behind it, the faded shoulders melt into the page. */}
         <figure className="mt-10 w-40 md:float-right md:mb-4 md:ml-8 md:w-44">
-          <div className="relative aspect-[4/5] border border-line bg-surface">
-            <Image
-              src={links.photo.src}
-              width={links.photo.width}
-              height={links.photo.height}
-              alt={t.about.photoAlt}
-              sizes="(min-width: 768px) 11rem, 10rem"
-              className="absolute inset-0 size-full object-contain object-bottom"
-            />
-          </div>
+          <Image
+            src={links.photo.src}
+            width={links.photo.width}
+            height={links.photo.height}
+            alt={t.about.photoAlt}
+            sizes="(min-width: 768px) 11rem, 10rem"
+            className="h-auto w-full"
+          />
         </figure>
         <div data-about-text className="mt-10 space-y-6 text-xl leading-snug tracking-tight md:text-[1.75rem] md:leading-[1.3]">
           {t.about.paragraphs.map((p) => (
