@@ -8,6 +8,8 @@ export type Tech = {
   name: Text;
   /** Missing for technologies in the "planned" category. */
   level?: Level;
+  /** Shorter name for the narrow technology column of the design CV, when the full one would wrap. */
+  cvName?: Text;
   /** simple-icons slug of the monochrome logo (see lib/techIcons.ts); omitted when the brand has none. */
   icon?: string;
   /** Project ids from projects.config.ts – the tooltip links to them. */
@@ -27,11 +29,11 @@ export const stack: StackCategory[] = [
     id: "languages",
     name: { en: "Languages", cs: "Jazyky" },
     items: [
-      { id: "python", name: "Python", level: 4, icon: "python", usedIn: ["bakalarka", "oks", "olda-web"] },
+      { id: "python", name: "Python", level: 4, icon: "python", usedIn: ["bakalarka", "oks", "kmx", "olda-web"] },
       { id: "php", name: "PHP", level: 4, icon: "php", usedIn: ["portal-jk", "foodapp"] },
       { id: "c", name: "C", level: 4, icon: "c", usedIn: ["pexeso", "kmx", "vfs"] },
       { id: "javascript", name: "JavaScript", level: 3, icon: "javascript", usedIn: ["campmaster", "kiosek", "foodapp"] },
-      { id: "sql", name: "SQL", level: 3, usedIn: ["portal-jk", "foodapp"] },
+      { id: "sql", name: "SQL", level: 3, usedIn: ["portal-jk", "foodapp", "oks"] },
       { id: "java", name: "Java", level: 2, icon: "openjdk", usedIn: ["pexeso"] },
       { id: "csharp", name: "C#", level: 2, icon: "dotnet", usedIn: ["opengl-hra"] },
       { id: "cpp", name: "C++", level: 2, icon: "cplusplus", usedIn: ["meteo"] },
@@ -50,6 +52,7 @@ export const stack: StackCategory[] = [
       { id: "vue", name: "Vue.js", level: 3, icon: "vuedotjs", usedIn: ["kiosek"] },
       { id: "nextjs", name: "Next.js", level: 2, icon: "nextdotjs", usedIn: ["cv-oldjas"] },
       { id: "twig", name: "Twig", level: 2, usedIn: ["foodapp"] },
+      { id: "bootstrap", name: "Bootstrap", level: 2, icon: "bootstrap", usedIn: ["foodapp"] },
       { id: "ux-ui", name: "UX/UI design", level: 2, usedIn: ["kiosek", "campmaster"] },
       { id: "node", name: "Node.js – Express, Socket.IO", level: 2, icon: "nodedotjs", usedIn: ["campmaster"] },
       { id: "gsap", name: "GSAP / Motion", level: 1, icon: "gsap", usedIn: ["cv-oldjas", "olda-web"] },
@@ -75,13 +78,20 @@ export const stack: StackCategory[] = [
       { id: "git", name: { en: "Git & GitHub", cs: "Git a GitHub" }, level: 4, icon: "git" },
       { id: "latex", name: "LaTeX", level: 4, icon: "latex", usedIn: ["kmx", "vfs", "pexeso", "foodapp", "campmaster"] },
       { id: "mysql", name: "MySQL", level: 3, icon: "mysql", usedIn: ["portal-jk", "foodapp"] },
-      { id: "linux", name: "Linux WSL", level: 3, icon: "linux" },
+      { id: "linux", name: "Linux WSL", level: 3, icon: "linux", usedIn: ["kmx", "vfs", "pexeso"] },
       { id: "vite", name: "Vite", level: 3, icon: "vite", usedIn: ["portal-jk", "campmaster", "olda-web"] },
       { id: "build-tools", name: "Make / CMake / Maven", level: 3, icon: "cmake", usedIn: ["kmx", "vfs", "pexeso"] },
-      { id: "pytest", name: "pytest / Robot Framework", level: 3, icon: "pytest", usedIn: ["oks", "bakalarka"] },
+      {
+        id: "testing",
+        name: { en: "Testing – pytest, Robot Framework", cs: "Testování – pytest, Robot Framework" },
+        cvName: "pytest / Robot Framework",
+        level: 3,
+        icon: "pytest",
+        usedIn: ["oks", "bakalarka", "olda-web"],
+      },
       { id: "vercel", name: "Vercel", level: 2, icon: "vercel", usedIn: ["campmaster", "olda-web", "cv-oldjas"] },
       { id: "docker", name: "Docker", level: 2, icon: "docker", usedIn: ["portal-jk"] },
-      { id: "gh-actions", name: "GitHub Actions (CI/CD)", level: 1, icon: "githubactions", usedIn: ["cv-oldjas"] },
+      { id: "gh-actions", name: "GitHub Actions (CI/CD)", level: 1, icon: "githubactions", usedIn: ["cv-oldjas", "olda-web"] },
       { id: "playwright", name: "Playwright", level: 1, usedIn: ["cv-oldjas"] },
     ],
   },
@@ -104,7 +114,7 @@ export const stack: StackCategory[] = [
     items: [
       { id: "postgresql", name: "PostgreSQL", icon: "postgresql" },
       { id: "spring", name: "Spring Boot", icon: "springboot" },
-      { id: "testing", name: { en: "Testing (JUnit, Jest)", cs: "Testování (JUnit, Jest)" }, icon: "jest" },
+      { id: "junit-jest", name: "JUnit / Jest", icon: "jest" },
       { id: "kubernetes", name: "Kubernetes", icon: "kubernetes" },
       { id: "aws", name: "AWS / cloud" },
     ],

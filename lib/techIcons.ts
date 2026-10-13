@@ -1,4 +1,5 @@
 import {
+  siBootstrap,
   siC,
   siCmake,
   siCplusplus,
@@ -44,6 +45,7 @@ import {
  */
 const ICONS: Record<string, SimpleIcon> = Object.fromEntries(
   [
+    siBootstrap,
     siC,
     siCmake,
     siCplusplus,

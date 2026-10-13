@@ -161,14 +161,14 @@ function PageOne(props: CvProps) {
                 <ul>
                   {main.map((tech) => (
                     <li key={tech.id}>
-                      <span>{tx(tech.name, locale)}</span>
+                      <span>{tx(tech.cvName ?? tech.name, locale)}</span>
                       <LevelMarks level={tech.level} label={t.stack.levels[tech.level - 1] ?? ""} />
                     </li>
                   ))}
                 </ul>
                 {rest.length ? (
                   <p className="cv-also">
-                    <span className="cv-label">{t.cv.also}</span> {rest.map((tech) => tx(tech.name, locale)).join(ALSO_SEP)}
+                    <span className="cv-label">{t.cv.also}</span> {rest.map((tech) => tx(tech.cvName ?? tech.name, locale)).join(ALSO_SEP)}
                   </p>
                 ) : null}
               </section>
@@ -178,7 +178,7 @@ function PageOne(props: CvProps) {
           {planned ? (
             <section className="cv-cat">
               <h3 className="cv-label">{t.cv.sections.planned}</h3>
-              <p className="cv-also">{planned.items.map((tech) => tx(tech.name, locale)).join(ALSO_SEP)}</p>
+              <p className="cv-also">{planned.items.map((tech) => tx(tech.cvName ?? tech.name, locale)).join(ALSO_SEP)}</p>
             </section>
           ) : null}
 
