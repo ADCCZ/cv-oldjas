@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { pad } from "@/lib/i18n";
-import { MD_UP, MOTION_OK } from "@/lib/motion";
+import { MD_UP, MOTION_OK, requestRefresh } from "@/lib/motion";
 
 /**
  * Projects from md up: the block is pinned and the vertical scroll distance is converted into
@@ -60,7 +60,7 @@ export function ProjectsMotion() {
         ),
       );
 
-      ScrollTrigger.refresh();
+      requestRefresh();
 
       return () => {
         [strip, ...parallax].forEach((tween) => {

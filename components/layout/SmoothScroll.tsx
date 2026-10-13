@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { ScrollTrigger } from "@/lib/gsap";
 import { scrollToId, startLenis } from "@/lib/lenis";
+import { requestRefresh } from "@/lib/motion";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 /** Moves keyboard / screen-reader focus to the target of an in-page jump. */
@@ -52,9 +52,8 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     window.addEventListener("popstate", onPopState);
 
     let cancelled = false;
-    document.fonts.ready.then(() => {
+    requestRefresh(() => {
       if (cancelled) return;
-      ScrollTrigger.refresh();
       const id = decodeURIComponent(location.hash.slice(1));
       if (id) scrollToId(id, { immediate: true });
     });

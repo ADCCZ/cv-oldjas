@@ -1,5 +1,7 @@
 "use client";
 
+import { ScrollTrigger } from "@/lib/gsap";
+
 /**
  * Small helpers shared by the scroll/intro animations.
  */
@@ -11,18 +13,61 @@ export const MD_UP = "(min-width: 768px)";
 /** A mouse or trackpad – hover effects, the custom cursor and magnetic buttons need one. */
 export const FINE_POINTER = "(hover: hover) and (pointer: fine)";
 
+/*
+ * Setup that measures text (SplitText, ScrollTrigger) waits for the web fonts. The controllers'
+ * callbacks then run one per task in the order they were registered – the hero first – so the
+ * browser can paint between them (the intro keeps moving, no second-long freeze on a phone), and
+ * ScrollTrigger measures the page once at the end instead of once per controller.
+ */
+const setupQueue: Array<() => void> = [];
+const afterRefresh: Array<() => void> = [];
+let draining = false;
+let refreshWanted = false;
+
+function drain() {
+  if (draining) return;
+  draining = true;
+  const step = () => {
+    const next = setupQueue.shift();
+    if (next) {
+      window.setTimeout(step, 0); // scheduled first: a throwing callback must not stall the queue
+      next();
+      return;
+    }
+    draining = false;
+    if (refreshWanted) {
+      refreshWanted = false;
+      ScrollTrigger.refresh();
+    }
+    afterRefresh.splice(0).forEach((callback) => callback());
+  };
+  document.fonts.ready.then(() => window.setTimeout(step, 0));
+}
+
 /**
- * Runs `callback` once web fonts are ready (SplitText must measure final glyphs).
- * Returns a cancel function so effects can clean up before the promise resolves.
+ * Runs `callback` once web fonts are ready (SplitText must measure final glyphs), in its own task.
+ * Returns a cancel function so effects can clean up before it runs.
  */
 export function afterFonts(callback: () => void): () => void {
   let cancelled = false;
-  document.fonts.ready.then(() => {
+  setupQueue.push(() => {
     if (!cancelled) callback();
   });
+  drain();
   return () => {
     cancelled = true;
   };
+}
+
+/**
+ * Asks for one ScrollTrigger.refresh() after the queued setup (and the fonts) – controllers that
+ * add pins or change the layout call this instead of refreshing on their own. `then` runs right
+ * after that refresh (e.g. a deep link that needs the final layout).
+ */
+export function requestRefresh(then?: () => void): void {
+  refreshWanted = true;
+  if (then) afterRefresh.push(then);
+  drain();
 }
 
 /** Random number in [min, max). */

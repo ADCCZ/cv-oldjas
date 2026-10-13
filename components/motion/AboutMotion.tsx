@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap, ScrollTrigger, SplitText, useGSAP } from "@/lib/gsap";
-import { afterFonts, MOTION_OK, rand } from "@/lib/motion";
+import { gsap, SplitText, useGSAP } from "@/lib/gsap";
+import { afterFonts, MOTION_OK, rand, requestRefresh } from "@/lib/motion";
 
 /**
  * About:
@@ -57,7 +57,7 @@ export function AboutMotion() {
           }),
         );
 
-        ScrollTrigger.refresh();
+        requestRefresh();
       });
 
       return () => {

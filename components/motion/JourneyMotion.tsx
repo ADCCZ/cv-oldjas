@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { MD_UP, MOTION_OK } from "@/lib/motion";
+import { gsap, useGSAP } from "@/lib/gsap";
+import { MD_UP, MOTION_OK, requestRefresh } from "@/lib/motion";
 
 /**
  * Journey from md up: while the next folder slides over a row, that row's body fades out,
@@ -42,7 +42,7 @@ export function JourneyMotion() {
         });
       });
 
-      ScrollTrigger.refresh();
+      requestRefresh();
 
       return () =>
         tweens.forEach((tween) => {

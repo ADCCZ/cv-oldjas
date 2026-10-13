@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import { EASE, gsap, ScrollTrigger, SplitText, useGSAP } from "@/lib/gsap";
+import { EASE, gsap, SplitText, useGSAP } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
-import { afterFonts, MOTION_OK } from "@/lib/motion";
+import { afterFonts, MOTION_OK, requestRefresh } from "@/lib/motion";
 
 /** Strongest heading skew in degrees while the page is flung fast. */
 const MAX_SKEW = 4;
@@ -52,7 +52,7 @@ export function MotionRoot() {
             }),
           );
         });
-        ScrollTrigger.refresh();
+        requestRefresh();
       });
 
       // Velocity skew – quickTo smooths the jumps of the raw velocity.
