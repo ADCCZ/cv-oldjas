@@ -143,16 +143,18 @@ export function Nav({ locale, projectCount, cvHref, labels }: Props) {
           {/* … folds into MENU :: once the hero is gone. */}
           {menuButton(`hidden md:inline-flex ${compact ? "pointer-events-auto opacity-100" : "opacity-0"}`, !compact)}
 
-          <a href="#top" aria-label={labels.home} className="pointer-events-auto text-fg transition-colors duration-200 hover:text-gold-text md:hidden">
+          {/* The name is a hidden text, not aria-label: the visible logo changes form while it animates. */}
+          <a href="#top" className="pointer-events-auto text-fg transition-colors duration-200 hover:text-gold-text md:hidden">
+            <span className="sr-only">{labels.home}</span>
             <Logo names={labels.logo.slice(0, 1)} />
           </a>
         </div>
 
         <a
           href="#top"
-          aria-label={labels.home}
           className="pointer-events-auto absolute left-1/2 hidden -translate-x-1/2 text-fg transition-colors duration-200 hover:text-gold-text md:block"
         >
+          <span className="sr-only">{labels.home}</span>
           <Logo names={labels.logo} />
         </a>
 
