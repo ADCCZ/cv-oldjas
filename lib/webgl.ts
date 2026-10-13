@@ -14,6 +14,15 @@ export const heroState = {
   scatter: 0,
 };
 
+/**
+ * Written by MenuOverlay: true once the fullscreen menu covers the whole page, false again as soon as
+ * it starts to close. The Driver draws nothing meanwhile – nobody would see it, and on touch screens
+ * the hero liquid would keep the GPU busy under the menu.
+ */
+export const pageState = {
+  covered: false,
+};
+
 /** Fired by HeroMotion once the name letters have settled – the WebGL layer may load now. */
 export const HERO_READY_EVENT = "cv:hero-ready";
 

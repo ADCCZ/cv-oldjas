@@ -3,6 +3,7 @@
 import { Canvas, useThree } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
+import { pageState } from "@/lib/webgl";
 import { Compass } from "./Compass";
 import { HeroReveal } from "./HeroReveal";
 import { Ripples } from "./Ripples";
@@ -39,7 +40,8 @@ function Driver({ onLost }: { onLost: () => void }) {
     };
 
     const tick = (time: number) => {
-      const busy = prepareStages(time);
+      // Stages always prepare (they keep their state current); nothing is drawn under the open menu.
+      const busy = prepareStages(time) && !pageState.covered;
       const order = layer.under ? "under" : "over";
       if (html.dataset.webglLayer !== order) html.dataset.webglLayer = order;
       if (busy) {

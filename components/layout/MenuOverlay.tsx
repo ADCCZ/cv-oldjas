@@ -6,6 +6,7 @@ import { TrackedLink } from "@/components/ui/TrackedLink";
 import type { Locale } from "@/content/types";
 import { pad } from "@/lib/i18n";
 import { NAV_ITEMS, type NavItem } from "@/lib/sections";
+import { pageState } from "@/lib/webgl";
 import { LangToggle } from "./LangToggle";
 
 type Props = {
@@ -33,6 +34,20 @@ const FOCUSABLE = "a[href], button:not([disabled])";
  */
 export function MenuOverlay({ open, onClose, locale, activeItem, activeSection, projectCount, cvHref, labels }: Props) {
   const dialogRef = useRef<HTMLDivElement>(null);
+
+  // Once the sheet has wiped over the whole page, WebGL has nothing visible to draw (lib/webgl.ts).
+  useEffect(() => {
+    const sheet = dialogRef.current;
+    if (!open || !sheet) return;
+    const onEnd = (event: TransitionEvent) => {
+      if (event.target === sheet && event.propertyName === "clip-path") pageState.covered = true;
+    };
+    sheet.addEventListener("transitionend", onEnd);
+    return () => {
+      sheet.removeEventListener("transitionend", onEnd);
+      pageState.covered = false;
+    };
+  }, [open]);
 
   // Move focus into the dialog once it opens.
   useEffect(() => {
