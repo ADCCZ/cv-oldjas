@@ -883,10 +883,11 @@ details[data-expanded="true"] .archive-plus {
 /* Big footer links (LetterRoll): each letter clips its own copy, which waits just outside – above or
    below (--dir) – and rolls in after the letter's delay. The clip (overflow – clip-path let the
    copies through while they moved on the compositor) reaches past the letter box by padding that
-   negative margins take back, so accents and the negative tracking are never cut. */
+   negative margins take back, so accents and the negative tracking are never cut. "clip", not
+   "hidden": a hidden inline-block would sit on its bottom edge instead of the text baseline. */
 .roll-char {
   display: inline-block;
-  overflow: hidden;
+  overflow: clip;
   padding: 0.08em 0.25em;
   margin: -0.08em -0.25em;
 }
@@ -902,9 +903,13 @@ details[data-expanded="true"] .archive-plus {
   translate: 0 calc(var(--dir) * (100% + 0.12em));
 }
 
-/* "→" turned to where the link leads. */
+/* "→" turned to where the link leads: a square as tall as the capitals, on the baseline. */
 .roll-arrow {
   display: inline-block;
+  vertical-align: baseline;
+  width: 0.72em;
+  height: 0.72em;
+  overflow: visible;
   rotate: var(--turn);
 }
 

@@ -14,7 +14,9 @@ type Props = {
  * Text of a big footer link (globals.css, `.roll-*`): on hover every letter rolls away and an
  * identical copy rolls in – from above or below and after its own short delay, picked per letter.
  * The arrow points right like any link and turns to where this one leads; without hover it shows
- * that direction from the start. The animated copy is aria-hidden, screen readers get the text.
+ * that direction from the start. It is drawn, not a glyph: as tall as the capitals, standing on the
+ * baseline, so it reads as part of the word and turns around its own centre.
+ * The animated copy is aria-hidden, screen readers get the text.
  */
 export function LetterRoll({ text, arrow }: Props) {
   const salt = [...text].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
@@ -42,7 +44,9 @@ export function LetterRoll({ text, arrow }: Props) {
         {arrow ? (
           <>
             {"\u00a0"}
-            <span className={`roll-arrow roll-arrow-${arrow}`}>→</span>
+            <svg className={`roll-arrow roll-arrow-${arrow}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+              <path d="M1 12h20M13 4l8 8-8 8" />
+            </svg>
           </>
         ) : null}
       </span>
