@@ -320,7 +320,7 @@ export const en = {
 
   footer: {
     place: "Pilsen, CZ",
-    built: "Built with Next.js, GSAP and Three.js together with Claude Code",
+    built: "Built with Next.js, GSAP and Three.js",
     source: "The code of this site is on GitHub",
     top: "Back to top ↑",
   },

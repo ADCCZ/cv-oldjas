@@ -313,7 +313,7 @@ export const cs: Dictionary = {
 
   footer: {
     place: "Plzeň, CZ",
-    built: "Postaveno s Next.js, GSAP a Three.js ve spolupráci s Claude Code",
+    built: "Postaveno s Next.js, GSAP a Three.js",
     source: "Kód tohoto webu je na GitHubu",
     top: "Nahoru ↑",
   },

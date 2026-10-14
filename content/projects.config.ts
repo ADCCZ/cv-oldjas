@@ -135,12 +135,12 @@ export const projects: Project[] = [
     demo: "https://cv-oldrich-jan-svehla.vercel.app/",
     title: { cs: "Tenhle web", en: "This website" },
     description: {
-      cs: "Portfolio, na které se právě díváš – Next.js, GSAP a WebGL shadery. Vzniká ve spolupráci s Claude Code.",
-      en: "The portfolio you’re looking at – Next.js, GSAP and WebGL shaders. Built together with Claude Code.",
+      cs: "Portfolio, na které se právě díváš: statické stránky v Next.js, animace v GSAP, WebGL shadery v React Three Fiber, PDF životopisy generované Playwrightem a CI se smoke a unit testy.",
+      en: "The portfolio you’re looking at: static pages in Next.js, GSAP animations, WebGL shaders in React Three Fiber, PDF CVs generated with Playwright and CI with smoke and unit tests.",
     },
     summary: {
-      cs: "Tohle portfolio – Next.js, GSAP a WebGL shadery, vzniká ve spolupráci s Claude Code.",
-      en: "This portfolio – Next.js, GSAP and WebGL shaders, built together with Claude Code.",
+      cs: "Tohle portfolio – Next.js, GSAP a WebGL shadery, PDF životopisy generované Playwrightem.",
+      en: "This portfolio – Next.js, GSAP and WebGL shaders, PDF CVs generated with Playwright.",
     },
     stack: ["Next.js", "TypeScript", "GSAP", "Three.js", "Tailwind CSS"],
     tags: ["PORTFOLIO"],
@@ -155,12 +155,12 @@ export const projects: Project[] = [
     demo: "https://cv-oldjas-tan.vercel.app/",
     title: { cs: "Předchozí web s CV", en: "Previous CV website" },
     description: {
-      cs: "Můj předchozí web s CV, stylizovaný jako úřad ze 70. let, který spravuje čas: spisy s razítky, větvící se časová osa, fosforové obrazovky a průvodkyně Složka. Data z GitHubu přes Vercel funkci, kytara syntetizovaná algoritmem Karplus–Strong, pexeso a terminál. Vznikl ve spolupráci s Claude Code.",
-      en: "My previous CV website, styled as a 1970s office that manages time: case files with stamps, a branching timeline, phosphor screens and Složka, the archive guide. GitHub data through a Vercel function, a guitar synthesised with the Karplus–Strong algorithm, a memory game and a terminal. Built together with Claude Code.",
+      cs: "Můj předchozí web s CV, stylizovaný jako úřad ze 70. let, který spravuje čas: spisy s razítky, větvící se časová osa, fosforové obrazovky a průvodkyně Složka. Data z GitHubu přes Vercel funkci, kytara syntetizovaná algoritmem Karplus–Strong, pexeso a terminál.",
+      en: "My previous CV website, styled as a 1970s office that manages time: case files with stamps, a branching timeline, phosphor screens and Složka, the archive guide. GitHub data through a Vercel function, a guitar synthesised with the Karplus–Strong algorithm, a memory game and a terminal.",
     },
     summary: {
-      cs: "Můj předchozí web s CV – hravý úřad ze 70. let v Reactu a TypeScriptu, vznikl ve spolupráci s Claude Code.",
-      en: "My previous CV website – a playful 1970s office in React and TypeScript, built together with Claude Code.",
+      cs: "Můj předchozí web s CV – hravý úřad ze 70. let v Reactu a TypeScriptu.",
+      en: "My previous CV website – a playful 1970s office in React and TypeScript.",
     },
     stack: ["React", "TypeScript", "Vite", "Tailwind CSS", "Motion"],
     tags: ["PORTFOLIO", { cs: "PŘEDCHOZÍ VERZE", en: "PREVIOUS VERSION" }],
