@@ -8,6 +8,8 @@ const PORT = Number(process.env.PORT ?? 3000);
  */
 export default defineConfig({
   testDir: "tests",
+  // tests/unit runs on Node's own test runner (`npm run test:unit`).
+  testIgnore: "unit/**",
   fullyParallel: true,
   // Every page runs rAF animations against one `next start` – more local workers only fight for the CPU.
   workers: process.env.CI ? undefined : 4,

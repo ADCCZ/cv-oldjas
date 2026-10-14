@@ -33,6 +33,7 @@ font preloads). `npm run dev` and `npm run build` share `.next`, so stop the dev
 | `npm run build` / `npm run start` | production build / serve it |
 | `npm run lint` · `npm run typecheck` | ESLint · `tsc --noEmit` |
 | `npm run test` | Playwright smoke tests against the production build (build first) |
+| `npm run test:unit` | unit tests of the typography helpers on Node's own test runner |
 | `npm run cv` | the four PDF CVs into `public/` (build first) |
 | `npm run og` | share images `public/og.png` and `public/og-cs.png` (build first) |
 | `npm run screenshots` | project screenshots into `public/projects/` (`-- <id>` for one project) |
@@ -169,6 +170,6 @@ pinned in `package.json` → `engines`).
 
 ## CI
 
-`.github/workflows/ci.yml` runs lint → typecheck → build → Playwright smoke tests on every push and pull request (the
+`.github/workflows/ci.yml` runs lint → typecheck → unit tests → build → Playwright smoke tests on every push and pull request (the
 badge above). The smoke tests cover both languages, every anchor including the legacy aliases, the PDF CVs, the font
 subset, keyboard and touch, reduced motion and the WebGL fallback – see `tests/smoke.spec.ts`.

@@ -164,6 +164,7 @@ docs/PROMPT.md       the brief
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run test` | Playwright smoke tests against `next start` (build first) |
+| `npm run test:unit` | unit tests in `tests/unit` on Node's test runner (no build needed) |
 | `npm run cv` | render the 4 PDF CVs into `public/` from the production build – commit them |
 | `npm run screenshots` | screenshots of projects with a live demo into `public/projects/` (`-- <id>` for one) |
 | `npm run og` | share images `public/og.png` + `og-cs.png` from the production build – commit them |
@@ -180,7 +181,7 @@ webpack/Next.js, and Next's font manifest stays empty on Windows (no font preloa
 - Work in the phases of `docs/PROMPT.md` §9; after each phase stop and show the result.
 - Conventional commits in English (`feat:`, `fix:`, `style:`, `refactor:`, `docs:`, `chore:`, `test:`, `ci:`),
   small and logical – one commit = one change. **No `Co-Authored-By` trailers.**
-- CI (`.github/workflows/ci.yml`): lint → typecheck → build → Playwright smoke tests on every push and PR.
+- CI (`.github/workflows/ci.yml`): lint → typecheck → unit tests → build → Playwright smoke tests on every push and PR.
 - Accessibility: one `h1` (the name), sections with `aria-labelledby`, visible gold focus ring, animated text keeps a
   readable copy for screen readers, contrast >= 4.5 : 1 in both themes, everything keyboard-operable.
 - Reduced motion: no pin/horizontal scroll, no Lenis, no marquee, no letter explosions, no WebGL ripples, no physics,
