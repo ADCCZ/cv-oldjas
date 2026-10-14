@@ -108,8 +108,8 @@ export const cs: Dictionary = {
     stars: "hvězdiček",
     language: "hlavní jazyk",
     dateLocale: "cs-CZ",
-    archiveTitle: "Archiv semestrálek",
-    archiveNote: "Soukromá repa, přístup na vyžádání.",
+    archiveTitle: "Další projekty",
+    archiveNote: "Semestrálky v soukromých repech, přístup na vyžádání.",
   },
 
   stack: {
@@ -292,7 +292,7 @@ export const cs: Dictionary = {
     contact: { email: "E-mail", phone: "Telefon", github: "GitHub", web: "Web" },
     scale: "Stupnice",
     also: "Dále",
-    otherProjects: "Další semestrální práce",
+    otherProjects: "Další projekty",
     languages: [
       { name: "Čeština", level: "rodilý mluvčí" },
       { name: "Angličtina", level: "B2" },

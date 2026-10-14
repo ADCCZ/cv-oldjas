@@ -1,5 +1,6 @@
 import { ArchiveMotion } from "@/components/motion/ArchiveMotion";
 import { Segments } from "@/components/ui/Segments";
+import { TrackedLink } from "@/components/ui/TrackedLink";
 import { archiveProjects, featuredProjects } from "@/content/projects.config";
 import type { Locale } from "@/content/types";
 import type { Dictionary } from "@/lib/dictionary";
@@ -9,7 +10,8 @@ import { pad, tx } from "@/lib/i18n";
 const ON_FILL = "transition-colors duration-500 group-hover/row:text-cream group-has-[summary:focus-visible]/row:text-cream";
 
 /**
- * Archive of semester projects – full-width rows (leome-and-partners.com style). Hovering a row
+ * Archive below the project strip (the previous website, semester projects) – full-width rows
+ * (leome-and-partners.com style), with repository and demo links where they exist. Hovering a row
  * wipes a red fill in from the left, edge to edge, and expands its description (ArchiveMotion).
  * The hairlines stay on the grid gutters like every other rule on the page.
  * Native <details> keeps it usable with keyboard and screen readers, and without any JS.
@@ -25,6 +27,10 @@ export function ProjectArchive({ t, locale }: { t: Dictionary; locale: Locale })
       <ol className="col-span-12 -mx-(--gutter)">
         {archiveProjects.map((project, i) => {
           const stack = <Segments items={project.stack.map((s) => tx(s, locale))} />;
+          const targets = [
+            project.repo ? { target: "repo" as const, href: `https://github.com/${project.repo}`, label: t.projects.repo } : null,
+            project.demo ? { target: "demo" as const, href: project.demo, label: t.projects.live } : null,
+          ].filter((link) => link !== null);
           return (
             <li key={project.id} id={`project-${project.id}`} data-surface="red" className="group/row relative after:absolute after:inset-x-(--gutter) after:bottom-0 after:h-px after:bg-line">
               <div className="archive-fill absolute inset-0 bg-red-500" aria-hidden="true" />
@@ -49,6 +55,24 @@ export function ProjectArchive({ t, locale }: { t: Dictionary; locale: Locale })
                       {tx(project.description, locale)}
                     </p>
                     <p className={`eyebrow col-span-12 mt-4 text-fg-muted md:hidden ${ON_FILL}`}>{stack}</p>
+                    {targets.length ? (
+                      <p className={`eyebrow col-span-12 mt-5 flex flex-wrap gap-x-6 gap-y-2 md:col-span-7 md:col-start-2 ${ON_FILL}`}>
+                        {targets.map((link) => (
+                          <TrackedLink
+                            key={link.target}
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            event="project_open"
+                            data={{ id: project.id, target: link.target }}
+                            className="link-draw"
+                          >
+                            {link.label}
+                            <span className="sr-only"> ({t.a11y.openInNewTab})</span>
+                          </TrackedLink>
+                        ))}
+                      </p>
+                    ) : null}
                   </div>
                 </div>
               </details>

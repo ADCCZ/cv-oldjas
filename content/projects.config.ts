@@ -147,9 +147,10 @@ export const projects: Project[] = [
     image: "/projects/cv-oldjas.webp",
   },
 
+  // ---- Archive below the strip: the previous website and the semester projects (private repos) ----
   {
     id: "olda-web",
-    featured: true,
+    featured: false,
     repo: "ADCCZ/olda-web",
     // Still live on its own Vercel project – the address in the applications sent before this website.
     demo: "https://cv-oldjas-tan.vercel.app/",
@@ -163,11 +164,8 @@ export const projects: Project[] = [
       en: "My previous CV website – a playful 1970s office in React and TypeScript.",
     },
     stack: ["React", "TypeScript", "Vite", "Tailwind CSS", "Motion"],
-    tags: ["PORTFOLIO", { cs: "PŘEDCHOZÍ VERZE", en: "PREVIOUS VERSION" }],
     image: "/projects/olda-web.webp",
   },
-
-  // ---- Semester project archive (private repos, access on request) ----
   {
     id: "kmx",
     featured: false,

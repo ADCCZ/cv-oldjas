@@ -114,8 +114,8 @@ export const en = {
     stars: "stars",
     language: "main language",
     dateLocale: "en-GB",
-    archiveTitle: "Semester project archive",
-    archiveNote: "Private repos, access on request.",
+    archiveTitle: "More projects",
+    archiveNote: "Semester projects in private repos, access on request.",
   },
 
   stack: {
@@ -299,7 +299,7 @@ export const en = {
     contact: { email: "E-mail", phone: "Phone", github: "GitHub", web: "Web" },
     scale: "Scale",
     also: "Also",
-    otherProjects: "Other semester projects",
+    otherProjects: "Other projects",
     languages: [
       { name: "Czech", level: "native" },
       { name: "English", level: "B2" },
