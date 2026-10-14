@@ -104,7 +104,8 @@ The full brief is in `docs/PROMPT.md`; effect decisions from the reference resea
   typographic DOM cover (`ProjectCover`) – no SVG covers (decision in docs/REFERENCES.md).
   Covers of projects without a demo are made by hand in the same format (3200 × 2000 WebP, quality 82): `portal-jk`
   (its sign-in page – the home page shows children), `foodapp` (product list) from local runs, `bakalarka` from a chart
-  in its `output/` (padded to 16:10, not cropped).
+  in its `output/`, `pexeso` (the real JavaFX GameView mid-game against the C server, snapshotted offscreen),
+  `kiosek` (its UX wireframe – the team repo is private); pictures that are not 16:10 are padded, never cropped.
 - Portrait: `public/photo.webp` (a trimmed cut-out with transparency, `links.photo`) in About and in the design CV.
   The source `photo.webp` in the repo root stays untracked, like `logo.jpg`. The plain CV has no photo.
 - Print pages `app/cv/print/[locale]/[variant]` (design | plain) have their own root layout (`<html lang>`, light theme,
