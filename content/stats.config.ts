@@ -1,4 +1,5 @@
 import { projects } from "./projects.config";
+import { stack } from "./stack.config";
 
 /** Labels live in the dictionaries (`stats.labels[id]`), the falling sticker texts in `stats.stickers`. */
 export type Stat = {
@@ -8,9 +9,12 @@ export type Stat = {
   suffix?: string;
 };
 
+/** Technologies on the stack scale – the "planned" ones are not counted. */
+const technologies = stack.filter((category) => !category.planned).reduce((sum, category) => sum + category.items.length, 0);
+
 export const stats: Stat[] = [
   { id: "projects", value: projects.length },
-  { id: "technologies", value: 35, suffix: "+" },
+  { id: "technologies", value: technologies },
   { id: "camps", value: 3 },
   { id: "pathfinder", value: 2012 },
   { id: "tests", value: 24 },
