@@ -1,7 +1,8 @@
 /**
  * Shoots the share images from the /og pages (app/og) of the production build:
  * public/og.png (English) and public/og-cs.png (Czech), 1200 × 630 – the size Open Graph and
- * X/Twitter cards expect.
+ * X/Twitter cards expect – and the LinkedIn profile banner docs/linkedin-banner.png (1584 × 396,
+ * app/og/[locale]/linkedin; uploaded by hand, not served by the site).
  *
  *   npm run build && npm run og
  *
@@ -14,24 +15,26 @@ import { chromium } from "@playwright/test";
 import sharp from "sharp";
 import { withProductionServer } from "./serve.ts";
 
+const OG = { width: 1200, height: 630 };
 const JOBS = [
-  { locale: "en", file: "og.png" },
-  { locale: "cs", file: "og-cs.png" },
+  { route: "/og/en", size: OG, out: path.join("public", "og.png") },
+  { route: "/og/cs", size: OG, out: path.join("public", "og-cs.png") },
+  { route: "/og/en/linkedin", size: { width: 1584, height: 396 }, out: path.join("docs", "linkedin-banner.png") },
 ];
 
 await withProductionServer(async (baseUrl) => {
   const browser = await chromium.launch();
   try {
-    const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1, reducedMotion: "reduce" });
     for (const job of JOBS) {
-      const response = await page.goto(`${baseUrl}/og/${job.locale}`, { waitUntil: "networkidle" });
-      if (!response?.ok()) throw new Error(`/og/${job.locale} returned ${response?.status()}`);
+      const page = await browser.newPage({ viewport: job.size, deviceScaleFactor: 1, reducedMotion: "reduce" });
+      const response = await page.goto(baseUrl + job.route, { waitUntil: "networkidle" });
+      if (!response?.ok()) throw new Error(`${job.route} returned ${response?.status()}`);
       await page.evaluate(() => document.fonts.ready);
-      const shot = await page.screenshot({ clip: { x: 0, y: 0, width: 1200, height: 630 } });
+      const shot = await page.screenshot({ clip: { x: 0, y: 0, ...job.size } });
       const png = await sharp(shot).png({ compressionLevel: 9 }).toBuffer();
-      const out = path.join("public", job.file);
-      writeFileSync(out, png);
-      console.log(`✓ ${out}: ${Math.round(png.length / 1024)} kB`);
+      writeFileSync(job.out, png);
+      console.log(`✓ ${job.out}: ${Math.round(png.length / 1024)} kB`);
+      await page.close();
     }
   } finally {
     await browser.close();
