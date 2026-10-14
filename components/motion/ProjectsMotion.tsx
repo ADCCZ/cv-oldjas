@@ -42,7 +42,7 @@ export function ProjectsMotion() {
         },
       });
 
-      const parallax = gsap.utils.toArray<HTMLElement>("[data-parallax]", track).map((layer) =>
+      const parallax = gsap.utils.toArray<HTMLElement>('[data-parallax="slide"]', track).map((layer) =>
         gsap.fromTo(
           layer,
           { xPercent: -5 },

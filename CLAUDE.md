@@ -82,6 +82,8 @@ The full brief is in `docs/PROMPT.md`; effect decisions from the reference resea
   DOM marquee; `HeroMotion` publishes `heroState` (`lib/webgl.ts`), the DOM name takes over as soon as letters scatter.
 - DOM hooks: `[data-marquee-row|copy]` (hero), `[data-compass]` + `.compass-svg`, `[data-facts] [data-fact] [data-fact-icon]`,
   `[data-cover] [data-cover-frame] [data-cover-tags] [data-parallax]`, `[data-projects-clip]`.
+  `[data-parallax="slide"]` (typographic covers) is oversized and moves; `"still"` (screenshots) fills the frame exactly,
+  so the whole page stays visible.
 - Textures come from the DOM (`rasterize.ts`: glyphs at their Range rects, backgrounds, images) – a screenshot in
   `public/projects/` is picked up by the ripples automatically.
 - Shaders: `RawShaderMaterial` GLSL3 mixing in sRGB, colours from the CSS tokens (`colors.ts`). Inside loops and branches

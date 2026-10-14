@@ -42,7 +42,7 @@ in vec2 vUv;
 out vec4 outColor;
 
 uniform sampler2D uWater;
-uniform sampler2D uLayer;   // the cover image layer (oversized, moved by the parallax), page colours
+uniform sampler2D uLayer;   // the cover layer: a screenshot fills it, typographic covers are oversized and slide
 uniform sampler2D uTags;    // the tags on the cover, in cover space
 uniform vec2 uTexel;        // one water cell in uv
 uniform vec4 uRect;         // cover, viewport CSS px
