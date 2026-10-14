@@ -92,14 +92,14 @@ export const en = {
     },
     /** Stickers thrown out by the mouse over each number (StatsPills). */
     stickers: {
-      projects: ["Shipped!", "Merged!"],
-      technologies: ["New tool!", "Learned!"],
-      camps: ["Campfire!", "Lights out!"],
-      pathfinder: ["Expedition!", "On the trail!"],
-      tests: ["All green!", "Passed!"],
-      charts: ["Plotted!", "Animated!"],
-      ferrata: ["Summit!", "Clipped in!"],
-      guitar: ["Encore!", "One more song!"],
+      projects: ["Shipped!", "Merged!", "Deployed!", "It works!"],
+      technologies: ["New tool!", "Learned!", "Compiled!", "Hello, world!"],
+      camps: ["Campfire!", "Lights out!", "Wake-up call!", "Tents up!"],
+      pathfinder: ["Expedition!", "On the trail!", "Compass check!", "Badge earned!"],
+      tests: ["All green!", "Passed!", "No regressions!", "Green build!"],
+      charts: ["Plotted!", "Animated!", "Data cleaned!", "Trend found!"],
+      ferrata: ["Summit!", "Clipped in!", "Topped out!", "What a view!"],
+      guitar: ["Encore!", "One more song!", "In tune!", "Campfire song!"],
     },
   },
 

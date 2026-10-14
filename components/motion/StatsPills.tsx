@@ -14,8 +14,8 @@ type Props = {
 const STEP_MS = 1000 / 60;
 /** A new pill needs this much pointer travel and time since the previous one – an occasional
     sticker, not a trail of them. */
-const SPAWN_DISTANCE = 220;
-const SPAWN_INTERVAL_MS = 450;
+const SPAWN_DISTANCE = 110;
+const SPAWN_INTERVAL_MS = 225;
 
 type Pill = { el: HTMLElement; body: Matter.Body; w: number; h: number; dying: boolean };
 
@@ -24,7 +24,7 @@ type Pill = { el: HTMLElement; body: Matter.Body; w: number; h: number; dying: b
  * now and then throws out a pill – red handwritten text in a red outline – that fits the number under
  * the pointer ("All green!" over the tests, "Summit!" over the via ferrata), with a random tilt and
  * the speed of the pointer. They fall (gravity 2), pile up on an invisible floor at the bottom edge
- * and ride along with the drifting strip (STRIP_MOVE_EVENT). At most 3–7 at once (by width); the
+ * and ride along with the drifting strip (STRIP_MOVE_EVENT). At most 6–14 at once (by width); the
  * oldest fades away. matter-js is loaded only when the strip comes near the viewport.
  * Mouse and full motion only – phones and reduced motion get no stickers.
  */
@@ -120,7 +120,7 @@ function run(
   };
   layout();
 
-  const maxPills = () => gsap.utils.clamp(3, 7, Math.round(width / 280));
+  const maxPills = () => gsap.utils.clamp(6, 14, Math.round(width / 140));
 
   const remove = (pill: Pill) => {
     Composite.remove(engine.world, pill.body);
