@@ -14,6 +14,8 @@ type Props = {
  * the top-right corner, the arrow drops its square and turns from ↗ to ↙, and the list rises line by
  * line (closing is immediate, no stagger). The list is always in the DOM, so screen readers read
  * it without any interaction.
+ * Square at least: no overflow clip, so a long title (two lines in Czech) grows the card instead of being cut
+ * off – the fill only scales up to the card itself.
  * A mouse only hovers: its click does not pin the card open, and the focus a click leaves on the button
  * does not count (only :focus-visible does) – the card closes as soon as the pointer leaves it.
  */
@@ -26,9 +28,9 @@ export function SkillCard({ number, title, items, showDetailsLabel }: Props) {
   const onFill = "group-data-[open=true]:text-cream group-has-[:focus-visible]:text-cream group-hover:text-cream";
 
   return (
-    <li className="reveal-card group relative aspect-square overflow-hidden bg-bg" data-open={open} data-surface="red">
+    <li className="reveal-card group relative flex bg-bg" data-open={open} data-surface="red">
       <div className="corner-fill absolute inset-0 bg-red-500" aria-hidden="true" />
-      <div className={`relative flex h-full flex-col p-6 transition-colors duration-700 md:p-8 ${onFill}`}>
+      <div className={`relative flex aspect-square w-full flex-col p-6 transition-colors duration-700 md:p-8 ${onFill}`}>
         <div className="flex items-start justify-between">
           <span className={`eyebrow text-gold-text transition-colors duration-700 ${onFill}`} aria-hidden="true">
             {number}
