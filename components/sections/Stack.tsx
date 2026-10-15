@@ -12,8 +12,8 @@ const LEVELS: Level[] = [1, 2, 3, 4, 5];
 
 /**
  * Stack – technologies grouped by category, tile size = level.
- * From md up (full motion) the tiles fall into a physics pile and can be sorted back into this
- * grid (StackPhysics); phones and reduced motion get the sorted grid only.
+ * From md up (full motion) the button above the grid tosses the tiles into a physics pile and sorts
+ * them back (StackPhysics); phones and reduced motion get the sorted grid only.
  */
 export function Stack({ t, locale }: { t: Dictionary; locale: Locale }) {
   const levelText = (level?: Level) => (level ? `${level}/5 – ${t.stack.levels[level - 1]}` : t.stack.planned);
@@ -43,6 +43,7 @@ export function Stack({ t, locale }: { t: Dictionary; locale: Locale }) {
         </ol>
       </div>
 
+      <StackPhysics controls="stack-tiles" sortLabel={t.stack.sort} scatterLabel={t.stack.scatter} />
       <div id="stack-tiles" data-stack-pile className="col-span-12 grid gap-x-(--gutter) gap-y-12 md:grid-cols-2 xl:grid-cols-3">
         {stack.map((category) => (
           <div key={category.id}>
@@ -70,7 +71,6 @@ export function Stack({ t, locale }: { t: Dictionary; locale: Locale }) {
           </div>
         ))}
       </div>
-      <StackPhysics controls="stack-tiles" sortLabel={t.stack.sort} scatterLabel={t.stack.scatter} />
     </section>
   );
 }

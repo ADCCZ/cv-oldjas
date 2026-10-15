@@ -16,10 +16,9 @@ type Props = {
 type Pile = { sort: () => Promise<void>; scatter: () => void; destroy: () => void };
 
 /**
- * Stack as a physics pile (matter-js). When the section scrolls into view the technology tiles
- * fall into a box, smallest first, so the strongest skills land on top. With a mouse they can be
- * grabbed, dragged and thrown; they bounce off the walls. "Sort" flies them (GSAP Flip) into the
- * category grid with the legend, "Scatter" throws them back into the box.
+ * Stack as a physics pile (matter-js). The section starts sorted – the category grid with the
+ * legend; "Scatter" tosses the technology tiles into a box where, with a mouse, they can be grabbed,
+ * dragged and thrown and bounce off the walls. "Sort" flies them (GSAP Flip) back into the grid.
  *
  * The box is exactly as tall as the sorted grid, so switching never changes the page height –
  * anchors further down (including the old #education, #experience, #leadership) stay put.
@@ -31,7 +30,7 @@ export function StackPhysics({ controls, sortLabel, scatterLabel }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
   const pileRef = useRef<Pile | null>(null);
   const [ready, setReady] = useState(false);
-  const [sorted, setSorted] = useState(false);
+  const [sorted, setSorted] = useState(true);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -64,7 +63,7 @@ export function StackPhysics({ controls, sortLabel, scatterLabel }: Props) {
       pileRef.current?.destroy();
       pileRef.current = null;
       setReady(false);
-      setSorted(false);
+      setSorted(true);
     };
   }, [enabled]);
 
@@ -79,7 +78,7 @@ export function StackPhysics({ controls, sortLabel, scatterLabel }: Props) {
   };
 
   // Rendered on the server too, so its row is reserved from the first paint (no layout shift);
-  // the button itself appears once the pile is running.
+  // the button itself appears once matter-js is loaded.
   return (
     <div ref={rootRef} className="col-span-12 hidden h-10 md:block motion-reduce:hidden">
       <button
@@ -87,7 +86,7 @@ export function StackPhysics({ controls, sortLabel, scatterLabel }: Props) {
         onClick={toggle}
         aria-controls={controls}
         disabled={!ready}
-        className={`btn btn-outline btn-sm transition-opacity duration-500 ${ready ? "opacity-100" : "invisible opacity-0"}`}
+        className={`btn btn-primary btn-sm transition-opacity duration-500 ${ready ? "opacity-100" : "invisible opacity-0"}`}
       >
         <ButtonContent label={sorted ? scatterLabel : sortLabel} icon={sorted ? "↑" : "↓"} />
       </button>
@@ -122,8 +121,6 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
   let running = false; // false while the tiles sit in the sorted grid
   let visible = true;
   let accumulator = 0;
-  let dropping = false;
-  let drop: gsap.core.Timeline | null = null;
   let flip: gsap.core.Timeline | null = null;
   let grab: Grab | null = null;
   let suppressClickUntil = 0;
@@ -176,25 +173,6 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
     return body;
   };
 
-  /** Smallest first (planned = 0), shuffled within a level – the strongest skills end up on top. */
-  const dropIn = () => {
-    const keyed = tiles.map((tile) => ({ tile, key: Number(tile.dataset.level) + rand(-0.6, 0.6) }));
-    const order = keyed.sort((a, b) => a.key - b.key).map(({ tile }) => tile);
-    dropping = true;
-    drop = gsap.timeline({ onComplete: () => (dropping = false) });
-    order.forEach((tile, i) =>
-      drop!.call(
-        () => {
-          const { w, h } = sizes.get(tile)!;
-          const body = addBody(tile, rand(w / 2, width - w / 2), -h - rand(20, 240), rand(-0.6, 0.6));
-          Body.setVelocity(body, { x: rand(-1, 1), y: rand(0, 4) });
-        },
-        undefined,
-        i * 0.045,
-      ),
-    );
-  };
-
   const toBox = () => {
     const box = container.getBoundingClientRect();
     return { x: pointer.x - box.left, y: pointer.y - box.top };
@@ -223,8 +201,8 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
       if (body.position.y < sizes.get(tile)!.h / 2) inside = false;
       if (!body.isSleeping) sync(tile, body);
     }
-    // Once everything has fallen in, the box gets a lid – thrown tiles bounce back instead of flying off.
-    if (!ceiling && !dropping && inside && bodies.size === tiles.length) Composite.add(world, (ceiling = makeCeiling()));
+    // Once everything is inside, the box gets a lid – thrown tiles bounce back instead of flying off.
+    if (!ceiling && inside && bodies.size === tiles.length) Composite.add(world, (ceiling = makeCeiling()));
   };
 
   // ---- Mouse: grab, drag, throw (a spring between the pointer and the grabbed point) ----------
@@ -289,20 +267,6 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
   window.addEventListener("pointercancel", release);
   gsap.ticker.add(tick);
 
-  enterPile();
-  running = true;
-  const trigger = ScrollTrigger.create({ trigger: container, start: "top 75%", once: true, onEnter: dropIn });
-  // Keyboard focus anywhere in the section (a waiting tile included) drops every tile at once.
-  const section = container.closest("section") ?? container;
-  const dropAll = () => {
-    if (!drop) {
-      trigger.kill();
-      dropIn();
-    }
-    drop?.progress(1);
-  };
-  section.addEventListener("focusin", dropAll);
-
   /** Removes every tile body and the lid; floor and walls stay for the next scatter. */
   const clearBodies = () => {
     Composite.remove(world, [...bodies.values()]);
@@ -327,8 +291,6 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
   const sort = async () => {
     const Flip = await loadFlip();
     release();
-    drop?.kill();
-    dropping = false;
     running = false;
     const faces = tiles.map(face);
     const state = Flip.getState(faces);
@@ -372,8 +334,6 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
 
   const destroy = () => {
     gsap.ticker.remove(tick);
-    trigger.kill();
-    drop?.kill();
     flip?.kill();
     release();
     observer.disconnect();
@@ -383,7 +343,6 @@ function createPile(Matter: typeof import("matter-js"), container: HTMLElement):
     window.removeEventListener("pointermove", onMove);
     window.removeEventListener("pointerup", release);
     window.removeEventListener("pointercancel", release);
-    section.removeEventListener("focusin", dropAll);
     clearBodies();
     Composite.clear(world, false);
     Engine.clear(engine);
