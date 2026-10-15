@@ -31,14 +31,16 @@ export function OffCode({ t }: { t: Dictionary }) {
         </SectionHeading>
       </div>
 
-      <div className="mt-10 md:mt-14">
+      {/* The scroller clips vertically too: the deep bottom padding keeps the lifted cards’ shadows whole,
+          the negative margin gives that space back to the section. */}
+      <div className="mt-10 -mb-14 md:mt-14">
         <div
           data-strip
           data-cursor="drag"
           role="group"
           tabIndex={0}
           aria-label={`${t.offCode.titleStart} ${t.offCode.titleAccent}`}
-          className="overflow-x-auto overscroll-x-contain py-14 select-none [scrollbar-width:none] motion-reduce:snap-x motion-reduce:snap-mandatory"
+          className="overflow-x-auto overscroll-x-contain pt-14 pb-28 select-none [scrollbar-width:none] motion-reduce:snap-x motion-reduce:snap-mandatory"
         >
           <div className="flex w-max px-gutter">
             {COPIES.map((copy) => (
