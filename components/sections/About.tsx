@@ -34,7 +34,7 @@ export function About({ t }: { t: Dictionary }) {
         {/* The portrait (a cut-out, no tile – the faded shoulders melt into the page) next to the compass,
             side by side so the sticky column gets no taller. The WebGL layer draws the 3D compass into its
             box; the SVG is the fallback. */}
-        <div className="mb-10 flex items-end justify-center gap-4 md:gap-6">
+        <div className="mb-10 flex items-center justify-center gap-4 md:gap-6">
           <figure className="w-[55%] max-w-72">
             <Image
               src={links.photo.src}
