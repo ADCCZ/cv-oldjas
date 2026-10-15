@@ -182,24 +182,24 @@ test("touch devices keep the system cursor and the plain stack grid", async ({ b
   await context.close();
 });
 
-test("the stack pile sorts into the grid and back without moving the page", async ({ page }) => {
+test("the stack starts sorted, scatters into the pile and back without moving the page", async ({ page }) => {
   await page.goto("/");
   const tiles = page.locator("#stack-tiles");
   await tiles.scrollIntoViewIfNeeded();
-  await expect(tiles).toHaveAttribute("data-mode", "pile");
-  const sort = page.locator("#stack").getByRole("button", { name: "Sort" });
-  await expect(sort).toBeEnabled();
+  await expect(tiles).not.toHaveAttribute("data-mode", "pile");
+  const scatter = page.locator("#stack").getByRole("button", { name: "Scatter" });
+  await expect(scatter).toBeEnabled();
 
   const height = () => page.evaluate(() => document.documentElement.scrollHeight);
   const before = await height();
-  await sort.click();
-  await expect(tiles).toHaveAttribute("data-mode", "grid");
-  const scatter = page.locator("#stack").getByRole("button", { name: "Scatter" });
-  await expect(scatter).toBeVisible();
-  expect(await height()).toBe(before);
-
   await scatter.click();
   await expect(tiles).toHaveAttribute("data-mode", "pile");
+  const sort = page.locator("#stack").getByRole("button", { name: "Sort" });
+  await expect(sort).toBeVisible();
+  expect(await height()).toBe(before);
+
+  await sort.click();
+  await expect(tiles).toHaveAttribute("data-mode", "grid");
   expect(await height()).toBe(before);
 });
 
