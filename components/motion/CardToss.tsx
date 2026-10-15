@@ -32,7 +32,8 @@ export function CardToss() {
         draggables = cards.flatMap((card) =>
           Draggable.create(card, {
             type: "x,y",
-            bounds: strip,
+            // No bounds: Draggable would pull every card outside the visible part of the scroller (the
+            // clone copies) into it at creation. The scroller clips a card dragged out of it anyway.
             dragClickables: false,
             minimumMovement: 4,
             zIndexBoost: false,
