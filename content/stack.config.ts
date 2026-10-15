@@ -30,8 +30,8 @@ export const stack: StackCategory[] = [
     name: { en: "Languages", cs: "Jazyky" },
     items: [
       { id: "python", name: "Python", level: 4, icon: "python", usedIn: ["bakalarka", "oks", "kmx", "olda-web"] },
-      { id: "php", name: "PHP", level: 4, icon: "php", usedIn: ["portal-jk", "foodapp"] },
-      { id: "c", name: "C", level: 4, icon: "c", usedIn: ["pexeso", "kmx", "vfs"] },
+      { id: "php", name: "PHP", level: 3, icon: "php", usedIn: ["portal-jk", "foodapp"] },
+      { id: "c", name: "C", level: 3, icon: "c", usedIn: ["pexeso", "kmx", "vfs"] },
       { id: "javascript", name: "JavaScript", level: 3, icon: "javascript", usedIn: ["campmaster", "kiosek", "foodapp"] },
       { id: "sql", name: "SQL", level: 3, usedIn: ["portal-jk", "foodapp", "oks"] },
       { id: "java", name: "Java", level: 2, icon: "openjdk", usedIn: ["pexeso"] },
