@@ -22,7 +22,10 @@ export function PlainCv(props: CvProps) {
           {contacts(t).map((c, i) => (
             <span key={c.label}>
               {i ? " | " : null}
-              {c.label}: <a href={c.href}>{c.value}</a>
+              {/* A label never ends a line without its value. */}
+              <span style={{ whiteSpace: "nowrap" }}>
+                {c.label}: <a href={c.href}>{c.value}</a>
+              </span>
             </span>
           ))}
         </p>
