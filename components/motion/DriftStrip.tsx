@@ -29,6 +29,8 @@ const NATIVE_PAUSE_MS = 900;
  * - Mouse: Draggable on a detached proxy turns pointer movement into scroll movement; on release
  *   the throw velocity (InertiaPlugin's tracker) decays smoothly back into the drift.
  * - Touch, trackpad, keyboard: the browser scrolls natively; the drift pauses and then resumes.
+ * - `[data-toss]` cards (CardToss) are picked up on their own: the strip drag skips them, and while
+ *   one is held (`data-strip-hold` on the strip) the strip stands still.
  * Every frame the content movement is announced with STRIP_MOVE_EVENT (the stickers ride on it).
  * Reduced motion: none of this – the clones are hidden by CSS and the strip is a plain scroller.
  */
@@ -78,6 +80,8 @@ export function DriftStrip({ speed = 30 }: Props) {
             mode = "drift";
             velocity = 0;
           }
+        } else if (strip.hasAttribute("data-strip-hold")) {
+          velocity = 0; // a card is held – it must stay under the pointer
         } else if (mode === "drift") {
           const target = speed * (hovered ? HOVER_SLOWDOWN : 1);
           velocity += (target - velocity) * (1 - Math.exp(-dt * BLEND));
@@ -145,8 +149,10 @@ export function DriftStrip({ speed = 30 }: Props) {
           draggable = Draggable.create(proxy, {
             type: "x",
             trigger: strip,
-            // Links keep their native click (and Ctrl+click); a drag starts anywhere else on the strip.
+            // Links keep their native click (and Ctrl+click), tossable cards their own drag; a drag of
+            // the strip starts anywhere else on it.
             dragClickables: false,
+            clickableTest: (el: Element) => !!el.closest?.("a, button, input, select, textarea, label, [data-toss]"),
             minimumMovement: 4,
             onPress() {
               lastX = this.x;

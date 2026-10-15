@@ -1,3 +1,4 @@
+import { CardToss } from "@/components/motion/CardToss";
 import { DriftStrip } from "@/components/motion/DriftStrip";
 import { Icon } from "@/components/ui/Icon";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -17,7 +18,8 @@ const TILT = [-5, 4, -4, 6, -6, 5, -4, 6, -5, 4];
 
 /**
  * Beyond code (griflan.com style): tilted cards in two staggered rows drift past by themselves;
- * the whole strip can be grabbed and thrown (DriftStrip, cursor "Drag"). Hover lifts a card.
+ * the strip can be grabbed by its gaps and thrown (DriftStrip, cursor "Drag"); a card can be picked up on
+ * its own and springs back into its slot (CardToss). Hover lifts a card.
  * With reduced motion it is a plain horizontal scroller with the five original cards.
  */
 export function OffCode({ t }: { t: Dictionary }) {
@@ -60,6 +62,7 @@ export function OffCode({ t }: { t: Dictionary }) {
                     return (
                       <li
                         key={`${pass}-${card.id}`}
+                        data-toss
                         aria-hidden={duplicate || undefined}
                         data-surface={red ? "red" : undefined}
                         style={{ "--r": `${TILT[slot % TILT.length]}deg` } as React.CSSProperties}
@@ -98,6 +101,7 @@ export function OffCode({ t }: { t: Dictionary }) {
           </div>
         </div>
         <DriftStrip speed={24} />
+        <CardToss />
       </div>
     </section>
   );
