@@ -16,7 +16,7 @@ export const links = {
   /** Source code of this website. */
   sourceRepo: "https://github.com/ADCCZ/cv-oldjas",
   /** `null` hides LinkedIn everywhere (web and PDF) until there is a profile. */
-  linkedin: null as string | null,
+  linkedin: "https://www.linkedin.com/in/oldrich-jan-svehla" as string | null,
 
   pathfinder: "https://www.pathfinder.cz/",
   seriesgraph: "https://seriesgraph.com/user/d3854d39-022b-4c98-ab7e-9d17de583a78",
