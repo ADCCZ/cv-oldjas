@@ -23,8 +23,8 @@ export default async function LinkedinBannerPage({ params }: Props) {
   if (process.env.VERCEL || !isLocale(locale)) notFound();
   const t = getDictionary(locale);
   const { hoursPerWeek, location } = links.availability;
-  // "Looking for an internship or a part-time role." + "Let’s talk."
-  const [, lead = t.contact.title, accent] = /^(.*[.!?])\s+(.+)$/su.exec(t.contact.title) ?? [];
+  const lead = t.contact.titleLines.join(" ").replace(/[\[\]]/g, ""); // no underline marks here
+  const accent = t.contact.titleAccent;
   const techs = stack.flatMap((category) => category.items);
   const names = BANNER_STACK.flatMap((id) => techs.filter((tech) => tech.id === id).map((tech) => tx(tech.name, locale)));
 
@@ -41,7 +41,7 @@ export default async function LinkedinBannerPage({ params }: Props) {
         </div>
 
         <p className="max-w-[920px] text-[58px] leading-[1.02] font-bold tracking-tight">
-          {lead} {accent ? <span className="font-serif font-normal tracking-normal text-fg-muted italic">{accent}</span> : null}
+          {lead} <span className="font-serif font-normal tracking-normal text-fg-muted italic">{accent}</span>
         </p>
 
         <div className="flex items-center justify-between gap-8 border-t border-line pt-5">

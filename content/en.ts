@@ -257,7 +257,10 @@ export const en = {
   },
 
   contact: {
-    title: "Looking for an internship or a part-time role. Let’s talk.",
+    /** The big ask: one line each (never "an" at a line end), the accent in the serif italic.
+        [Brackets] mark the words with the hand-drawn underline. */
+    titleLines: ["Looking for an [internship]", "or a [part-time] role."],
+    titleAccent: "Let’s talk.",
     emailButton: "Email me @",
     cvButton: "Download CV ↓",
     cvPlain: "plain version for applicant tracking systems",

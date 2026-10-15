@@ -640,6 +640,20 @@ html[data-intro="replay"] [data-hero-name] {
   margin-block: -0.08em -0.14em;
 }
 
+/* Hand-drawn underlines (Contact heading): revealed left to right once the heading is in view
+   (UnderlineDraw); without full motion they are simply there. A clip, not a stroke dash – dashes
+   repeat on a stretched SVG with a non-scaling stroke. Negative insets keep the round caps. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-draw-ready] [data-draw] {
+    clip-path: inset(-50% 100% -50% -5%);
+    transition: clip-path 0.9s var(--ease-inout) var(--draw-delay, 0ms);
+  }
+
+  [data-draw-ready][data-drawn] [data-draw] {
+    clip-path: inset(-50% -5% -50% -5%);
+  }
+}
+
 /* About: words change from muted to full colour as you read (--reveal 0 → 1, driven by GSAP). */
 .about-word {
   color: color-mix(in srgb, var(--fg) calc(var(--reveal, 1) * 100%), var(--fg-muted));

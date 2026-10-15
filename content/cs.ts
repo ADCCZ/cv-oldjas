@@ -251,7 +251,8 @@ export const cs: Dictionary = {
   },
 
   contact: {
-    title: "Hledám stáž nebo částečný úvazek. Ozvi se.",
+    titleLines: ["Hledám [stáž]", "nebo [částečný úvazek]."],
+    titleAccent: "Ozvi se.",
     emailButton: "Napsat e-mail @",
     cvButton: "Stáhnout CV ↓",
     cvPlain: "strohá verze pro personální systémy",

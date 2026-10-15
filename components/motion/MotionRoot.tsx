@@ -36,6 +36,7 @@ export function MotionRoot() {
               type: "lines",
               mask: "lines",
               linesClass: "split-line",
+              ignore: "[data-split-keep]", // words that must stay whole (the hand-drawn underlines)
               aria: "auto",
               autoSplit: true, // re-split on resize; the returned tween is replaced with it
               onSplit: (self) => {
