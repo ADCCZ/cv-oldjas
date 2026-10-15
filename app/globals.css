@@ -659,7 +659,12 @@ html[data-intro="replay"] [data-hero-name] {
   color: color-mix(in srgb, var(--fg) calc(var(--reveal, 1) * 100%), var(--fg-muted));
 }
 
-/* Scramble: random glyphs are red, characters that have not started yet are invisible. */
+/* Scramble: a line wraps only between words; random glyphs are red, characters that have not
+   started yet are invisible. */
+.scr-word {
+  white-space: nowrap;
+}
+
 .scr-char.is-band {
   color: var(--red-text);
 }

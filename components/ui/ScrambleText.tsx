@@ -27,8 +27,11 @@ type Char = { el: HTMLElement; final: string; start: number; lock: number };
 /**
  * Text that decodes itself (juncastudio.com style): every character starts at its own moment,
  * flickers through random red glyphs and locks to the final letter – when it scrolls into view
- * and/or when its link is hovered. Each glyph keeps the measured width of the real letter, so the
- * line never jumps. Screen readers get the plain text; the animated copy is aria-hidden.
+ * and/or when its link is hovered. Letters sit in unbreakable words, so a line only wraps between
+ * words ("2024" stays whole). While a run plays each glyph keeps the width of its real letter, measured
+ * at that moment, so the line never jumps; afterwards the plain text is put back, so it kerns and
+ * reflows like any other text when the window changes size. Screen readers get the plain text; the
+ * animated copy is aria-hidden.
  * Reduced motion: no effect.
  */
 export function ScrambleText({ text, className = "", duration = 0.7, appear = true, hover = false }: Props) {
@@ -52,17 +55,28 @@ export function ScrambleText({ text, className = "", duration = 0.7, appear = tr
         let entered = !appear;
         let lastTick = -1;
 
+        let frozen = false;
         const ensureSplit = () => {
           if (split) return;
-          split = SplitText.create(el, { type: "chars", charsClass: "scr-char", aria: "none" });
-          const nodes = split.chars as HTMLElement[];
-          // Freeze the real glyph widths before any random glyph replaces them – all reads first,
-          // then all writes, so the page is laid out once and not once per letter.
-          const widths = nodes.map((charEl) => charEl.getBoundingClientRect().width);
-          chars = nodes.map((charEl, i) => {
-            Object.assign(charEl.style, { display: "inline-block", width: `${widths[i]}px`, textAlign: "center" });
-            return { el: charEl, final: charEl.textContent ?? "", start: 0, lock: 0 };
-          });
+          split = SplitText.create(el, { type: "words,chars", wordsClass: "scr-word", charsClass: "scr-char", aria: "none" });
+          chars = (split.chars as HTMLElement[]).map((charEl) => ({ el: charEl, final: charEl.textContent ?? "", start: 0, lock: 0 }));
+          frozen = false;
+        };
+        // Freeze the real glyph widths before random glyphs replace them – all reads first, then all
+        // writes, so the page is laid out once and not once per letter. Measured now, at today's size.
+        const freeze = () => {
+          if (frozen) return;
+          const widths = chars.map((c) => c.el.getBoundingClientRect().width);
+          chars.forEach((c, i) => Object.assign(c.el.style, { display: "inline-block", width: `${widths[i]}px`, textAlign: "center" }));
+          frozen = true;
+        };
+        // Done: back to the plain text (kerning, natural wrapping on resize). A hover re-splits it.
+        const restore = () => {
+          render();
+          split?.revert();
+          split = null;
+          chars = [];
+          frozen = false;
         };
 
         // Left-to-right wave with jitter; each letter flickers for 15–30 % of the run.
@@ -92,9 +106,10 @@ export function ScrambleText({ text, className = "", duration = 0.7, appear = tr
 
         const play = (seconds: number) => {
           tween?.kill();
+          freeze();
           state.p = 0;
           render();
-          tween = gsap.to(state, { p: 1, duration: seconds, ease: "none", onUpdate: render, onComplete: render });
+          tween = gsap.to(state, { p: 1, duration: seconds, ease: "none", onUpdate: render, onComplete: restore });
         };
 
         const cancelFonts = appear
