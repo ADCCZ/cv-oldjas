@@ -10,18 +10,20 @@ type Props = {
 };
 
 /**
- * Square card (leome-and-partners.com style). On hover / focus / tap a red square grows out of the
- * top-right corner, the arrow drops its square and turns from ↗ to ↙, and the list rises line by
+ * Square card (leome-and-partners.com style). On hover, keyboard focus or tap a red square grows out of
+ * the top-right corner, the arrow drops its square and turns from ↗ to ↙, and the list rises line by
  * line (closing is immediate, no stagger). The list is always in the DOM, so screen readers read
  * it without any interaction.
+ * A mouse only hovers: its click does not pin the card open, and the focus a click leaves on the button
+ * does not count (only :focus-visible does) – the card closes as soon as the pointer leaves it.
  */
 export function SkillCard({ number, title, items, showDetailsLabel }: Props) {
   const [open, setOpen] = useState(false);
   const listId = `skill-${number}-list`;
 
   const revealed =
-    "group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100 group-data-[open=true]:[transition-delay:var(--d)] group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:[transition-delay:var(--d)] group-hover:translate-y-0 group-hover:opacity-100 group-hover:[transition-delay:var(--d)]";
-  const onFill = "group-data-[open=true]:text-cream group-focus-within:text-cream group-hover:text-cream";
+    "group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100 group-data-[open=true]:[transition-delay:var(--d)] group-has-[:focus-visible]:translate-y-0 group-has-[:focus-visible]:opacity-100 group-has-[:focus-visible]:[transition-delay:var(--d)] group-hover:translate-y-0 group-hover:opacity-100 group-hover:[transition-delay:var(--d)]";
+  const onFill = "group-data-[open=true]:text-cream group-has-[:focus-visible]:text-cream group-hover:text-cream";
 
   return (
     <li className="reveal-card group relative aspect-square overflow-hidden bg-bg" data-open={open} data-surface="red">
@@ -36,11 +38,15 @@ export function SkillCard({ number, title, items, showDetailsLabel }: Props) {
             aria-expanded={open}
             aria-controls={listId}
             aria-label={`${showDetailsLabel}: ${title}`}
-            onClick={() => setOpen((v) => !v)}
-            className="grid size-11 place-items-center bg-fg text-bg transition-colors duration-700 group-data-[open=true]:bg-transparent group-data-[open=true]:text-cream group-focus-within:bg-transparent group-focus-within:text-cream group-hover:bg-transparent group-hover:text-cream"
+            onClick={(event) => {
+              // Mouse: hover already shows the card. Touch and keyboard (pointerType "") toggle it.
+              if ((event.nativeEvent as PointerEvent).pointerType === "mouse") return;
+              setOpen((v) => !v);
+            }}
+            className="grid size-11 place-items-center bg-fg text-bg transition-colors duration-700 group-data-[open=true]:bg-transparent group-data-[open=true]:text-cream group-has-[:focus-visible]:bg-transparent group-has-[:focus-visible]:text-cream group-hover:bg-transparent group-hover:text-cream"
           >
             <span
-              className="text-xl leading-none transition-transform duration-700 ease-brand group-data-[open=true]:rotate-180 group-focus-within:rotate-180 group-hover:rotate-180"
+              className="text-xl leading-none transition-transform duration-700 ease-brand group-data-[open=true]:rotate-180 group-has-[:focus-visible]:rotate-180 group-hover:rotate-180"
               aria-hidden="true"
             >
               ↗

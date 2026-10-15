@@ -494,7 +494,7 @@
   }
 
   .reveal-card[data-open="true"] .corner-fill,
-  .reveal-card:focus-within .corner-fill {
+  .reveal-card:has(:focus-visible) .corner-fill {
     scale: 1;
   }
 
