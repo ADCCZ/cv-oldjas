@@ -158,7 +158,7 @@ export function Footer({ t, locale, projectCount }: Props) {
             ]}
           />
         </p>
-        <a href="#top" className="link-draw link-anim col-span-12 justify-self-start text-fg lg:col-span-2 lg:justify-self-end">
+        <a href="#top" className="link-draw link-anim col-span-12 justify-self-end text-fg lg:col-span-2">
           <ScrambleText text={t.footer.top} appear={false} hover />
         </a>
       </div>

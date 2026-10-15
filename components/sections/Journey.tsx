@@ -172,9 +172,12 @@ export function Journey({ t }: { t: Dictionary }) {
             title={t.journey.next.title}
             rows={2}
             aside={
-              <a href="#contact" className="btn btn-cream btn-sm mt-2 md:mt-0">
-                <ButtonContent label={t.journey.next.cta} icon="→" />
-              </a>
+              // Phones: the button sits on the right, under the title (from md up the bar puts it there).
+              <div className="flex justify-end">
+                <a href="#contact" className="btn btn-cream btn-sm mt-2 md:mt-0">
+                  <ButtonContent label={t.journey.next.cta} icon="→" />
+                </a>
+              </div>
             }
           />
         </Stack>
