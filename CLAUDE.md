@@ -66,8 +66,10 @@ The full brief is in `docs/PROMPT.md`; effect decisions from the reference resea
 - Magnetic `.btn`: the pull goes through `--mag-x/--mag-y` and the CSS `translate` property – never GSAP `x/y` on `.btn`.
 - Drifting strip (`DriftStrip`): `[data-strip]` scroller with three identical `[data-strip-copy]` blocks (clone,
   original, clone); clones are `aria-hidden` (+ `inert` when they hold no links) and `motion-only`.
-  Beyond code cards are `[data-toss]` (`CardToss`): picked up alone, they spring back into their slot; the strip is
-  dragged by its gaps and stands still while a card is held (`data-strip-hold`).
+  Beyond code cards are `[data-toss]` (`CardToss`): picking one up lays a fixed copy over the page (the scroller clips
+  vertically, so the card itself cannot leave it) and hides the original; the copy springs back onto the slot. The
+  strip is dragged by its gaps and stands still while a card is held (`data-strip-hold`). Never Draggable `bounds`
+  inside the scroller – they pull the off-screen clone cards into view.
 - The stack pile box keeps the sorted grid's height – switching must never change the page height (anchors below).
 
 ## WebGL (phase 5)
