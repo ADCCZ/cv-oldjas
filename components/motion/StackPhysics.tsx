@@ -80,7 +80,7 @@ export function StackPhysics({ controls, sortLabel, scatterLabel }: Props) {
   // Rendered on the server too, so its row is reserved from the first paint (no layout shift);
   // the button itself appears once matter-js is loaded.
   return (
-    <div ref={rootRef} className="col-span-12 hidden h-10 md:block motion-reduce:hidden">
+    <div ref={rootRef} className="col-span-12 hidden h-10 justify-end md:flex motion-reduce:hidden">
       <button
         type="button"
         onClick={toggle}
