@@ -654,6 +654,19 @@ html[data-intro="replay"] [data-hero-name] {
   }
 }
 
+/* About: the 3D compass is tilted in perspective and fills only ~77 % of its box, the SVG one all of it –
+   next to the 3D one the portrait shrinks so both look equally tall (measured: 160 vs 190 px). */
+[data-about-portrait] {
+  transition:
+    width 0.6s var(--ease-inout),
+    max-width 0.6s var(--ease-inout);
+}
+
+html[data-webgl="on"] [data-about-portrait] {
+  width: calc(42.7% * 0.84);
+  max-width: calc(218px * 0.84);
+}
+
 /* About: words change from muted to full colour as you read (--reveal 0 → 1, driven by GSAP). */
 .about-word {
   color: color-mix(in srgb, var(--fg) calc(var(--reveal, 1) * 100%), var(--fg-muted));

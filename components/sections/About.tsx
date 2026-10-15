@@ -35,8 +35,9 @@ export function About({ t }: { t: Dictionary }) {
             side by side so the sticky column gets no taller. The WebGL layer draws the 3D compass into its
             box; the SVG is the fallback. */}
         <div className="mb-10 flex items-center justify-center gap-4 md:gap-6">
-          {/* As tall as the compass: its width × 520/572 (the cut-out’s aspect). */}
-          <figure className="w-[42.7%] max-w-[218px]">
+          {/* As tall as the compass: its width × 520/572 (the cut-out’s aspect); smaller next to the
+              3D compass, which shows less of its box (globals.css, [data-about-portrait]). */}
+          <figure data-about-portrait className="w-[42.7%] max-w-[218px]">
             <Image
               src={links.photo.src}
               width={links.photo.width}
