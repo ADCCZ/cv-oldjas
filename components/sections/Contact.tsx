@@ -74,8 +74,9 @@ export function Contact({ t, locale }: { t: Dictionary; locale: Locale }) {
         {availabilityLine(hoursPerWeek, t.availability.hoursUnit, location[locale])}
       </p>
 
-      <div className="col-span-12 flex flex-col items-start gap-4">
-        <div className="flex flex-wrap gap-3">
+      {/* The actions sit on the right, under the end of the big ask. */}
+      <div className="col-span-12 flex flex-col items-end gap-4">
+        <div className="flex flex-wrap justify-end gap-3">
           <TrackedLink href={`mailto:${links.email}`} event="email_click" data={{ place: "contact-button" }} className="btn btn-primary">
             <ButtonContent label={t.contact.emailButton} />
           </TrackedLink>
