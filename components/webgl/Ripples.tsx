@@ -2,7 +2,7 @@
 
 import { View } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CanvasTexture,
   GLSL3,
@@ -33,6 +33,10 @@ import { WaterSim } from "./water";
  * the cover is rasterised from the DOM (rasterize.ts – or its screenshot, once there is one) and
  * WebGL draws it on top for as long as the water moves; once calm, the canvas lets the DOM show
  * again. Mouse only – touch screens get no ripples.
+ *
+ * Two lanes (each its own simulation and View) take turns, so moving from one cover to the next
+ * leaves the first one's rings to settle while the next one starts. Towards the end of the settling
+ * the water's strength eases to zero, so the DOM cover takes over without a cut.
  */
 
 const FRAGMENT = /* glsl */ `
@@ -50,6 +54,7 @@ uniform vec4 uLayerRect;    // image layer, viewport CSS px
 uniform vec2 uClip;         // visible column of the projects strip (left, right), CSS px
 uniform vec2 uLight;        // cursor in cover uv
 uniform float uAspect;
+uniform float uFade;        // strength of the water: 1 under the pointer, eased to 0 at the end
 
 const float REFRACTION = 2.4;
 const float DISPERSION = 0.6;
@@ -83,7 +88,7 @@ void main() {
   float hR = height(vUv + vec2(uTexel.x, 0.0));
   float hB = height(vUv - vec2(0.0, uTexel.y));
   float hT = height(vUv + vec2(0.0, uTexel.y));
-  vec2 slope = vec2(hR - hL, hT - hB);
+  vec2 slope = vec2(hR - hL, hT - hB) * uFade;
   if (abs(slope.x) + abs(slope.y) < 1e-4) {
     outColor = vec4(cover(vUv), 1.0);
     return;
@@ -109,17 +114,23 @@ void main() {
 
   // Caustics: where the surface curves inwards, the light under it gathers.
   float curvature = hL + hR + hB + hT - 4.0 * height(vUv);
-  color += max(-curvature, 0.0) * CAUSTICS * 6.0;
+  color += max(-curvature, 0.0) * CAUSTICS * 6.0 * uFade;
 
   outColor = vec4(color, 1.0);
 }`;
 
 /** The water calms down this long after the last drop. */
-const SETTLE = 2;
+const SETTLE = 2.6;
+/** The last part of the settling, over which the water's strength eases to zero. */
+const FADE = 0.9;
+/** How many covers can have water at once – the one under the pointer and the one it just left. */
+const LANES = 2;
 /** Spacing of drops along the cursor path (cover uv). */
 const DROP_SPACING = 0.02;
 
 type Textures = { layer: CanvasTexture; tags: CanvasTexture };
+/** What the lanes share: the rasterised covers and each other. */
+type Shared = { cache: Map<HTMLElement, Textures>; lanes: RippleLayer[] };
 
 /** Runs `fn` when the browser is idle (or soon, where requestIdleCallback is missing). */
 function whenIdle(fn: () => void) {
@@ -141,7 +152,7 @@ class RippleLayer {
   /** Tracked by the View – always the cover the water is on. */
   readonly track: { current: HTMLElement };
   private readonly sim: WaterSim;
-  private readonly cache = new Map<HTMLElement, Textures>();
+  private readonly cache: Map<HTMLElement, Textures>;
   private readonly clip: HTMLElement | null;
   private readonly cleanups: (() => void)[] = [];
   private readonly camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -151,12 +162,16 @@ class RippleLayer {
   private time = 0;
   private dt = 0;
   private calmAt = 0;
+  private fade = 1;
   private disposed = false;
 
   constructor(
     private readonly renderer: WebGLRenderer,
     covers: HTMLElement[],
+    private readonly shared: Shared,
+    rasteriseCovers: boolean,
   ) {
+    this.cache = shared.cache;
     this.track = { current: covers[0]! };
     this.clip = covers[0]!.closest<HTMLElement>("[data-projects-clip]");
     this.sim = new WaterSim(renderer);
@@ -176,6 +191,7 @@ class RippleLayer {
           uClip: { value: new Vector2(-1e5, 1e5) },
           uLight: { value: new Vector2(0.5, 0.5) },
           uAspect: { value: 1.6 },
+          uFade: { value: 1 },
         },
         depthTest: false,
         depthWrite: false,
@@ -183,7 +199,7 @@ class RippleLayer {
     );
     this.mesh.frustumCulled = false;
     this.mesh.visible = false;
-    this.warmUp(covers);
+    this.warmUp(covers, rasteriseCovers);
 
     const onMove = (event: PointerEvent) => {
       if (event.pointerType === "touch") return;
@@ -216,7 +232,7 @@ class RippleLayer {
     this.time = time;
 
     // The pointer moved (or the strip scrolled it) onto another cover: the water moves there.
-    if (this.hovered && this.hovered !== this.active && !layer.under) this.activate(this.hovered);
+    if (this.hovered && this.hovered !== this.active && !layer.under && this.claims(this.hovered)) this.activate(this.hovered);
     if (this.active && this.hovered !== this.active && this.time > this.calmAt) this.deactivate();
 
     const rect = this.active?.getBoundingClientRect();
@@ -256,6 +272,10 @@ class RippleLayer {
     if (clip) u.uClip!.value.set(clip.left, clip.right);
     u.uLight!.value.set(...toUv(this.pointer.x, this.pointer.y));
     u.uAspect!.value = r.width / Math.max(1, r.height);
+    // Full strength under the pointer; once it has left, eased to zero over the last FADE seconds.
+    const target = this.hovered === cover ? 1 : Math.min(1, Math.max(0, (this.calmAt - this.time) / FADE));
+    this.fade += (target - this.fade) * Math.min(1, this.dt * 10);
+    u.uFade!.value = this.fade;
   }
 
   dispose() {
@@ -271,8 +291,9 @@ class RippleLayer {
    * Gets everything ready before the first hover: shader programs compile in parallel, and the
    * covers are rasterised and uploaded one by one while the browser is idle.
    */
-  private warmUp(covers: HTMLElement[]) {
+  private warmUp(covers: HTMLElement[], rasteriseCovers: boolean) {
     this.cleanups.push(this.sim.warmUp(), precompile(this.renderer, [{ object: this.mesh, camera: this.camera }]));
+    if (!rasteriseCovers) return; // the other lane fills the shared cache
     const next = (i: number) => {
       const cover = covers[i];
       if (this.disposed || !cover) return;
@@ -303,6 +324,17 @@ class RippleLayer {
     return true;
   }
 
+  /**
+   * A cover goes to a free lane, else to the one that has been calming longest – never to two lanes
+   * at once. Every lane asks each frame; only the picked one says yes.
+   */
+  private claims(cover: HTMLElement): boolean {
+    const lanes = this.shared.lanes;
+    if (lanes.some((lane) => lane.active === cover)) return false;
+    const pick = lanes.find((lane) => !lane.active) ?? lanes.reduce((a, b) => (a.calmAt <= b.calmAt ? a : b));
+    return pick === this;
+  }
+
   private activate(cover: HTMLElement) {
     const textures = this.cache.get(cover) ?? this.rasterise(cover);
     if (!textures) return;
@@ -314,6 +346,7 @@ class RippleLayer {
     this.pointer.lastX = this.pointer.x;
     this.pointer.lastY = this.pointer.y;
     this.calmAt = this.time + SETTLE;
+    this.fade = 1;
     this.mesh.material.uniforms.uLayer!.value = textures.layer;
     this.mesh.material.uniforms.uTags!.value = textures.tags;
   }
@@ -362,39 +395,40 @@ class RippleLayer {
   }
 }
 
-function RippleScene({ layerRef }: { layerRef: { current: RippleLayer | null } }) {
-  useFrame(() => layerRef.current?.frame());
-  const ripple = layerRef.current;
-  return ripple ? <primitive object={ripple.mesh} /> : null;
+function RippleScene({ ripple }: { ripple: RippleLayer }) {
+  useFrame(() => ripple.frame());
+  return <primitive object={ripple.mesh} />;
 }
 
-/** Ripples on the project covers – a View that follows whichever cover the water is on. */
+/** Ripples on the project covers – one View per lane, each following the cover its water is on. */
 export function Ripples() {
   const gl = useThree((state) => state.gl);
   const [covers] = useState(() =>
     window.matchMedia(FINE_POINTER).matches ? Array.from(document.querySelectorAll<HTMLElement>("[data-cover]")) : [],
   );
-  const layerRef = useRef<RippleLayer | null>(null);
-  const [ripple, setRipple] = useState<RippleLayer | null>(null);
+  const [lanes, setLanes] = useState<RippleLayer[]>([]);
 
   useEffect(() => {
     if (!covers.length) return;
-    const instance = new RippleLayer(gl, covers);
-    layerRef.current = instance;
-    setRipple(instance);
-    const remove = addStage(instance.prepare, ORDER.ripples);
+    const shared: Shared = { cache: new Map(), lanes: [] };
+    const created = Array.from({ length: LANES }, (_, i) => new RippleLayer(gl, covers, shared, i === 0));
+    shared.lanes.push(...created);
+    setLanes(created);
+    const removes = created.map((lane) => addStage(lane.prepare, ORDER.ripples));
     return () => {
-      remove();
-      instance.dispose();
-      layerRef.current = null;
+      removes.forEach((remove) => remove());
+      created.forEach((lane) => lane.dispose());
+      setLanes([]);
     };
   }, [gl, covers]);
 
-  const track = useMemo(() => ripple?.track, [ripple]);
-  if (!ripple || !track) return null;
   return (
-    <View track={track}>
-      <RippleScene layerRef={layerRef} />
-    </View>
+    <>
+      {lanes.map((lane, i) => (
+        <View key={i} track={lane.track}>
+          <RippleScene ripple={lane} />
+        </View>
+      ))}
+    </>
   );
 }
