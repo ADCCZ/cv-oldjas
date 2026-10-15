@@ -80,13 +80,21 @@ export function CardToss() {
           type: "x,y",
           zIndexBoost: false,
           onRelease() {
-            // Back onto the slot where the card is now (the page may have scrolled meanwhile).
-            const from = centre(ghost);
-            const to = centre(card);
-            gsap.to(ghost, {
-              x: `+=${to.x - from.x}`,
-              y: `+=${to.y - from.y}`,
+            // Back onto the slot – followed every frame, so scrolling during the return cannot leave
+            // the copy wandering over other sections: it always heads for where the card is now.
+            const startX = Number(gsap.getProperty(ghost, "x"));
+            const startY = Number(gsap.getProperty(ghost, "y"));
+            const progress = { t: 0 };
+            gsap.to(progress, {
+              t: 1,
               ...RETURN,
+              onUpdate: () => {
+                const to = centre(card);
+                gsap.set(ghost, {
+                  x: startX + (to.x - x - startX) * progress.t,
+                  y: startY + (to.y - y - startY) * progress.t,
+                });
+              },
               onComplete: finish,
             });
           },
