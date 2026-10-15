@@ -100,7 +100,7 @@ export function OffCode({ t }: { t: Dictionary }) {
             ))}
           </div>
         </div>
-        <DriftStrip speed={24} />
+        <DriftStrip speed={44} />
         <CardToss />
       </div>
     </section>

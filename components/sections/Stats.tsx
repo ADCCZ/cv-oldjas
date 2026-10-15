@@ -70,7 +70,7 @@ export function Stats({ t }: { t: Dictionary }) {
         </div>
       </div>
       <StatsMotion />
-      <DriftStrip speed={30} />
+      <DriftStrip speed={52} />
       <StatsPills stickers={t.stats.stickers} />
     </section>
   );
