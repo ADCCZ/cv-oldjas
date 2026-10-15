@@ -202,7 +202,7 @@ export const projects: Project[] = [
   {
     id: "opengl-hra",
     featured: false,
-    repo: null,
+    repo: "ADCCZ/zpg-semestral",
     title: { cs: "3D hra v OpenGL", en: "3D game in OpenGL" },
     description: {
       cs: "C# (.NET 8) nad OpenTK: svět z textových map, kolize, kamera, teleporty, baterka jako dynamické světlo, minimapa a vlastní GLSL shadery. KIV/ZPG.",

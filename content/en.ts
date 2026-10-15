@@ -115,7 +115,7 @@ export const en = {
     language: "main language",
     dateLocale: "en-GB",
     archiveTitle: "More projects",
-    archiveNote: "Semester projects in private repos, access on request.",
+    archiveNote: "Most semester projects are in private repos, access on request.",
   },
 
   stack: {

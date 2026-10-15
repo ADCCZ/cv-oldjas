@@ -109,7 +109,7 @@ export const cs: Dictionary = {
     language: "hlavní jazyk",
     dateLocale: "cs-CZ",
     archiveTitle: "Další projekty",
-    archiveNote: "Semestrálky v soukromých repech, přístup na vyžádání.",
+    archiveNote: "Většina semestrálek je v soukromých repech, přístup na vyžádání.",
   },
 
   stack: {
