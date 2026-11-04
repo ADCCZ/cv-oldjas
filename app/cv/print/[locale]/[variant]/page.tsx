@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CvPrintPage({ params }: Props) {
   const { locale, variant } = await params;
-  // The pages carry the phone number, which belongs in the PDFs only: on Vercel they are static 404s,
+  // The pages exist only to be printed: on Vercel they are static 404s (the PDFs are committed),
   // locally and in CI they render for `npm run cv` and the tests.
   if (process.env.VERCEL || !isLocale(locale) || !isVariant(variant)) notFound();
   const t = getDictionary(locale, "plain");

@@ -299,7 +299,7 @@ export const en = {
       offCode: "Beyond code",
       availability: "Availability",
     },
-    contact: { email: "E-mail", phone: "Phone", github: "GitHub", web: "Web" },
+    contact: { email: "E-mail", github: "GitHub", web: "Web" },
     scale: "Scale",
     also: "Also",
     otherProjects: "Other projects",

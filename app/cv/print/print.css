@@ -237,7 +237,7 @@ html.cv-doc body {
   border-block: 0.5pt solid var(--line-strong);
 }
 
-/* Five values (with LinkedIn) share one row – each stays on its line. */
+/* Four values (with LinkedIn) share one row – each stays on its line. */
 .cv-contacts li {
   display: flex;
   flex-direction: column;

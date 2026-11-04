@@ -12,7 +12,8 @@ const PDFS = [
   { file: "/cv-cs.pdf", pages: [2, 2] },
   { file: "/cv-plain-cs.pdf", pages: [1, 2] },
 ] as const;
-const PHONE = "730 961 437";
+/** Neither the website nor the CVs carry a phone number. */
+const PHONE = /\+420|tel:/;
 
 /** Mark the intro as already seen, so the tests do not wait for the loader (it has its own test). */
 const SKIP_INTRO = () => sessionStorage.setItem("cv:intro", "1");
@@ -252,18 +253,17 @@ test.describe("PDF CVs", () => {
         await expect(page.locator("html")).toHaveAttribute("lang", locale);
         await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
         await expect(page.locator("h1")).toHaveText(NAME);
-        // The phone number lives in the CVs only.
-        await expect(page.getByText(PHONE).first()).toBeAttached();
+        expect(await page.content(), `${locale}/${variant}`).not.toMatch(PHONE);
         if (variant === "design") await expect(page.locator(".cv-sheet")).toHaveCount(2);
       }
     }
     expect(errors).toEqual([]);
   });
 
-  test("the phone number never appears on the website", async ({ page }) => {
+  test("no phone number appears on the website", async ({ page }) => {
     for (const path of ["/", "/cs"]) {
       await page.goto(path);
-      expect(await page.content(), path).not.toContain(PHONE);
+      expect(await page.content(), path).not.toMatch(PHONE);
     }
   });
 });

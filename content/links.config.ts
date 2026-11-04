@@ -8,8 +8,6 @@ export const links = {
   siteLabel: "cv-oldrich-jan-svehla.vercel.app",
 
   email: "oldasvehla@seznam.cz",
-  /** Only in the PDF CV – never rendered on the website. */
-  phone: "+420 730 961 437",
 
   github: "https://github.com/adccz",
   githubLabel: "github.com/adccz",

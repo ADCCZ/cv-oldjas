@@ -163,7 +163,7 @@ pinned in `package.json` → `engines`).
 - **Analytics** – the project's **Analytics** tab → *Enable* (Web Analytics), then the **Speed Insights** tab →
   *Enable*. Data comes in from the next deployment. `<Analytics />` and `<SpeedInsights />` render only on Vercel
   (`process.env.VERCEL`), so local builds and CI send nothing.
-- On Vercel the print pages (`/cv/print/*`, they carry the phone number) and the share image pages (`/og/*`)
+- On Vercel the print pages (`/cv/print/*`) and the share image pages (`/og/*`)
   return 404 – the PDFs and images are generated locally and committed.
 - The GitHub metadata revalidates hourly (ISR), everything else is static.
 - A bad deployment is reverted in *Deployments → ⋯ → Instant Rollback*.

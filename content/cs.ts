@@ -290,7 +290,7 @@ export const cs: Dictionary = {
       offCode: "Mimo kód",
       availability: "Dostupnost",
     },
-    contact: { email: "E-mail", phone: "Telefon", github: "GitHub", web: "Web" },
+    contact: { email: "E-mail", github: "GitHub", web: "Web" },
     scale: "Stupnice",
     also: "Dále",
     otherProjects: "Další projekty",

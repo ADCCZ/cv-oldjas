@@ -115,7 +115,8 @@ The full brief is in `docs/PROMPT.md`; effect decisions from the reference resea
 - Portrait: `public/photo.webp` (a trimmed cut-out with transparency, `links.photo`) in About and in the design CV.
   The source `photo.webp` in the repo root stays untracked, like `logo.jpg`. The plain CV has no photo.
 - Print pages `app/cv/print/[locale]/[variant]` (design | plain) have their own root layout (`<html lang>`, light theme,
-  fonts) and `app/cv/print/print.css` in mm/pt. They carry the phone number, so on Vercel they are static 404s.
+  fonts) and `app/cv/print/print.css` in mm/pt. On Vercel they are static 404s. No phone number in the CVs – they are
+  public files.
 - `npm run cv` (after `npm run build`) first flattens `public/photo.webp` onto the paper colour as `public/photo-cv.jpg`
   (the design CV uses it – a transparent image stays lossless in a PDF), then renders the 4 PDFs into `public/` and
   fails unless the design CV has exactly 2 pages and the plain one at most 2 – commit the PDFs. CV-only texts are in the `cv` block of `content/en.ts`/`cs.ts`,

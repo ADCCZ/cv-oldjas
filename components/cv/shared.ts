@@ -16,11 +16,10 @@ export function bare(url: string): string {
   return url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
 }
 
-/** Contact cells of both CVs – the phone number appears only here, never on the website. */
+/** Contact cells of both CVs. No phone number – the CVs are public files on the website. */
 export function contacts(t: Dictionary): { label: string; href: string; value: string }[] {
   return [
     { label: t.cv.contact.email, href: `mailto:${links.email}`, value: links.email },
-    { label: t.cv.contact.phone, href: `tel:${links.phone.replace(/\s/g, "")}`, value: links.phone },
     { label: t.cv.contact.github, href: links.github, value: links.githubLabel },
     ...(links.linkedin ? [{ label: t.contact.linkedin, href: links.linkedin, value: bare(links.linkedin) }] : []),
     { label: t.cv.contact.web, href: links.site, value: links.siteLabel },
