@@ -314,7 +314,7 @@ Dva stohy za sebou, každý s vlastním malým nadpisem („Vzdělání“, „P
   - E-mail: oldasvehla@seznam.cz (klik = kopírovat do schránky + toast „Zkopírováno“, vedle ikonka mailto)
   - GitHub: https://github.com/adccz
   - LinkedIn: zatím nemám – v `links.config.ts` připrav pole `linkedin: null`; dokud je null, položka se nikde (web ani PDF) nezobrazuje.
-  - Telefon na webu není (je jen v PDF CV).
+  - Telefon není na webu ani v PDF CV.
 - Vpravo sloupec odkazů velkým písmem (GitHub / E-mail / CV PDF) – hover: podtržení se vykreslí zleva doprava zlatou linkou.
 - Obří nápis přes celou šířku dole: **ŠVEHLA** (Archivo, plná šířka viewportu). Každé písmeno je samostatný span; při najetí myší se písmeno zúží/zmenší (animace variabilní osy `wdth` 125 → 62 a `wght` 900 → 300, spring), sousední písmena reagují slaběji (falloff podle vzdálenosti). Ostatní písmena se tím roztáhnou, takže nápis stále vyplňuje šířku.
 - Spodní lišta (mono, malé): © 2026 Oldřich Jan Švehla · Plzeň, CZ · živé hodiny (UTC+2) 11:39:55 · Postaveno s Next.js, GSAP a Three.js ve spolupráci s Claude Code · odkaz „Kód tohoto webu je na GitHubu“ · vpravo NAHORU ↑.
@@ -337,7 +337,7 @@ Vytvoř dvě PDF verze životopisu, které se generují ze stejných dat v `cont
   - Nahoře tenká mono lišta: ● ŽIVOTOPIS · 2026 · cv-oldjas-tan.vercel.app · 01 / 02.
   - Obří jméno ve dvou řádcích: OLDŘICH JAN (černě) / ŠVEHLA (červeně `#D2162A`), Archivo wdth 125, wght 900, ~50 pt, těsné řádkování.
   - Pod ním „Junior full-stack vývojář, Plzeň.“ + „Pro přátele Olda.“ (Instrument Serif italic) a vpravo pill ● OPEN TO INTERNSHIPS · 20 H/WEEK · PILSEN OR REMOTE (česky ● HLEDÁM STÁŽ · 20 H TÝDNĚ · PLZEŇ NEBO REMOTE).
-  - Kontaktní řádek rozdělený tenkými linkami do 4 buněk (zlatý mono popisek + hodnota): e-mail, telefon +420 730 961 437 (jen v PDF, na webu ne), GitHub, web.
+  - Kontaktní řádek rozdělený tenkými linkami do 4 buněk (zlatý mono popisek + hodnota): e-mail, GitHub, LinkedIn, web (bez telefonu – PDF jsou na webu veřejně).
   - Pod tím dva sloupce: vlevo **01 Profil** (zkrácený text z O mně) a **02 Praxe** (4 položky z Cesty, období v mono vlevo, firma červeně, odrážky se zlatou čárkou); vpravo červený sloupec `#9E0F1C` přes celou zbývající výšku s krémovým textem: **03 Technologie** (hlavní technologie po kategoriích, úroveň jako 5 malých obdélníčků, úroveň 4 zlatě, nahoře legenda stupnice), **V plánu** a **Jazyky** (čeština rodilý, angličtina B2, němčina základy, španělština začínám). Na dně sloupce velmi průhledný obří nápis OLDA.
 - **Strana 2:**
   - **04 Vzdělání** jako tři „složky“ – plné pruhy v odstínech `--red-950`, `--red-800`, `--red-600` s krémovým textem, zlatým číslem a obdobím vpravo (stejný motiv jako sekce Cesta na webu).
@@ -349,7 +349,7 @@ Vytvoř dvě PDF verze životopisu, které se generují ze stejných dat v `cont
 **`cv-plain.pdf` – strohá verze pro personální systémy (ATS):**
 
 - Jeden sloupec, bílé pozadí, černý text, Archivo 10–11 pt, žádné tabulky, sloupce, ikony ani obrázky.
-- Pořadí: jméno a kontakt (včetně telefonu) → dostupnost (20 h/week, Pilsen or remote) → Profil → Praxe → Vzdělání → Projekty (název, technologie, 1 věta, odkaz) → Technologie (prosté seznamy po kategoriích, bez úrovní) → Jazyky → Kurzy.
+- Pořadí: jméno a kontakt (bez telefonu) → dostupnost (20 h/week, Pilsen or remote) → Profil → Praxe → Vzdělání → Projekty (název, technologie, 1 věta, odkaz) → Technologie (prosté seznamy po kategoriích, bez úrovní) → Jazyky → Kurzy.
 - Nadpisy sekcí obyčejným textem („Praxe“, „Vzdělání“…), aby je parser rozpoznal.
 
 Na webu: tlačítko „Download CV“ vede na `cv.pdf`, v české verzi „Stáhnout CV“ na `cv-cs.pdf`; odkaz na strohou verzi analogicky na `cv-plain.pdf` / `cv-plain-cs.pdf`.
